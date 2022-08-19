@@ -1,17 +1,12 @@
 <script setup>
-import { computed, onUnmounted, ref } from "vue";
+import { onUnmounted, ref } from "vue";
 import { useOlivStore } from "@/stores/oliv.js";
 import VRuntimeTemplate from "vue3-runtime-template";
 import LogoOliv from "@icons/LogoOliv.vue";
 import IconSun from "@icons/IconSun.vue";
+import { computed } from "vue";
 
 const store = useOlivStore();
-const home = computed(() => {
-  const homeData = store.pageData.filter((data) => data["slug"] === "home");
-  if (homeData) return homeData[0];
-  return false;
-});
-
 const time = ref(null);
 
 const interval = setInterval(() => {
@@ -25,6 +20,10 @@ const interval = setInterval(() => {
 onUnmounted(() => {
   clearInterval(interval);
 });
+
+// This doesn't work on page load so I had to use computed()
+// const currentPage = store.getPageBySlug("home");
+const currentPage = computed(() => store.getPageBySlug("home"));
 </script>
 
 <template>
@@ -57,8 +56,8 @@ onUnmounted(() => {
       </nav>
       <div class="homepage-content">
         <v-runtime-template
-          v-if="home"
-          :template="home.content.rendered"
+          v-if="currentPage"
+          :template="currentPage.content.rendered"
         ></v-runtime-template>
       </div>
       <footer class="homepage-footer">
@@ -68,7 +67,9 @@ onUnmounted(() => {
           |
           <div>Iasi</div>
         </div>
-        <div>Sf. Petru Movila, nr. 68</div>
+        <div v-if="store.websiteOptions.global_settings">
+          {{ store.websiteOptions.global_settings.address }}
+        </div>
       </footer>
     </div>
   </section>

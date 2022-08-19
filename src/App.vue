@@ -11,3 +11,13 @@ store.initWebsite();
     <RouterView />
   </div>
 </template>
+
+<style scoped lang="scss">
+:deep {
+  svg,
+  img {
+    display: block;
+    width: 50px;
+  }
+}
+</style>

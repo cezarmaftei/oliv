@@ -8,10 +8,14 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
   },
   "dependencies": {
+    "@googlemaps/js-api-loader": "^1.14.3",
+    "@popperjs/core": "^2.11.5",
     "axios": "^0.27.2",
+    "bootstrap": "^5.2.0",
     "pinia": "^2.0.16",
     "vue": "^3.2.37",
     "vue-router": "^4.1.2",
+    "vue3-cookies": "^1.0.6",
     "vue3-runtime-template": "^1.0.2"
   },
   "devDependencies": {
