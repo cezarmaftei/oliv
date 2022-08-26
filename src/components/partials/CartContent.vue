@@ -1,8 +1,10 @@
 <script setup>
 import { useOlivStore } from "@/stores/oliv.js";
 import { useRoute } from "vue-router";
-import { computed, ref } from "vue";
+import { provide, ref } from "vue";
 import UpdateLoading from "@/components/partials/UpdateLoading.vue";
+import ErrorCoupon from "@/components/partials/ErrorCoupon.vue";
+import NoProductsInCart from "@/components/partials/NoProductsInCart.vue";
 
 const store = useOlivStore();
 const route = useRoute();
@@ -11,14 +13,7 @@ const cartItemsInputs = ref([]);
 const cartDrawerItems = ref([]);
 const productExtras = ref([]);
 const couponCode = ref(false);
-
-const showCouponError = computed(() => {
-  setTimeout(() => {
-    store.cartData.coupon.error = false;
-    couponCode.value.value = "";
-  }, 5000);
-  return store.cartData.coupon.error;
-});
+provide("couponCode", couponCode);
 
 defineProps({
   isCheckout: Boolean,
@@ -189,7 +184,7 @@ defineProps({
           />
           <button type="submit" class="btn btn-primary">Aplica codul</button>
           <div v-if="store.cartData.coupon.error">
-            {{ showCouponError }}
+            <ErrorCoupon :errorMsg="store.cartData.coupon.error" />
           </div>
         </form>
       </div>
@@ -238,10 +233,7 @@ defineProps({
       </div>
     </div>
     <div v-else>
-      <p>
-        Nu ai nici un produs in cos.
-        <router-link to="/meniu">Vezi meniul</router-link>
-      </p>
+      <NoProductsInCart />
     </div>
   </div>
 </template>
