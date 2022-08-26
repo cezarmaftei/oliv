@@ -34,7 +34,7 @@ const updateVisibleItem = (itemName) => {
 onMounted(() => {
   if (route.query.show) {
     updateVisibleItem(route.query.show);
-  } else {
+  } else if (!route.query.action) {
     // Default
     router.push({
       query: {

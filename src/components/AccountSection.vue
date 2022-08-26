@@ -1,5 +1,5 @@
 <script setup>
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useOlivStore } from "@/stores/oliv.js";
 import FormLogin from "@/components/partials/FormLogin.vue";
 import FormRegistration from "@/components/partials/FormRegistration.vue";
@@ -8,15 +8,46 @@ import FormPassRecovery from "@/components/partials/FormPassRecovery.vue";
 import UserOrders from "@/components/partials/UserOrders.vue";
 import UserAddresses from "@/components/partials/UserAddresses.vue";
 import UserGeneral from "@/components/partials/UserGeneral.vue";
+import UpdateLoading from "@/components/partials/UpdateLoading.vue";
 import { inject } from "vue";
 
 const route = useRoute();
+const router = useRouter();
 const store = useOlivStore();
 
 const showUserMenuItems = inject("showUserMenuItems");
+
+if (route.query.action === "aa") {
+  store
+    .userActions(
+      "activate",
+      route.query.login,
+      route.query.login,
+      false,
+      route.query.key
+    )
+    .then(() => {
+      if (store.userData.success) {
+        router.push({ path: "/meniu" });
+      }
+    });
+}
 </script>
 <template>
   <div class="container">
+    <UpdateLoading />
+    <div
+      class="activation-container"
+      v-show="route.query.action === 'aa' && !store.userData.success"
+    >
+      <div v-if="!store.userData.error">
+        <h3>Se activeaza contul</h3>
+      </div>
+      <div v-if="store.userData.error">
+        <h5>{{ store.userData.error }}</h5>
+      </div>
+    </div>
+
     <div v-if="store.userData.success">
       <div v-for="(menuItem, slug) in showUserMenuItems" :key="slug">
         <UserOrders v-if="slug === 'orders' && menuItem.show" />
@@ -28,7 +59,7 @@ const showUserMenuItems = inject("showUserMenuItems");
     <div
       v-if="
         !store.userData.success &&
-        ['create', 'reset', 'rp'].indexOf(route.query.action) === -1
+        ['create', 'reset', 'rp', 'aa'].indexOf(route.query.action) === -1
       "
     >
       <h2>Intra in cont</h2>

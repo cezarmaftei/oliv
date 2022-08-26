@@ -1,41 +1,26 @@
 <script setup>
 import { useOlivStore } from "@/stores/oliv.js";
 import FormUserAddress from "@/components/partials/FormUserAddress.vue";
-import { computed } from "vue";
+import UserAddress from "@/components/partials/UserAddress.vue";
+import { ref, computed, provide } from "vue";
+
+defineProps({
+  isCheckout: Boolean,
+});
 
 const store = useOlivStore();
-
-const sameWithShipping = computed(() => {
-  return store.compareObjects(
-    store.userData.customerData.shipping,
-    store.userData.customerData.billing,
-    ["address_2", "shipping", "billing"]
-  );
-});
 
 const userAddresses = computed(() => {
   return store.getUserAddresses();
 });
 
-const getAddressIndex = (address) => {
-  let result = false;
-  userAddresses.value.forEach((userAddress, userAddressIndex) => {
-    const addressExists = store.compareObjects(userAddress, address, [
-      "address_2",
-      "shipping",
-      "billing",
-    ]);
-    if (addressExists) result = userAddressIndex;
-  });
-
-  return result;
-};
+const excludeAddressInModal = ref(false);
+provide("excludeAddressInModal", excludeAddressInModal);
 </script>
 <template>
-  <h2>Adresele Mele</h2>
+  <h2 v-if="!isCheckout">Adresele Mele</h2>
   <div v-if="store.userData.customerData">
     <FormUserAddress />
-
     <!-- No address -->
     <div v-if="!userAddresses.length">
       <h4>Nu ai nici o adresa!</h4>
@@ -43,6 +28,7 @@ const getAddressIndex = (address) => {
     <!-- /.No address -->
 
     <button
+      v-if="!isCheckout"
       class="btn btn-primary"
       @click="store.showUserAddressForm('Adauga o adresa noua!', 'create')"
     >
@@ -52,45 +38,33 @@ const getAddressIndex = (address) => {
     <!-- Delivery Address -->
     <div v-if="userAddresses.length">
       <h4>Adresa de livrare</h4>
-
-      <div v-if="store.userData.customerData.shipping.address_1">
-        <pre>
-          {{ store.userData.customerData.shipping }}
-        </pre>
-        <button
-          class="btn btn-secondary"
-          @click="
-            store.showUserAddressForm(
-              'Editeaza adresa',
-              'update',
-              getAddressIndex(store.userData.customerData.shipping)
-            )
-          "
-        >
-          editeaza
-        </button>
-        <button class="btn btn-dark">selecteaza alta adresa de livrare</button>
-        <button
-          class="btn btn-danger"
-          @click="
-            store.deleteUserAddress(
-              getAddressIndex(store.userData.customerData.shipping)
-            )
-          "
-        >
-          Sterge
-        </button>
+      <div v-if="store.getUserAddresses('shipping')">
+        <UserAddress
+          :isCheckout="isCheckout"
+          :address="store.getUserAddresses('shipping')"
+          :index="store.getAddressIndex(store.getUserAddresses('shipping'))"
+        />
       </div>
 
       <div v-else>
         <p>Nu ai nici o adresa de livrare</p>
         <a
           href="#user-addresses"
-          v-if="userAddresses.length"
+          v-if="store.getUserExtraAddresses && !isCheckout"
           class="btn btn-secondary"
         >
           Alege una dintre adresele existente
         </a>
+        <button
+          v-if="userAddresses.length && isCheckout"
+          @click="
+            store.showAddressesModal = true;
+            excludeAddressInModal = 'shipping';
+          "
+          class="btn btn-secondary"
+        >
+          Alege una dintre adresele existente
+        </button>
       </div>
 
       <button
@@ -110,42 +84,39 @@ const getAddressIndex = (address) => {
     <div v-if="userAddresses.length">
       <h4>Adresa de facturare</h4>
 
-      <div v-if="store.userData.customerData.billing.address_1">
-        <div v-if="sameWithShipping">
+      <div v-if="store.getUserAddresses('billing')">
+        <div v-if="store.getSameWithShipping">
           <p>La fel ca adresa de livrare</p>
 
-          <button class="btn btn-dark">
+          <a
+            v-if="userAddresses.length > 1 && !isCheckout"
+            href="#user-addresses"
+            class="btn btn-dark"
+          >
+            selecteaza alta adresa de facturare
+          </a>
+          <button
+            @click="
+              store.showAddressesModal = true;
+              excludeAddressInModal = 'billing';
+            "
+            class="btn btn-dark"
+            v-if="
+              isCheckout &&
+              store.getUserExtraAddresses &&
+              store.showAddressesModal !== true
+            "
+          >
             selecteaza alta adresa de facturare
           </button>
         </div>
 
         <div v-else>
-          <pre>{{ store.userData.customerData.billing }}</pre>
-          <button
-            class="btn btn-secondary"
-            @click="
-              store.showUserAddressForm(
-                'Editeaza adresa',
-                'update',
-                getAddressIndex(store.userData.customerData.billing)
-              )
-            "
-          >
-            editeaza
-          </button>
-          <button class="btn btn-dark">
-            selecteaza alta adresa de facturare
-          </button>
-          <button
-            class="btn btn-danger"
-            @click="
-              store.deleteUserAddress(
-                getAddressIndex(store.userData.customerData.billing)
-              )
-            "
-          >
-            Sterge
-          </button>
+          <UserAddress
+            :isCheckout="isCheckout"
+            :address="store.getUserAddresses('billing')"
+            :index="store.getAddressIndex(store.getUserAddresses('billing'))"
+          />
         </div>
       </div>
 
@@ -153,11 +124,22 @@ const getAddressIndex = (address) => {
         <p>Nu ai nici o adresa de facturare</p>
         <a
           href="#user-addresses"
-          v-if="userAddresses.length"
+          v-if="userAddresses.length && !isCheckout"
           class="btn btn-secondary"
         >
           Alege una dintre adresele existente
         </a>
+
+        <button
+          v-if="userAddresses.length && isCheckout"
+          @click="
+            store.showAddressesModal = true;
+            excludeAddressInModal = 'billing';
+          "
+          class="btn btn-secondary"
+        >
+          Alege una dintre adresele existente
+        </button>
       </div>
 
       <button
@@ -171,47 +153,72 @@ const getAddressIndex = (address) => {
         adauga adresa de facturare
       </button>
     </div>
+    <div v-if="store.userData.customerData && store.getUserExtraAddresses">
+      <div v-if="!isCheckout" id="user-addresses" class="py-5">
+        <h4>Alte adrese disponibile</h4>
+        <div
+          v-for="(userAddress, userAddressIndex) in userAddresses"
+          :key="userAddress"
+        >
+          <div v-if="!userAddress.shipping && !userAddress.billing">
+            <UserAddress
+              :address="userAddress"
+              :index="userAddressIndex"
+              :isCheckout="isCheckout"
+            />
+          </div>
+        </div>
+      </div>
 
-    <div id="user-addresses" v-if="store.userData.customerData" class="py-5">
       <div
-        v-for="(userAddress, userAddressIndex) in userAddresses"
-        :key="userAddress"
+        v-else
+        class="checkout-addresses-modal"
+        :class="store.showAddressesModal ? 'show' : ''"
       >
-        <div v-if="!userAddress.shipping && !userAddress.billing">
-          {{ userAddress }}
-          <br />
-          <button
-            class="btn btn-secondary"
-            @click="
-              store.showUserAddressForm(
-                'Editeaza adresa',
-                'update',
-                userAddressIndex
-              )
-            "
+        <div class="modal-body">
+          <button @click="store.showAddressesModal = false">X</button>
+          <div
+            id="user-addresses"
+            v-if="store.userData.customerData"
+            class="py-5"
           >
-            editeaza
-          </button>
-          <button
-            class="btn btn-danger"
-            @click="store.deleteUserAddress(userAddressIndex)"
-          >
-            sterge
-          </button>
-          <button
-            class="btn btn-success"
-            @click="store.updateUserAddressFor(userAddressIndex, 'shipping')"
-          >
-            seteaza ca adresa de livrare
-          </button>
-          <button
-            class="btn btn-warning"
-            @click="store.updateUserAddressFor(userAddressIndex, 'billing')"
-          >
-            seteaza ca adresa de facturare
-          </button>
+            <h4>Adrese disponibile</h4>
+            <div
+              v-for="(userAddress, userAddressIndex) in userAddresses"
+              :key="userAddress"
+            >
+              <div v-if="!userAddress[excludeAddressInModal]">
+                <UserAddress
+                  :address="userAddress"
+                  :index="userAddressIndex"
+                  :isCheckout="isCheckout"
+                />
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </template>
+
+<style scoped lang="scss">
+.checkout-addresses-modal {
+  display: none;
+  &.show {
+    overflow: auto;
+    display: block;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: $white;
+    z-index: 1000;
+  }
+}
+
+.modal-body {
+  position: relative;
+}
+</style>

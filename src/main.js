@@ -21,4 +21,7 @@ app.component("ShopSection", ShopSection);
 import AccountSection from "@/components/AccountSection.vue";
 app.component("AccountSection", AccountSection);
 
+import CheckoutSection from "@/components/CheckoutSection.vue";
+app.component("CheckoutSection", CheckoutSection);
+
 app.mount("#app");

@@ -14,7 +14,11 @@ import {
   updateOrder,
   shippingData,
   updateUser,
+  createUser,
+  getPaymentGateways,
 } from "@/api";
+
+import { gmapsCheckUserAddress } from "@/api/gmaps.js";
 
 const { cookies } = useCookies();
 
@@ -24,8 +28,24 @@ export const useOlivStore = defineStore({
     websiteOptions: [],
     pageData: [],
     storeData: {},
-    cartLiveUpdate: false,
+    storeLiveUpdate: false,
     showCartDrawer: false,
+    showAddressesModal: false,
+    cartData: {
+      orderId: false,
+      shippingId: false,
+      coupon: {
+        codes: false,
+        error: false,
+      },
+      items: [],
+      totalQty: 0,
+      subTotal: 0,
+      totalDiscount: 0,
+      totalShipping: 0,
+      totalPrice: 0,
+    },
+    shippingData: false,
     addressForm: {
       show: false,
       title: false,
@@ -108,12 +128,19 @@ export const useOlivStore = defineStore({
           required: false,
           value: "Iasi",
         },
+        distance: {
+          name: "Distanta de la sediu pana la adresa",
+          type: "hidden",
+          required: false,
+          value: "",
+        },
       },
     },
     userData: {
       credentials: {
         user: "",
         pass: "",
+        vpass: "",
       },
       customerData: false,
       customerOrdersData: false,
@@ -122,18 +149,6 @@ export const useOlivStore = defineStore({
         address: false,
       },
     },
-    cartData: {
-      orderId: false,
-      coupon: {
-        codes: false,
-        error: false,
-      },
-      items: [],
-      totalQty: 0,
-      totalDiscount: 0,
-      totalPrice: 0,
-    },
-    shippingData: false,
   }),
   getters: {
     getPageBySlug: (state) => {
@@ -176,7 +191,6 @@ export const useOlivStore = defineStore({
         });
       };
     },
-
     getProductById: (state) => {
       return (id) => {
         if (state.storeData.products) {
@@ -208,15 +222,63 @@ export const useOlivStore = defineStore({
         (data) => (state.userData["customerOrdersData"] = data.data)
       );
     },
+    // Get user addresses
+    // @addressFor - string - shipping or billing
     getUserAddresses: (state) => {
-      return () => {
-        // console.log(state.userData.customerData.meta_data);
+      return (addressFor) => {
         const userAddresses = state.userData.customerData.meta_data.filter(
           (meta) => meta.key === "user_addresses"
         );
 
-        return userAddresses[0].value;
+        if (userAddresses[0]) {
+          if (addressFor) {
+            return userAddresses[0].value.filter(
+              (address) => address[addressFor]
+            )[0];
+          }
+
+          return userAddresses[0].value;
+        } else return false;
       };
+    },
+    getAddressIndex() {
+      return (address) => {
+        let index = false;
+        this.getUserAddresses().forEach((userAddress, userAddressIndex) => {
+          const addressExists = this.compareAddressObjects(
+            userAddress,
+            address
+          );
+          if (addressExists) index = userAddressIndex;
+        });
+
+        return index;
+      };
+    },
+    getDistanceFees: (state) => {
+      return (distance) => {
+        const fees = state.shippingData.shipping_options.exwfood_adv_feekm;
+        const results = fees.filter((fee) => parseFloat(fee.km) <= distance);
+        return results[results.length - 1];
+      };
+    },
+    getSameWithShipping(state) {
+      return this.compareAddressObjects(
+        state.userData.customerData.shipping,
+        state.userData.customerData.billing
+      );
+    },
+    getUserExtraAddresses() {
+      const userAddresses = this.getUserAddresses();
+      let extraAddresses = false;
+      if (
+        userAddresses.length &&
+        userAddresses.filter((address) => !address.shipping && !address.billing)
+          .length > 0
+      )
+        extraAddresses = true;
+
+      return extraAddresses;
     },
   },
   actions: {
@@ -246,15 +308,53 @@ export const useOlivStore = defineStore({
       this.checkCart();
     },
 
+    validateEmail(email) {
+      return String(email)
+        .toLowerCase()
+        .match(
+          /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+        );
+    },
+    async registerCustomer() {
+      if (!this.userData.credentials.user) {
+        this.userData.error = "Te rugam introdu adresa de email!";
+        return;
+      }
+
+      if (!this.userData.credentials.pass) {
+        this.userData.error = "Te rugam introdu parola!";
+        return;
+      }
+
+      // Validate email address
+      if (!this.validateEmail(this.userData.credentials.user)) {
+        return;
+      }
+
+      // Start creation process
+      this.storeLiveUpdate = true;
+
+      const userData = {
+        email: this.userData.credentials.user,
+        username: this.userData.credentials.user,
+        pass: this.userData.credentials.pass,
+      };
+
+      await createUser(userData).then((result) => {
+        console.log(result);
+        this.storeLiveUpdate = false;
+      });
+    },
     // User actions( see user_actions() in custom-api-endpoints.php ):
     // - uses userAccountActions (action, user, email, pass, cookie, key) from @/api/index.js
     //
     // 1. action = verify | Verify if is logged in. Runs on load with initWebsite()
     // 2. action = login | Log in user. Returns user logged_in cookie and user data
-    // 3. action = register | Create new account. Returns user logged_in cookie and user data
+    // 3. REMOVED action = register | Create new account. Returns user logged_in cookie and user data
     // 4. action = reset | Reset password
     // 5. action = recovery | The actual password reset
-    userActions(action, user, email, pass, key) {
+    async userActions(action, user, email, pass, key) {
+      this.storeLiveUpdate = true;
       const loggedInCookie = cookies.get("oliv_logged_in");
 
       switch (action) {
@@ -275,10 +375,12 @@ export const useOlivStore = defineStore({
               }
             });
           }
+
+          this.storeLiveUpdate = false;
           break;
 
         case "login":
-          userAccountActions(action, user, null, pass, null, null).then(
+          await userAccountActions(action, user, null, pass, null, null).then(
             (data) => {
               if (data.data.success) {
                 cookies.set(
@@ -293,6 +395,8 @@ export const useOlivStore = defineStore({
               if (data.data.error) {
                 this.userData.error = data.data.error;
               }
+
+              this.storeLiveUpdate = false;
             }
           );
           break;
@@ -300,10 +404,11 @@ export const useOlivStore = defineStore({
         case "logout":
           this.userData.success = false;
           cookies.remove("oliv_logged_in");
+          this.storeLiveUpdate = false;
           break;
 
-        case "register":
-          userAccountActions(action, null, email, pass, null, null).then(
+        case "activate":
+          await userAccountActions(action, user, null, pass, null, key).then(
             (data) => {
               if (data.data.success) {
                 cookies.set(
@@ -317,9 +422,30 @@ export const useOlivStore = defineStore({
               if (data.data.error) {
                 this.userData.error = data.data.error;
               }
+
+              this.storeLiveUpdate = false;
             }
           );
           break;
+
+        // case "register":
+        //   userAccountActions(action, null, email, pass, null, null).then(
+        //     (data) => {
+        //       if (data.data.success) {
+        //         cookies.set(
+        //           "oliv_logged_in",
+        //           data.data.success.cookie,
+        //           data.data.success.expires
+        //         );
+        //         this.userData.success = data.data.success.userData.data;
+        //       }
+
+        //       if (data.data.error) {
+        //         this.userData.error = data.data.error;
+        //       }
+        //     }
+        //   );
+        //   break;
 
         case "reset":
           userAccountActions(action, null, email, null, null, null).then(
@@ -327,6 +453,8 @@ export const useOlivStore = defineStore({
               if (data.data.error) {
                 this.userData.error = data.data.error;
               }
+
+              this.storeLiveUpdate = false;
             }
           );
           break;
@@ -346,13 +474,15 @@ export const useOlivStore = defineStore({
               if (data.data.error) {
                 this.userData.error = data.data.error;
               }
+
+              this.storeLiveUpdate = false;
             }
           );
           break;
       }
     },
     // Update cart after quantities change
-    updateCartTotals() {
+    async updateCartTotals() {
       // Cart product object:
       //
       // id -> product ID
@@ -367,7 +497,7 @@ export const useOlivStore = defineStore({
       // itemTotal -> productQty * productWithExtrasPrice - item total price === Is updated here
       // isFirstTime -> bool - Used to add extras on "quick add"
       let cartTotalQty = 0;
-      let cartTotalPrice = 0;
+      let cartSubTotalPrice = 0;
       this.cartData.items.forEach((product) => {
         let extrasPrice = 0;
         product.productExtras.forEach((extra) => {
@@ -379,21 +509,44 @@ export const useOlivStore = defineStore({
           parseFloat(product.productPrice) + extrasPrice;
         product.itemTotal = product.productWithExtrasPrice * product.productQty;
 
-        cartTotalQty += product.productQty;
-        cartTotalPrice += product.itemTotal;
+        cartTotalQty += parseInt(product.productQty);
+        cartSubTotalPrice += product.itemTotal;
       });
 
       this.cartData.totalQty = cartTotalQty;
-      this.cartData.totalPrice = cartTotalPrice;
+      this.cartData.subTotal = cartSubTotalPrice;
 
-      // Live update the cart
-      if (this.cartData.orderId) {
-        this.handleOrder(
-          "put",
-          this.createOrderParams(),
-          this.cartData.orderId
-        );
+      // Set coupon discount
+      let cartDiscount = 0;
+      if (this.cartData.coupon.codes.length) {
+        this.cartData.coupon.codes.forEach((coupon) => {
+          if (coupon.discount_type === "percent") {
+            coupon["discount"] =
+              (parseInt(coupon.amount) * this.cartData.subTotal) / 100;
+            cartDiscount += coupon.discount;
+          }
+        });
       }
+      this.cartData.totalDiscount = cartDiscount;
+
+      // Set shipping cost
+      const totalShipping = await this.addressShippingPrice().then(
+        (price) => price
+      );
+
+      if (totalShipping) {
+        this.cartData.totalShipping = parseFloat(
+          totalShipping.replace(",", ".")
+        );
+      } else {
+        this.cartData.totalShipping = 0;
+      }
+
+      const totalPrice =
+        cartSubTotalPrice -
+        this.cartData.totalDiscount +
+        this.cartData.totalShipping;
+      this.cartData.totalPrice = parseFloat(totalPrice).toFixed(2);
 
       // Save cart in cookie for 1 week
       cookies.set("oliv_cart", JSON.stringify(this.cartData), "7D");
@@ -544,15 +697,14 @@ export const useOlivStore = defineStore({
     },
     handleExtra(action, eventTarget, product, extra, onlyFirstTime) {
       // Update extra on first time add to cart
+
+      // Limit to maximum 10 extras
       if (action === "add" && eventTarget.value < 10) eventTarget.value++;
       if (action === "sub" && eventTarget.value > 0) eventTarget.value--;
 
+      // Limit to maximum 10 extras
       if (action === "update" && eventTarget.value > 10) eventTarget.value = 10;
       if (action === "update" && eventTarget.value < 0) eventTarget.value = 0;
-
-      // console.log(eventTarget);
-      // console.log(product);
-      // console.log(extra);
 
       if (onlyFirstTime) {
         const itemFirstTime = this.cartData.items.find((item) => {
@@ -661,6 +813,61 @@ export const useOlivStore = defineStore({
 
       return orderParams;
     },
+    createOrderAddressesParams() {
+      this.storeLiveUpdate = true;
+      const orderAddressesParams = {};
+
+      if (
+        this.userData.customerData.billing ||
+        this.userData.customerData.shipping
+      ) {
+        orderAddressesParams["customer_id"] = this.userData.success.ID;
+      }
+
+      if (this.userData.customerData.billing) {
+        orderAddressesParams.billing = this.userData.customerData.billing;
+      }
+
+      // Add addresses
+      if (this.userData.customerData.shipping) {
+        //
+        // Get shipping price
+        //
+
+        // Get user shipping address from meta data
+        const userAddresses = this.getUserAddresses();
+        const userShippingAddress = userAddresses.filter(
+          (address) => address.shipping === true
+        )[0];
+        const distanceFees = this.getDistanceFees(userShippingAddress.distance);
+
+        orderAddressesParams.shipping_lines = [
+          {
+            method_id: "flat_rate",
+            method_title: "Flat Rate",
+            total: "0",
+          },
+        ];
+
+        if (this.cartData.shippingId) {
+          orderAddressesParams.shipping_lines[0].id = this.cartData.shippingId;
+        }
+
+        const cartSubTotal = this.cartData.subTotal;
+
+        if (
+          cartSubTotal < distanceFees.free &&
+          cartSubTotal >= distanceFees.min_amount
+        ) {
+          orderAddressesParams.shipping_total = distanceFees.fee;
+          orderAddressesParams.shipping_lines[0].total = distanceFees.fee;
+        }
+
+        orderAddressesParams.shipping = this.userData.customerData.shipping;
+      }
+
+      return orderAddressesParams;
+    },
     async addOrderCoupon(coupon) {
       // Check if the coupon input field is not empty
       if (!coupon) {
@@ -668,40 +875,39 @@ export const useOlivStore = defineStore({
         return false;
       }
 
-      // Check if the coupon is already applied
-      if (this.cartData.coupon.codes.length) {
-        const couponExists = this.cartData.coupon.codes.filter(
-          (couponData) => couponData.code === coupon
-        );
-        if (couponExists.length) {
-          this.cartData.coupon.error = "Cuponul este deja aplicat!";
-          return false;
-        }
-      }
+      /*
+      Maybe will be needed later
+      Currently the coupon use is limited to 1
+      */
+      // // Check if the coupon is already applied
+      // if (this.cartData.coupon.codes.length) {
+      //   const couponExists = this.cartData.coupon.codes.filter(
+      //     (couponData) => couponData.code === coupon
+      //   );
+      //   if (couponExists.length) {
+      //     this.cartData.coupon.error = "Cuponul este deja aplicat!";
+      //     return false;
+      //   }
+      // }
 
       // Check if the coupon exists in woo
-      this.cartData.cartLiveUpdate = true;
-      const clientCoupon = await getCoupon(coupon).then((data) => {
-        this.cartData.cartLiveUpdate = false;
-        return data.data;
-      });
+      this.storeLiveUpdate = true;
+      await getCoupon(coupon).then((data) => {
+        const couponData = data.data;
+        if (couponData.length) {
+          // Coupoon exists, add it to cartData
+          this.cartData.coupon.codes.push({
+            code: coupon,
+            discount_type: couponData[0].discount_type,
+            amount: couponData[0].amount,
+          });
 
-      if (clientCoupon.length) {
-        // Coupoon exists, apply it to the order
-        if (this.cartData.orderId) {
-          // Order already exists update it
-          this.handleOrder(
-            "put",
-            this.createOrderParams(coupon),
-            this.cartData.orderId
-          );
+          this.updateCartTotals();
         } else {
-          // New order
-          this.handleOrder("post", this.createOrderParams(coupon));
+          this.cartData.coupon.error = "Cupon invalid!";
         }
-      } else {
-        this.cartData.coupon.error = "Cupon invalid!";
-      }
+        this.storeLiveUpdate = false;
+      });
     },
     removeOrderCoupon(couponCode) {
       // Get coupon to remove index
@@ -715,70 +921,12 @@ export const useOlivStore = defineStore({
           1
         );
 
-        this.handleOrder(
-          "put",
-          this.createOrderParams(),
-          this.cartData.orderId
-        );
+        this.updateCartTotals();
       }
     },
-    async handleOrder(action, cartData, orderId) {
-      console.log("handleOrder");
-      this.cartData.cartLiveUpdate = true;
-      switch (action) {
-        case "post":
-          await createOrder(cartData).then((data) => {
-            this.mergeOrderWithCart(data.data);
-            this.cartData.cartLiveUpdate = false;
-          });
-          break;
+    compareAddressObjects(obj1, obj2) {
+      const ignoreKeys = ["address_2", "shipping", "billing", "distance"];
 
-        case "put":
-          await updateOrder(orderId, cartData).then((data) => {
-            this.mergeOrderWithCart(data.data);
-            this.cartData.cartLiveUpdate = false;
-          });
-          break;
-
-        // case "get":
-        //   await getOrder(orderId);
-        //   break;
-      }
-    },
-    mergeOrderWithCart(orderData) {
-      // Add items order id for further updates
-      if (orderData.line_items.length) {
-        orderData.line_items.forEach((orderProduct, orderProductIndex) => {
-          this.cartData.items[orderProductIndex].lineId = orderProduct.id;
-        });
-      }
-
-      if (orderData.coupon_lines.length) {
-        this.cartData.coupon.codes = [];
-        orderData.coupon_lines.forEach((code) => {
-          const codeExists = this.cartData.coupon.codes.filter(
-            (couponCode) => couponCode.code === code.code
-          );
-
-          if (!codeExists.length)
-            this.cartData.coupon.codes.push({
-              code: code.code,
-              discount: code.discount,
-              discount_tax: code.discount_tax,
-            });
-        });
-      }
-
-      this.cartData.orderId = orderData.id;
-      this.cartData.totalDiscount = orderData.discount_total;
-      this.cartData.totalPrice =
-        parseFloat(orderData.total) + parseFloat(orderData.discount_total);
-
-      cookies.set("oliv_cart", JSON.stringify(this.cartData), "7D");
-
-      // console.log(JSON.stringify(this.cartData));
-    },
-    compareObjects(obj1, obj2, ignoreKeys) {
       // Compares 1-level objects
       // only letters and numbers are taken in consideration
       for (const [obj1Key, obj1Value] of Object.entries(obj1)) {
@@ -794,7 +942,10 @@ export const useOlivStore = defineStore({
 
       return true;
     },
-    async handleUserAddress() {
+    handleUserAddress() {
+      // Show loading screen
+      this.storeLiveUpdate = true;
+
       let formErrorMessage = "";
 
       const newUserAddress = this.addressForm.formData;
@@ -852,6 +1003,7 @@ export const useOlivStore = defineStore({
         case "create":
           // At this point we can't have duplicate addresses when creating a new one
           // see submitUserAddress() in FormUserAddress.vue
+
           if (userShippingAddress.length) {
             // User has a shipping address
             if (newUserAddress.shipping) {
@@ -859,15 +1011,23 @@ export const useOlivStore = defineStore({
               userShippingAddress[0].shipping = false;
               userUpdate.shipping = newUserAddress;
             }
+          } else {
+            // Set it as shipping if none is present
+            newUserAddress.shipping = true;
+            userUpdate.shipping = newUserAddress;
           }
 
           if (userBillingAddress.length) {
             // User has a billing address
             if (newUserAddress.billing) {
               // Set it to false if newUserAddress.billing = true
-              userShippingAddress[0].billing = false;
+              userBillingAddress[0].billing = false;
               userUpdate.billing = newUserAddress;
             }
+          } else {
+            // Set it as billing if none is present
+            newUserAddress.billing = true;
+            userUpdate.billing = newUserAddress;
           }
 
           // If this is the first address set it automatically as shipping and billing
@@ -880,6 +1040,11 @@ export const useOlivStore = defineStore({
             userUpdate.billing = newUserAddress;
           }
 
+          // Set defaulty values for shipping/billing
+          if (!newUserAddress.shipping) newUserAddress.shipping = false;
+
+          if (!newUserAddress.billing) newUserAddress.billing = false;
+
           userAddresses.push(newUserAddress);
           break;
 
@@ -889,6 +1054,12 @@ export const useOlivStore = defineStore({
 
         case "delete":
           userAddresses.splice(this.addressForm.addressIndex, 1);
+
+          // If only 1 remains, set as billing and shipping
+          if (userAddresses.length === 1) {
+            userAddresses[0].shipping = true;
+            userAddresses[0].billing = true;
+          }
           break;
       }
 
@@ -929,9 +1100,13 @@ export const useOlivStore = defineStore({
         this.addressForm.show = false;
         this.addressForm.formData = false;
         this.addressForm.addressIndex = false;
+        this.storeLiveUpdate = false;
       });
     },
     showUserAddressForm(title, action, addressIndex) {
+      // Reset error message
+      this.userData.addressCreateData.error = false;
+
       // Get user addresses
       const userAddresses = this.getUserAddresses();
 
@@ -965,7 +1140,7 @@ export const useOlivStore = defineStore({
           break;
 
         case "update":
-          this.addressForm.formData = addressToUpdate;
+          this.addressForm.formData = Object.assign({}, addressToUpdate);
           this.addressForm.addressIndex = addressIndex;
           break;
       }
@@ -990,6 +1165,62 @@ export const useOlivStore = defineStore({
       });
 
       this.handleUserAddress();
+      this.showAddressesModal = false;
+    },
+    checkUserAddress(clientAddress) {
+      this.storeLiveUpdate = true;
+      return gmapsCheckUserAddress(this.shippingData, clientAddress).then(
+        (response) => {
+          // If response is float then address exists and is in range
+          this.storeLiveUpdate = false;
+          return response;
+        }
+      );
+    },
+    updateUserGeneral(updateData) {
+      this.storeLiveUpdate = true;
+      updateData.id = this.userData.customerData.id;
+      updateUser(updateData).then((data) => {
+        this.userData.customerData = data.data;
+        this.storeLiveUpdate = false;
+      });
+    },
+    async addressShippingPrice() {
+      const shippingAddress = this.getUserAddresses("shipping");
+      if (shippingAddress) {
+        // Update address to get the distance
+        if (!shippingAddress.distance) {
+          await this.checkUserAddress(
+            `${shippingAddress.address_1}, ${shippingAddress.city}`
+          ).then((distance) => {
+            // Update address in Woo
+            shippingAddress.distance = distance;
+            this.addressForm.formData = shippingAddress;
+            this.addressForm.addressIndex =
+              this.getAddressIndex(shippingAddress);
+
+            console.log(this.getAddressIndex(shippingAddress));
+            this.addressForm.action = "update";
+            this.handleUserAddress();
+          });
+        }
+
+        const distanceFees = this.getDistanceFees(shippingAddress.distance);
+
+        const cartSubTotal =
+          this.cartData.subTotal - this.cartData.totalDiscount;
+
+        if (cartSubTotal < distanceFees.free) {
+          return distanceFees.fee;
+        }
+      }
+      return 0;
+    },
+    async paymentGateways() {
+      await getPaymentGateways().then((data) => {
+        const paymentGateways = data.data.filter((gateway) => gateway.enabled);
+        console.log(paymentGateways);
+      });
     },
   },
 });

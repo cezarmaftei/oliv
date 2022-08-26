@@ -1,9 +1,11 @@
 <script setup>
 import { useOlivStore } from "@/stores/oliv.js";
-import { computed } from "vue";
-import { ref } from "vue";
+import { useRoute } from "vue-router";
+import { computed, ref } from "vue";
+import UpdateLoading from "@/components/partials/UpdateLoading.vue";
 
 const store = useOlivStore();
+const route = useRoute();
 
 const cartItemsInputs = ref([]);
 const cartDrawerItems = ref([]);
@@ -17,14 +19,15 @@ const showCouponError = computed(() => {
   }, 5000);
   return store.cartData.coupon.error;
 });
+
+defineProps({
+  isCheckout: Boolean,
+});
 </script>
 
 <template>
   <div class="cart-content">
-    <div
-      class="cart-update-overlay"
-      v-show="store.cartData.cartLiveUpdate"
-    ></div>
+    <UpdateLoading />
     <div v-if="store.cartData.items.length">
       <div
         class="cart-item"
@@ -59,12 +62,16 @@ const showCouponError = computed(() => {
               v-html="cartDrawerItems[cartItemIndex].short_description"
             ></div>
 
-            <div
-              class="price"
-              v-html="cartDrawerItems[cartItemIndex].price_html"
-            ></div>
+            <div class="d-flex">
+              <div
+                class="price"
+                v-html="cartDrawerItems[cartItemIndex].price_html"
+              ></div>
 
-            <div class="cart-item-actions">
+              <div v-if="isCheckout">X {{ cartItem.productQty }}</div>
+            </div>
+
+            <div v-if="!isCheckout" class="cart-item-actions">
               <button
                 @click="
                   store.updateCartItems('sub', cartItem, cartItemIndex, 1)
@@ -77,11 +84,13 @@ const showCouponError = computed(() => {
                 min="0"
                 :ref="(el) => (cartItemsInputs[cartItemIndex] = el)"
                 @keyup="
-                  store.updateCartItems(
-                    'update',
-                    cartItem,
-                    cartItemsInputs[cartItemIndex].value
-                  )
+                  if (cartItemsInputs[cartItemIndex].value)
+                    store.updateCartItems(
+                      'update',
+                      cartItem,
+                      cartItemIndex,
+                      cartItemsInputs[cartItemIndex].value
+                    );
                 "
                 :value="cartItem.productQty"
               />
@@ -100,6 +109,7 @@ const showCouponError = computed(() => {
             >
               <div v-for="extra in cartItem.productExtras" :key="extra">
                 <button
+                  v-if="!isCheckout"
                   @click="
                     store.handleExtra(
                       'sub',
@@ -113,6 +123,7 @@ const showCouponError = computed(() => {
                   -
                 </button>
                 <input
+                  :disabled="isCheckout"
                   type="number"
                   min="0"
                   max="10"
@@ -136,6 +147,7 @@ const showCouponError = computed(() => {
                   "
                 />
                 <button
+                  v-if="!isCheckout"
                   @click="
                     store.handleExtra(
                       'add',
@@ -149,6 +161,7 @@ const showCouponError = computed(() => {
                   +
                 </button>
                 <div class="extra-name">
+                  <span v-if="isCheckout">X</span>
                   {{ extra.extraName }}<br />
                   <strong>{{ extra.extraPrice }}</strong> lei
                 </div>
@@ -157,11 +170,16 @@ const showCouponError = computed(() => {
 
             <div class="total">{{ cartItem.itemTotal }}</div>
 
-            <button @click="store.removeFromCart(cartItemIndex)">x</button>
+            <button
+              v-if="!isCheckout"
+              @click="store.removeFromCart(cartItemIndex)"
+            >
+              x
+            </button>
           </div>
         </div>
       </div>
-      <div>
+      <div v-if="!store.cartData.coupon.codes.length && !isCheckout">
         <form @submit.prevent="store.addOrderCoupon(couponCode.value)">
           <input
             type="text"
@@ -178,7 +196,7 @@ const showCouponError = computed(() => {
       <div>
         <div class="d-flex">
           <div>Subtotal</div>
-          <div>{{ store.cartData.totalPrice }}</div>
+          <div>{{ store.cartData.subTotal }}</div>
         </div>
         <div v-if="store.cartData.coupon.codes">
           <div
@@ -188,26 +206,42 @@ const showCouponError = computed(() => {
           >
             <div>Coupon "{{ couponData.code }}" discount:</div>
             <div>{{ couponData.discount }}</div>
-            <button class="btn btn-primary" @click="store.removeOrderCoupon">
+            <button
+              class="btn btn-primary"
+              v-if="!isCheckout"
+              @click="store.removeOrderCoupon"
+            >
               x
             </button>
           </div>
         </div>
         <div class="d-flex">
+          <div>Cost livrare</div>
+          <div>
+            <strong>{{ store.cartData.totalShipping }}</strong>
+          </div>
+        </div>
+        <div class="d-flex">
           <div>Total</div>
           <div>
-            <strong>{{
-              store.cartData.totalPrice - store.cartData.totalDiscount
-            }}</strong>
+            <strong>{{ store.cartData.totalPrice }}</strong>
           </div>
         </div>
       </div>
-      <div class="d-flex">
-        <button class="btn btn-secondary">Checkout</button>
+      <div v-if="route.params.slug !== 'finalizare'" class="d-flex">
+        <router-link
+          class="btn btn-success"
+          @click="store.showCartDrawer = false"
+          to="/finalizare"
+          >Checkout</router-link
+        >
       </div>
     </div>
     <div v-else>
-      <p>Nu ai nici un producs in cos.</p>
+      <p>
+        Nu ai nici un produs in cos.
+        <router-link to="/meniu">Vezi meniul</router-link>
+      </p>
     </div>
   </div>
 </template>
@@ -215,15 +249,5 @@ const showCouponError = computed(() => {
 <style scoped lang="scss">
 .cart-content {
   position: relative;
-}
-
-.cart-update-overlay {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  z-index: 10;
-  left: 0;
-  top: 0;
-  background: rgba($white, 0.8);
 }
 </style>

@@ -91,9 +91,25 @@ export const userAccountActions = (action, user, email, pass, cookie, key) => {
   );
 };
 
+export const createUser = (userData) => {
+  return ajax.post(
+    `/wp-json/wc/v3/customers/?consumer_key=${WcApiKey}&consumer_secret=${WcApiSecret}`,
+    userData
+  );
+};
+
 export const updateUser = (userData) => {
   return ajax.post(
     `/wp-json/wc/v3/customers/${userData.id}?consumer_key=${WcApiKey}&consumer_secret=${WcApiSecret}`,
     userData
   );
+};
+
+export const getPaymentGateways = () => {
+  return ajax.get(`/wp-json/wc/v3/payment_gateways`, {
+    params: {
+      consumer_key: WcApiKey,
+      consumer_secret: WcApiSecret,
+    },
+  });
 };

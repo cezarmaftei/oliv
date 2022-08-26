@@ -1,20 +1,12 @@
 <script setup>
 import { useOlivStore } from "@/stores/oliv.js";
+import UpdateLoading from "@/components/partials/UpdateLoading.vue";
 const store = useOlivStore();
 </script>
 
 <template>
-  <form
-    class="regsitration-form"
-    @submit.prevent="
-      store.userActions(
-        'register',
-        null,
-        store.userData.credentials.user,
-        store.userData.credentials.pass
-      )
-    "
-  >
+  <form class="registration-form" @submit.prevent="store.registerCustomer()">
+    <UpdateLoading />
     <div class="error-message" v-if="store.userData.error">
       {{ store.userData.error }}
     </div>
@@ -37,3 +29,9 @@ const store = useOlivStore();
     <button type="submit">Creaza cont</button>
   </form>
 </template>
+
+<style scoped lang="scss">
+.registration-form {
+  position: relative;
+}
+</style>

@@ -1,6 +1,7 @@
 <script setup>
 import ProductOrder from "@/components/partials/ProductOrder.vue";
 import { useOlivStore } from "@/stores/oliv.js";
+import { computed } from "vue";
 
 const store = useOlivStore();
 
@@ -8,14 +9,23 @@ const dateToLocale = (dateString) => {
   let date = new Date(dateString);
   return date.toLocaleDateString("ro-RO");
 };
+
+const getUserOrders = computed(() => {
+  if (store.userData.customerOrdersData) {
+    return store.userData.customerOrdersData.filter(
+      (order) => order.status === "completed"
+    );
+  }
+  return false;
+});
 </script>
 <template>
   <h2>Comenzile Mele</h2>
   <div v-if="store.userData">
-    <div v-if="store.userData.customerOrdersData">
+    <div v-if="getUserOrders.length">
       <div
         class="user-order p-4 mb-5"
-        v-for="order in store.userData.customerOrdersData"
+        v-for="order in getUserOrders"
         :key="order"
       >
         <div class="order-header">

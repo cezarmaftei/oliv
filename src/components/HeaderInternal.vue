@@ -64,18 +64,15 @@ const currentPage = computed(() => store.getPageBySlug(route.params.slug));
             </div>
           </div>
 
-          <button class="navbar-cart" @click="store.showCartDrawerAction">
+          <button
+            v-if="route.params.slug !== 'finalizare'"
+            class="navbar-cart"
+            @click="store.showCartDrawerAction"
+          >
             <IconCart />
             <span v-if="store.cartData.totalQty > 0">{{
               store.cartData.totalQty
-            }}</span
-            ><br />
-            <span v-if="store.cartData.totalPrice > 0"
-              >{{
-                store.cartData.totalPrice - store.cartData.totalDiscount
-              }}
-              RON</span
-            >
+            }}</span>
           </button>
         </div>
       </div>
