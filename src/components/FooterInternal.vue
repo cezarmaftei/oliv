@@ -5,10 +5,8 @@ import LogoOliv from "@icons/LogoOliv.vue";
 import LogoFacebook from "@icons/LogoFacebook.vue";
 import LogoInstagram from "@icons/LogoInstagram.vue";
 import SplashGreen from "@icons/SplashGreen.vue";
-import { inject } from "vue";
 
 const store = useOlivStore();
-const pageData = inject("pageData");
 </script>
 <template>
   <footer v-if="store.websiteOptions.footer" class="site-footer">
@@ -25,7 +23,7 @@ const pageData = inject("pageData");
               :template="store.websiteOptions.footer.footer_links"
             ></v-runtime-template>
           </div>
-          <div v-if="pageData" class="row footer-bot">
+          <div v-if="store.currentPage" class="row footer-bot">
             <div class="col-12 col-sm-6">
               <v-runtime-template
                 :template="store.websiteOptions.footer.footer_copyright"
@@ -35,7 +33,7 @@ const pageData = inject("pageData");
               <ul>
                 <li>
                   <a
-                    :href="pageData.yoast_social.facebook_site"
+                    :href="store.currentPage.yoast_social.facebook_site"
                     target="_blank"
                     rel="nofollow noopener"
                     ><LogoFacebook
@@ -43,7 +41,7 @@ const pageData = inject("pageData");
                 </li>
                 <li>
                   <a
-                    :href="pageData.yoast_social.other_social_urls[0]"
+                    :href="store.currentPage.yoast_social.other_social_urls[0]"
                     target="_blank"
                     rel="nofollow noopener"
                     ><LogoInstagram

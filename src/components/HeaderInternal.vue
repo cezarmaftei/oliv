@@ -12,6 +12,7 @@ import LogoOliv from "@icons/LogoOliv.vue";
 import SplashGreen from "@icons/SplashGreen.vue";
 import IconCart from "@icons/IconCart.vue";
 import IconMenu from "@icons/IconMenu.vue";
+import IconLoading from "@icons/IconLoading.vue";
 
 const store = useOlivStore();
 const route = useRoute();
@@ -72,7 +73,7 @@ const showMobileMenu = ref(false);
           </div>
 
           <button
-            v-if="route.params.slug !== 'finalizare'"
+            v-if="store.isLoaded && route.params.slug !== 'finalizare'"
             class="btn navbar-cart"
             @click="store.showCartDrawerAction"
           >
@@ -83,6 +84,7 @@ const showMobileMenu = ref(false);
               >{{ store.cartData.totalQty }}</span
             >
           </button>
+          <button class="btn navbar-cart" v-else><IconLoading /></button>
 
           <button
             class="btn mobile-menu-trigger"
@@ -116,12 +118,25 @@ const showMobileMenu = ref(false);
         <MenuProductCategories />
       </div>
       <div v-if="route.params.slug === 'contul-meu'" class="navbar-bot">
+        s
         <MenuUserAccount />
       </div>
     </nav>
-    <div class="cart-drawer bg-light p-5" v-show="store.showCartDrawer">
-      <CartContent />
-    </div>
+
+    <transition name="cart-drawer">
+      <div
+        class="cart-drawer"
+        v-show="store.showCartDrawer"
+        @keyup.esc="store.showCartDrawer = false"
+      >
+        <div class="cart-drawer-inner p-5">
+          <div class="cart-drawer-backdrop"></div>
+          <button @click="store.showCartDrawer = false">X</button>
+          <h2>Cosul tau</h2>
+          <CartContent />
+        </div>
+      </div>
+    </transition>
   </header>
 </template>
 
@@ -152,8 +167,8 @@ const showMobileMenu = ref(false);
 .navbar-call-us {
   margin-right: 1rem;
   white-space: nowrap;
-  font-family: $font-family-lanekcut;
   line-height: 0.7;
+  font-family: $font-family-lanekcut;
   @include font-size(2.2rem);
   color: $gray-500;
 
@@ -213,5 +228,39 @@ const showMobileMenu = ref(false);
     background: $gray-200;
     @include padding-top(25rem);
   }
+}
+
+.cart-drawer {
+  position: fixed;
+  z-index: 2000;
+  right: 0;
+  top: 0;
+  width: 100%;
+  height: 100vh;
+  overflow: auto;
+  background: $gray-100;
+}
+
+.cart-drawer-inner {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100vw;
+}
+
+.cart-drawer-enter-active,
+.cart-drawer-leave-active {
+  @include transition($transition-base);
+  overflow: hidden;
+}
+
+.cart-drawer-enter-from,
+.cart-drawer-leave-to {
+  width: 0;
+}
+
+.cart-drawer-enter-to,
+.cart-drawer-leave-from {
+  width: 100%;
 }
 </style>

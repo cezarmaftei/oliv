@@ -125,3 +125,7 @@ export const getPaymentGateways = () => {
     },
   });
 };
+
+export const getImageData = (id) => {
+  return ajax.get(`/wp-json/olivbistro/v1/image-data?id=${id}`);
+};

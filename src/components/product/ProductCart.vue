@@ -1,7 +1,9 @@
 <script setup>
 import { useOlivStore } from "@/stores/oliv.js";
-import ErrorProduct from "@/components/partials/ErrorProduct.vue";
 import { inject, ref } from "vue";
+import ErrorProduct from "@/components/partials/ErrorProduct.vue";
+import LoadImage from "@/components/partials/LoadImage.vue";
+import IconDelete from "@/components/icons/IconDelete.vue";
 
 const store = useOlivStore();
 
@@ -18,26 +20,43 @@ defineProps({
 
 <template>
   <div
-    class="card card-product-cart d-flex"
+    class="card card-product-cart bg-white d-flex p-1"
     v-if="cartDrawerItems[cartItemIndex]"
   >
     <ErrorProduct v-if="cartItem.errorMsg" :productIndex="cartItemIndex" />
     <figure>
-      <img :src="cartDrawerItems[cartItemIndex].images[0].src" />
+      <LoadImage
+        :id="cartDrawerItems[cartItemIndex].images[0].id"
+        size="medium"
+      />
     </figure>
-    <div>
-      <h4>{{ cartDrawerItems[cartItemIndex].name }}</h4>
-      <strong v-if="cartDrawerItems[cartItemIndex].weight"
-        >{{ cartDrawerItems[cartItemIndex].weight
-        }}<span
-          v-if="
-            cartDrawerItems[cartItemIndex].categories.filter(
-              (cat) => cat.slug === 'bauturi'
-            ).length > 0
-          "
-          >g</span
-        ><span v-else>g</span></strong
+    <div class="card-content">
+      <button
+        class="btn btn-remove"
+        v-if="!isCheckout"
+        @click="store.removeFromCart(cartItemIndex)"
       >
+        <IconDelete />
+      </button>
+      <h4 class="mb-0">{{ cartDrawerItems[cartItemIndex].name }}</h4>
+
+      <div class="product-small-details d-flex">
+        <div v-if="cartDrawerItems[cartItemIndex].weight">
+          {{ cartDrawerItems[cartItemIndex].weight
+          }}<span
+            v-if="
+              cartDrawerItems[cartItemIndex].categories.filter(
+                (cat) => cat.slug === 'bauturi'
+              ).length > 0
+            "
+            >ml</span
+          ><span v-else>g</span>
+        </div>
+        <div
+          class="price ms-auto"
+          v-html="cartDrawerItems[cartItemIndex].price_html"
+        ></div>
+      </div>
 
       <div
         v-if="cartDrawerItems[cartItemIndex].short_description"
@@ -53,7 +72,7 @@ defineProps({
         <div v-if="isCheckout">X {{ cartItem.productQty }}</div>
       </div>
 
-      <div v-if="!isCheckout" class="cart-item-actions">
+      <div v-if="!isCheckout" class="cart-item-actions d-flex">
         <button
           @click="store.updateCartItems('sub', cartItem, cartItemIndex, 1)"
         >
@@ -85,7 +104,11 @@ defineProps({
         v-if="cartItem.productExtras.length > 0"
         class="cart-item-extras-actions"
       >
-        <div v-for="extra in cartItem.productExtras" :key="extra">
+        <div
+          class="d-flex"
+          v-for="extra in cartItem.productExtras"
+          :key="extra"
+        >
           <button
             v-if="!isCheckout"
             @click="
@@ -150,10 +173,52 @@ defineProps({
       </div>
 
       <div class="total">{{ cartItem.itemTotal }}</div>
-
-      <button v-if="!isCheckout" @click="store.removeFromCart(cartItemIndex)">
-        x
-      </button>
     </div>
   </div>
 </template>
+
+<style scoped lang="scss">
+.card-product-cart {
+}
+
+figure {
+  flex: 0 0 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-right: 1rem;
+
+  :deep {
+    img,
+    svg {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+}
+
+.card-content {
+  position: relative;
+}
+
+.btn-remove {
+  position: absolute;
+  right: 0;
+  top: 0;
+  padding: 0;
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.product-small-details {
+  font-family: $font-family-lanekcut;
+  font-size: 2.2rem;
+  color: $gray-500;
+
+  .price {
+    font-size: 2.4rem;
+    color: $body-color;
+  }
+}
+</style>

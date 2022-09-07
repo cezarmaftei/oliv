@@ -1,6 +1,7 @@
 <script setup>
 import { useOlivStore } from "@/stores/oliv.js";
 import IconCart from "@icons/IconCart.vue";
+import LoadImage from "@/components/partials/LoadImage.vue";
 import { ref } from "vue";
 
 const props = defineProps({
@@ -59,9 +60,9 @@ const updateProductExtra = (
       }}</router-link>
     </h3>
     <figure>
-      <img v-if="isSingle" :src="product.images[0].src" />
+      <LoadImage v-if="isSingle" :id="product.images[0].id" size="medium" />
       <router-link v-else :to="`/meniu/${product.slug}`"
-        ><img :src="product.images[0].src"
+        ><LoadImage :id="product.images[0].id" size="medium"
       /></router-link>
     </figure>
     <div class="product-description">

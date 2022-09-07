@@ -11,6 +11,7 @@ import {
   customerData,
   customerOrders,
   getCoupon,
+  getImageData,
   createOrder,
   shippingData,
   updateUser,
@@ -44,6 +45,7 @@ export const useOlivStore = defineStore({
       searchString: "",
       searchResults: {},
     },
+    imageData: {},
     userData: {
       loggedIn: false,
       credentials: {
@@ -1593,6 +1595,9 @@ export const useOlivStore = defineStore({
           return false;
         }
       });
+    },
+    async fetchImageData(id) {
+      return await getImageData(id).then((data) => data.data);
     },
   },
 });
