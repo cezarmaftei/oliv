@@ -1,14 +1,9 @@
 <script setup>
-import ProductOrder from "@/components/partials/ProductOrder.vue";
+import OrderDetails from "@/components/partials/OrderDetails.vue";
 import { useOlivStore } from "@/stores/oliv.js";
 import { computed } from "vue";
 
 const store = useOlivStore();
-
-const dateToLocale = (dateString) => {
-  let date = new Date(dateString);
-  return date.toLocaleDateString("ro-RO");
-};
 
 const getUserOrders = computed(() => {
   if (store.userData.customerOrdersData) {
@@ -28,53 +23,7 @@ const getUserOrders = computed(() => {
         v-for="order in getUserOrders"
         :key="order"
       >
-        <div class="order-header">
-          <h3>
-            <button>
-              Comanda #{{ order.id }} -
-              <span v-if="order.date_completed">{{
-                dateToLocale(order.date_completed)
-              }}</span
-              ><span v-else>{{ dateToLocale(order.date_created) }}</span>
-            </button>
-          </h3>
-        </div>
-
-        <div class="order-body">
-          <div class="order-products">
-            <div
-              class="order-product"
-              v-for="product in order.line_items"
-              :key="product"
-            >
-              <ProductOrder :product="product" />
-            </div>
-          </div>
-          <div class="order-totals text-end">
-            <div class="order-subtotal d-flex">
-              <div>Subtotal</div>
-              <div>{{ order.total }}lei</div>
-            </div>
-            <div class="order-coupons" v-if="order.coupon_lines.length">
-              <div
-                class="order-coupon d-flex"
-                v-for="coupon in order.coupon_lines"
-                :key="coupon"
-              >
-                <div>Coupon "{{ coupon.code }}" discount:</div>
-                <div>{{ coupon.discount }}</div>
-              </div>
-            </div>
-            <div class="order-total d-flex">
-              <div>Total</div>
-              <div>
-                {{
-                  parseFloat(order.total) + parseFloat(order.discount_total)
-                }}lei
-              </div>
-            </div>
-          </div>
-        </div>
+        <OrderDetails :order="order" />
       </div>
     </div>
     <div v-else>
@@ -82,7 +31,7 @@ const getUserOrders = computed(() => {
       <router-link to="/meniu">Vezi meniul!</router-link>
     </div>
   </div>
-  <div v-else>Loading...</div>
+  <div v-else>Se incarca...</div>
 </template>
 
 <style scoped lang="scss">

@@ -3,26 +3,69 @@ import { useOlivStore } from "@/stores/oliv.js";
 import IconCart from "@icons/IconCart.vue";
 import { ref } from "vue";
 
-const store = useOlivStore();
+const props = defineProps({
+  product: Object,
+  productCount: Number,
+  isSingle: Boolean,
+});
 
+const store = useOlivStore();
+const productPrice = ref(parseFloat(props.product.price));
+const productFullPrice = ref(parseFloat(props.product.regular_price));
 const productExtras = ref([]);
 const firstProductAdd = ref([]);
 const showProductExtras = ref([]);
 
-defineProps({
-  product: Object,
-  productCount: Number,
-});
+/**
+ * Update extra quantity in cart and update product price
+ * @param {String} action
+ * @param {DOMElement} element
+ * @param {Object} product
+ * @param {Object} productExtra
+ * @param {Boolean} isFirstTime
+ */
+const updateProductExtra = (
+  action,
+  element,
+  product,
+  productExtra,
+  isFirstTime
+) => {
+  store.handleExtra(action, element, product, productExtra, isFirstTime);
+
+  // Update product price
+  let newProductPrice = parseFloat(props.product.price);
+  let newProductFullPrice = parseFloat(props.product.regular_price);
+  const currentProductExtras = productExtras.value[product.id];
+  if (currentProductExtras) {
+    for (const [extraId, extraData] of Object.entries(currentProductExtras)) {
+      newProductPrice += extraData.element.value * extraData.price;
+      newProductFullPrice += extraData.element.value * extraData.price;
+    }
+  }
+  productPrice.value = newProductPrice;
+  productFullPrice.value = newProductFullPrice;
+};
 </script>
 
 <template>
   <div class="card card-product-listing">
-    <h3>{{ product.name }}</h3>
+    <h3>
+      <span v-if="isSingle">
+        {{ product.name }}
+      </span>
+      <router-link v-else :to="`/meniu/${product.slug}`">{{
+        product.name
+      }}</router-link>
+    </h3>
     <figure>
-      <img :src="product.images[0].src" />
+      <img v-if="isSingle" :src="product.images[0].src" />
+      <router-link v-else :to="`/meniu/${product.slug}`"
+        ><img :src="product.images[0].src"
+      /></router-link>
     </figure>
     <div class="product-description">
-      <span v-html="product.description"></span>
+      <div v-html="product.description"></div>
       <strong v-if="product.weight"
         >{{ product.weight
         }}<span
@@ -33,9 +76,12 @@ defineProps({
           >ml</span
         ><span v-else>g</span></strong
       >
+
+      <div v-if="isSingle" v-html="product.short_description"></div>
     </div>
     <div
-      class="product-extras collapse"
+      class="product-extras"
+      :class="!isSingle ? 'collapse' : ''"
       :ref="(el) => (showProductExtras[productCount] = el)"
     >
       <div
@@ -45,7 +91,7 @@ defineProps({
       >
         <button
           @click="
-            store.handleExtra(
+            updateProductExtra(
               'sub',
               productExtras[product.id][productExtra._id],
               product,
@@ -64,12 +110,15 @@ defineProps({
             (el) => {
               if (!productExtras[product.id]) productExtras[product.id] = {};
 
-              productExtras[product.id][productExtra._id] = el;
+              productExtras[product.id][productExtra._id] = {
+                element: el,
+                price: productExtra._price,
+              };
             }
           "
           value="0"
           @keyup="
-            store.handleExtra(
+            updateProductExtra(
               'update',
               productExtras[product.id][productExtra._id],
               product,
@@ -80,7 +129,7 @@ defineProps({
         />
         <button
           @click="
-            store.handleExtra(
+            updateProductExtra(
               'add',
               productExtras[product.id][productExtra._id],
               product,
@@ -98,7 +147,10 @@ defineProps({
       </div>
     </div>
     <div class="product-actions">
-      <span class="price" v-html="product.price_html"></span>
+      <del class="d-block" v-if="product.sale_price"
+        >{{ productFullPrice }} lei</del
+      >
+      <span class="price">{{ productPrice }} lei</span>
       <button
         :ref="
           () => {

@@ -1,0 +1,21 @@
+@font-face {
+  font-family: 'Poppins';
+  src: local('Poppins Regular'), local('Poppins-Regular'),
+      url('fonts/Poppins-Regular.woff2') format('woff2'),
+      url('fonts/Poppins-Regular.woff') format('woff'),
+      url('fonts/Poppins-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Lanekcut';
+  src: local('Lanekcut'),
+      url('fonts/Lanekcut.woff2') format('woff2'),
+      url('fonts/Lanekcut.woff') format('woff'),
+      url('fonts/Lanekcut.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}

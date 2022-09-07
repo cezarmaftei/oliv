@@ -15,6 +15,10 @@ const ajax = axios.create({
   },
 });
 
+/**
+ * Axios API calls
+ */
+
 export const websiteOptions = () => {
   return ajax.get(`/wp-json/olivbistro/v1/theme-options`);
 };
@@ -23,13 +27,21 @@ export const pageData = () => {
   return ajax.get(`/wp-json/wp/v2/pages`);
 };
 
-export const productsData = () => {
+export const articleData = () => {
+  return ajax.get(`/wp-json/wp/v2/posts`);
+};
+
+export const productsData = (productIds) => {
+  const queryParams = {
+    consumer_key: WcApiKey,
+    consumer_secret: WcApiSecret,
+    per_page: 100,
+  };
+
+  if (productIds) queryParams["include"] = productIds;
+
   return ajax.get(`/wp-json/wc/v3/products`, {
-    params: {
-      consumer_key: WcApiKey,
-      consumer_secret: WcApiSecret,
-      per_page: 100,
-    },
+    params: queryParams,
   });
 };
 
@@ -52,10 +64,10 @@ export const customerOrders = (customerId) => {
   });
 };
 
-export const createOrder = (productData) => {
+export const createOrder = (orderData) => {
   return ajax.post(
     `/wp-json/wc/v3/orders?consumer_key=${WcApiKey}&consumer_secret=${WcApiSecret}`,
-    productData
+    orderData
   );
 };
 

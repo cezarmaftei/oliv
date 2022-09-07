@@ -1,10 +1,10 @@
 <script setup>
 import { useRoute, useRouter } from "vue-router";
 import { useOlivStore } from "@/stores/oliv.js";
-import FormLogin from "@/components/partials/FormLogin.vue";
-import FormRegistration from "@/components/partials/FormRegistration.vue";
-import FormResetPass from "@/components/partials/FormResetPass.vue";
-import FormPassRecovery from "@/components/partials/FormPassRecovery.vue";
+import FormLogin from "@/components/form/FormLogin.vue";
+import FormRegistration from "@/components/form/FormRegistration.vue";
+import FormResetPass from "@/components/form/FormResetPass.vue";
+import FormPassRecovery from "@/components/form/FormPassRecovery.vue";
 import UserOrders from "@/components/partials/UserOrders.vue";
 import UserAddresses from "@/components/partials/UserAddresses.vue";
 import UserGeneral from "@/components/partials/UserGeneral.vue";
@@ -27,7 +27,7 @@ if (route.query.action === "aa") {
       route.query.key
     )
     .then(() => {
-      if (store.userData.success) {
+      if (store.userData.loggedIn) {
         router.push({ path: "/meniu" });
       }
     });
@@ -38,7 +38,7 @@ if (route.query.action === "aa") {
     <UpdateLoading />
     <div
       class="activation-container"
-      v-show="route.query.action === 'aa' && !store.userData.success"
+      v-show="route.query.action === 'aa' && !store.userData.loggedIn"
     >
       <div v-if="!store.userData.error">
         <h3>Se activeaza contul</h3>
@@ -48,7 +48,7 @@ if (route.query.action === "aa") {
       </div>
     </div>
 
-    <div v-if="store.userData.success">
+    <div v-if="store.userData.loggedIn">
       <div v-for="(menuItem, slug) in showUserMenuItems" :key="slug">
         <UserOrders v-if="slug === 'orders' && menuItem.show" />
         <UserAddresses v-if="slug === 'addresses' && menuItem.show" />
@@ -58,7 +58,7 @@ if (route.query.action === "aa") {
 
     <div
       v-if="
-        !store.userData.success &&
+        !store.userData.loggedIn &&
         ['create', 'reset', 'rp', 'aa'].indexOf(route.query.action) === -1
       "
     >
@@ -66,19 +66,19 @@ if (route.query.action === "aa") {
       <FormLogin />
     </div>
 
-    <div v-if="!store.userData.success && route.query.action === 'create'">
+    <div v-if="!store.userData.loggedIn && route.query.action === 'create'">
       <h2>Creeaza-ti cont in cateva secunde!</h2>
       <FormRegistration />
     </div>
 
-    <div v-if="!store.userData.success && route.query.action === 'reset'">
+    <div v-if="!store.userData.loggedIn && route.query.action === 'reset'">
       <h2>Reseteaza parola</h2>
       <FormResetPass />
     </div>
 
     <div
       class="recovery-form"
-      v-show="!store.userData.success && route.query.action === 'rp'"
+      v-show="!store.userData.loggedIn && route.query.action === 'rp'"
     >
       <p>Introdu parola noua:</p>
       <FormPassRecovery />

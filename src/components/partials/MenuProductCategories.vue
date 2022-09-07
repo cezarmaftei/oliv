@@ -1,19 +1,24 @@
 <script setup>
 import { useOlivStore } from "@/stores/oliv.js";
-import { inject } from "vue";
 
 const store = useOlivStore();
-const showCategories = inject("showCategories");
 </script>
 <template>
-  <ul>
+  <ul class="d-flex flex-wrap list-unstyled">
     <li>
-      <button @click="showCategories = 'all'">Toate</button>
+      <router-link
+        class="btn btn-success"
+        :to="{ path: '/meniu', query: { categorie: 'all' } }"
+        >Toate</router-link
+      >
     </li>
     <li v-for="cat in store.storeData.categories" :key="cat">
-      <button @click="showCategories = cat.name">
+      <router-link
+        class="btn btn-success"
+        :to="{ path: '/meniu', query: { categorie: cat.name } }"
+      >
         {{ cat.name }}
-      </button>
+      </router-link>
     </li>
   </ul>
 </template>

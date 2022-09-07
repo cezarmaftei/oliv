@@ -1,22 +1,21 @@
 <script setup>
 import { useOlivStore } from "@/stores/oliv.js";
-import { inject, onBeforeUnmount } from "vue";
-import ProductListing from "@/components/partials/ProductListing.vue";
+import { useRoute } from "vue-router";
+import ProductListing from "@/components/product/ProductListing.vue";
+import { inject } from "vue";
 
 const store = useOlivStore();
+const route = useRoute();
 
-const showCategories = inject("showCategories");
+const showMenuProductCats = inject("showMenuProductCats");
+showMenuProductCats.value = true;
 
-const filterProduct = (categories) => {
-  if (showCategories.value === "all") return true;
+const showProduct = (categories) => {
+  if (route.query.categorie === "all" || !route.query.categorie) return true;
 
-  const hasCat = categories.filter((cat) => cat.name === showCategories.value);
+  const hasCat = categories.filter((cat) => cat.name === route.query.categorie);
   return hasCat.length > 0;
 };
-
-onBeforeUnmount(() => {
-  store.mergeCartProducts();
-});
 </script>
 
 <template>
@@ -26,7 +25,7 @@ onBeforeUnmount(() => {
         class="col-12 col-sm-6 col-md-4 col-lg-3"
         v-for="(product, productCount) in store.getAllProductsByCategory"
         :key="product"
-        v-show="filterProduct(product.categories)"
+        v-show="showProduct(product.categories)"
       >
         <ProductListing :product="product" :productCount="productCount" />
       </div>

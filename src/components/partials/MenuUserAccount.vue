@@ -9,6 +9,10 @@ const store = useOlivStore();
 
 const showUserMenuItems = inject("showUserMenuItems");
 
+/**
+ * Show account section based on URL parameter
+ * @param {String} itemName
+ */
 const updateVisibleItem = (itemName) => {
   for (const menuItem in showUserMenuItems.value) {
     showUserMenuItems.value[menuItem].show =
@@ -46,7 +50,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <ul v-if="store.userData.success">
+  <ul v-if="store.userData.loggedIn">
     <li
       v-for="(menuItem, menuItemName) in showUserMenuItems"
       :key="menuItemName"

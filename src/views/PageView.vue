@@ -1,24 +1,16 @@
 <script setup>
-import { computed, provide, ref } from "vue";
-import { useRoute } from "vue-router";
+import { provide, ref } from "vue";
 import { useOlivStore } from "@/stores/oliv.js";
-import VRuntimeTemplate from "vue3-runtime-template";
 import HeaderInternal from "@/components/HeaderInternal.vue";
 import FooterInternal from "@/components/FooterInternal.vue";
 
-const route = useRoute();
-const store = useOlivStore();
-const page = computed(() => {
-  const pageData = store.pageData.filter(
-    (data) => data["slug"] === route.params.slug
-  );
-  if (pageData) return pageData[0];
-  return false;
-});
-provide("pageData", page);
+// Dynamic components
+import SectionSplash from "@/components/section/SectionSplash.vue";
+import SectionShop from "@/components/section/SectionShop.vue";
+import SectionCheckout from "@/components/section/SectionCheckout.vue";
+import SectionAccount from "@/components/section/SectionAccount.vue";
 
-const showCategories = ref("all");
-provide("showCategories", showCategories);
+const store = useOlivStore();
 
 const showUserMenuItems = ref({
   orders: {
@@ -39,10 +31,36 @@ provide("showUserMenuItems", showUserMenuItems);
 
 <template>
   <HeaderInternal />
-  <v-runtime-template
-    v-if="page"
-    :template="page.content.rendered"
-  ></v-runtime-template>
+  <div v-if="store.isLoaded && store.currentPage">
+    <section
+      v-for="pageSection in store.currentPage.acf.page_sections"
+      :key="pageSection"
+    >
+      <SectionSplash
+        v-if="pageSection.acf_fc_layout === 'SectionSplash'"
+        :content="pageSection"
+      ></SectionSplash>
+
+      <SectionShop
+        v-if="pageSection.acf_fc_layout === 'SectionShop'"
+        :content="pageSection"
+      ></SectionShop>
+
+      <SectionCheckout
+        v-if="pageSection.acf_fc_layout === 'SectionCheckout'"
+        :content="pageSection"
+      ></SectionCheckout>
+
+      <SectionAccount
+        v-if="pageSection.acf_fc_layout === 'SectionAccount'"
+        :content="pageSection"
+      ></SectionAccount>
+    </section>
+  </div>
+  <div v-else-if="store.isLoaded">
+    <h1>Not found!</h1>
+  </div>
+
   <FooterInternal />
 </template>
 

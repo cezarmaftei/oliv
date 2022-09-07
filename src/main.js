@@ -11,17 +11,4 @@ const app = createApp(App);
 app.use(createPinia());
 app.use(router);
 
-// Global components
-import CurrentYear from "@/components/partials/CurrentYear.vue";
-app.component("CurrentYear", CurrentYear);
-
-import ShopSection from "@/components/ShopSection.vue";
-app.component("ShopSection", ShopSection);
-
-import AccountSection from "@/components/AccountSection.vue";
-app.component("AccountSection", AccountSection);
-
-import CheckoutSection from "@/components/CheckoutSection.vue";
-app.component("CheckoutSection", CheckoutSection);
-
 app.mount("#app");

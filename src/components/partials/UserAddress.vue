@@ -20,17 +20,22 @@ const excludeAddressInModal = inject("excludeAddressInModal");
       >, {{ address.address_1
       }}<span v-if="address.address_2"> {{ address.address_2 }}</span
       >, {{ address.city }}, <br />{{ address.phone }} <br />
-
       <!-- Shipping address -->
       <div v-if="address.shipping">
         <AddressFees :address="address" />
         <button
           class="btn btn-secondary"
-          @click="store.showUserAddressForm('Editeaza adresa', 'update', index)"
+          @click="
+            store.showUserAddressForm(
+              'Editeaza adresa',
+              'Salveaza',
+              'update',
+              index
+            )
+          "
         >
           editeaza
         </button>
-
         <button
           @click="
             store.showAddressesModal = true;
@@ -75,7 +80,14 @@ const excludeAddressInModal = inject("excludeAddressInModal");
       <div v-else-if="address.billing">
         <button
           class="btn btn-secondary"
-          @click="store.showUserAddressForm('Editeaza adresa', 'update', index)"
+          @click="
+            store.showUserAddressForm(
+              'Editeaza adresa',
+              'Salveaza',
+              'update',
+              index
+            )
+          "
         >
           editeaza
         </button>
@@ -88,7 +100,7 @@ const excludeAddressInModal = inject("excludeAddressInModal");
           class="btn btn-dark"
           v-if="
             isCheckout &&
-            store.getUserExtraAddresses &&
+            store.getUserExtraAddresses.length &&
             store.showAddressesModal !== true
           "
         >
@@ -123,7 +135,14 @@ const excludeAddressInModal = inject("excludeAddressInModal");
 
         <button
           class="btn btn-secondary"
-          @click="store.showUserAddressForm('Editeaza adresa', 'update', index)"
+          @click="
+            store.showUserAddressForm(
+              'Editeaza adresa',
+              'Salveaza',
+              'update',
+              index
+            )
+          "
         >
           editeaza
         </button>

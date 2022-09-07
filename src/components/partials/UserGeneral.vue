@@ -7,9 +7,9 @@ const store = useOlivStore();
 
 const editForm = ref(false);
 const editFormData = computed(() => ({
-  first_name: store.userData.customerData.first_name,
-  last_name: store.userData.customerData.last_name,
-  email: store.userData.customerData.email,
+  first_name: store.userData.firstName,
+  last_name: store.userData.lastName,
+  email: store.userData.email,
   user_pass: "",
 }));
 
@@ -45,9 +45,9 @@ const checkPass = () => {
 <template>
   <h2>general</h2>
   <img
-    v-if="store.userData.customerData.avatar_url"
-    :src="store.userData.customerData.avatar_url"
-    :alt="`${store.userData.customerData.first_name} ${store.userData.customerData.last_name}`"
+    v-if="store.userData.avatarUrl"
+    :src="store.userData.avatarUrl"
+    :alt="`${store.userData.firstName} ${store.userData.lastName}`"
   />
   <button @click="editForm = !editForm" class="btn btn-success">
     Editeaza
