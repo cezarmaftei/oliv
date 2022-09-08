@@ -33,7 +33,7 @@ const store = useOlivStore();
               <ul>
                 <li>
                   <a
-                    :href="store.currentPage.yoast_social.facebook_site"
+                    :href="store.websiteOptions.social.facebook_site"
                     target="_blank"
                     rel="nofollow noopener"
                     ><LogoFacebook
@@ -41,7 +41,7 @@ const store = useOlivStore();
                 </li>
                 <li>
                   <a
-                    :href="store.currentPage.yoast_social.other_social_urls[0]"
+                    :href="store.websiteOptions.social.other_social_urls[0]"
                     target="_blank"
                     rel="nofollow noopener"
                     ><LogoInstagram

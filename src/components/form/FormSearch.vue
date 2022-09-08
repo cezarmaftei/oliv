@@ -33,6 +33,11 @@ defineProps({
     font-family: $font-family-lanekcut;
     color: $gray-500;
     font-size: 2.4rem;
+
+    &:focus,
+    &:focus-visible {
+      outline: 0;
+    }
   }
 }
 </style>

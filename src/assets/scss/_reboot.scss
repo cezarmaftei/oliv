@@ -283,8 +283,8 @@ pre {
   margin-top: 0; // 1
   margin-bottom: 1rem; // 2
   overflow: auto; // 3
-  @include font-size($code-font-size);
-  color: $pre-color;
+  @include font-size($font-size-base);
+  color: $body-color;
 
   // Account for some code outputs that place code tags in pre tags
   code {
@@ -295,7 +295,7 @@ pre {
 }
 
 code {
-  @include font-size($code-font-size);
+  @include font-size($font-size-base);
   color: var(--#{$prefix}code-color);
   word-wrap: break-word;
 
@@ -305,27 +305,13 @@ code {
   }
 }
 
-kbd {
-  padding: $kbd-padding-y $kbd-padding-x;
-  @include font-size($kbd-font-size);
-  color: $kbd-color;
-  background-color: $kbd-bg;
-  @include border-radius($border-radius-sm);
-
-  kbd {
-    padding: 0;
-    @include font-size(1em);
-    font-weight: $nested-kbd-font-weight;
-  }
-}
-
 
 // Figures
 //
 // Apply a consistent margin strategy (matches our type styles).
 
 figure {
-  margin: 0 0 1rem;
+  margin: 0;
 }
 
 

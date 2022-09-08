@@ -39,7 +39,7 @@ showMenuProductCats.value = true;
     <div class="container">
       <ProductListing
         :product="store.currentPage"
-        productCount="0"
+        :productCount="0"
         :isSingle="true"
       />
     </div>

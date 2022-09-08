@@ -51,15 +51,15 @@ const updateProductExtra = (
 
 <template>
   <div class="card card-product-listing">
-    <h3>
+    <h2>
       <span v-if="isSingle">
         {{ product.name }}
       </span>
       <router-link v-else :to="`/meniu/${product.slug}`">{{
         product.name
       }}</router-link>
-    </h3>
-    <figure>
+    </h2>
+    <figure class="d-flex align-items-center justify-content-center">
       <LoadImage v-if="isSingle" :id="product.images[0].id" size="medium" />
       <router-link v-else :to="`/meniu/${product.slug}`"
         ><LoadImage :id="product.images[0].id" size="medium"
@@ -67,20 +67,22 @@ const updateProductExtra = (
     </figure>
     <div class="product-description">
       <div v-html="product.description"></div>
-      <strong v-if="product.weight"
-        >{{ product.weight
+      <strong
+        class="product-weight d-none d-sm-inline-block"
+        v-if="product.weight"
+      >
+        {{ product.weight
         }}<span
           v-if="
             product.categories.filter((cat) => cat.slug === 'bauturi').length >
             0
           "
           >ml</span
-        ><span v-else>g</span></strong
-      >
-
+        ><span v-else>g</span>
+      </strong>
       <div v-if="isSingle" v-html="product.short_description"></div>
     </div>
-    <div
+    <!-- <div
       class="product-extras"
       :class="!isSingle ? 'collapse' : ''"
       :ref="(el) => (showProductExtras[productCount] = el)"
@@ -146,11 +148,18 @@ const updateProductExtra = (
           <strong>{{ productExtra._price }}</strong> lei
         </div>
       </div>
-    </div>
-    <div class="product-actions">
-      <del class="d-block" v-if="product.sale_price"
-        >{{ productFullPrice }} lei</del
-      >
+    </div> -->
+    <div class="product-actions d-flex align-items-center">
+      <div class="product-weight d-sm-none" v-if="product.weight">
+        {{ product.weight
+        }}<span
+          v-if="
+            product.categories.filter((cat) => cat.slug === 'bauturi').length >
+            0
+          "
+          >ml</span
+        ><span v-else>g</span>
+      </div>
       <span class="price">{{ productPrice }} lei</span>
       <button
         :ref="
@@ -173,9 +182,151 @@ const updateProductExtra = (
           firstProductAdd[product.id] = false;
         "
       >
-        <IconCart />
         adauga in cos
       </button>
     </div>
   </div>
 </template>
+
+<style scoped lang="scss">
+.card-product-listing {
+  background: $white;
+  position: relative;
+  padding: 1rem 0 0 8rem;
+
+  h2 {
+    a {
+      color: $body-color;
+    }
+  }
+
+  figure {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 8rem;
+    height: 8rem;
+
+    :deep {
+      img,
+      svg {
+        display: block;
+        width: 6rem;
+        height: 6rem;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+    }
+  }
+
+  .product-actions {
+    font-family: $font-family-lanekcut;
+    line-height: 1.2;
+    font-size: 2rem;
+
+    > * {
+      padding: 0 0.5rem;
+      flex-grow: 1;
+      text-align: center;
+    }
+
+    .product-weight {
+      padding-left: 0;
+      text-align: left;
+      color: $gray-500;
+    }
+
+    .price {
+      border-top: 2px solid $border-color;
+      border-left: 2px solid $border-color;
+    }
+
+    button {
+      margin: 0;
+      background: none;
+      border: 0;
+      border-top: 2px solid $border-color;
+      background: $yellow-200;
+    }
+  }
+
+  @include media-breakpoint-up(xs) {
+    padding-left: 12rem;
+
+    figure {
+      width: 12rem;
+      height: 12rem;
+
+      :deep {
+        img,
+        svg {
+          width: 10rem;
+          height: 10rem;
+        }
+      }
+    }
+
+    .product-actions {
+      font-size: 2.2rem;
+    }
+  }
+
+  @include media-breakpoint-up(sm) {
+    @include padding(3rem 3rem 10rem);
+    height: 100%;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    figure {
+      position: static;
+      margin: auto;
+      width: 100%;
+      height: 19rem;
+      @include margin-top(3rem);
+      @include margin-bottom(3rem);
+
+      a {
+        display: block;
+        height: 100%;
+      }
+
+      :deep {
+        svg,
+        img {
+          border-radius: 0;
+          width: 100%;
+          height: 100%;
+        }
+      }
+    }
+
+    .product-actions {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+
+      > * {
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+      }
+
+      .price {
+        border-left: 0;
+      }
+
+      button {
+        border-left: 2px solid $border-color;
+        background: transparent;
+
+        &:hover {
+          background: $yellow-200;
+          border-left-color: $yellow-200;
+        }
+      }
+    }
+  }
+}
+</style>
