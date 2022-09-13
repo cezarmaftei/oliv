@@ -2,6 +2,7 @@
 import { useOlivStore } from "@/stores/oliv.js";
 import { useRoute } from "vue-router";
 import { provide, ref } from "vue";
+import { MutationType } from "pinia";
 import UpdateLoading from "@/components/partials/UpdateLoading.vue";
 import ErrorCoupon from "@/components/partials/ErrorCoupon.vue";
 import NoProductsInCart from "@/components/partials/NoProductsInCart.vue";
@@ -21,6 +22,13 @@ provide("couponCode", couponCode);
 
 defineProps({
   isCheckout: Boolean,
+});
+
+store.$subscribe((mutation, state) => {
+  if (mutation.type === "patch function") {
+    // This also calls updateCartTotals()
+    store.mergeCartProducts();
+  }
 });
 </script>
 

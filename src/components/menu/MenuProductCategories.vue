@@ -1,27 +1,41 @@
 <script setup>
 import { useOlivStore } from "@/stores/oliv.js";
+import { inject, watch } from "vue";
 import { useRoute } from "vue-router";
 
 const route = useRoute();
 const store = useOlivStore();
+const activeCat = inject("activeCat");
+
+watch(
+  () => route.query,
+  () => {
+    if (route.query.categorie) {
+      window.scrollTo(0, 0);
+    }
+  }
+);
 </script>
 <template>
   <h3 class="mb-2 text-center d-md-none">Categorii:</h3>
   <div class="row row-categories justify-content-center g-50">
     <div class="col-auto">
       <router-link
+        @click="activeCat = 'Toate'"
         :class="
-          route.query.categorie === 'all' || !route.query.categorie
+          (route.query.categorie === 'Toate' || !route.query.categorie) &&
+          (route.params.slug === 'meniu' || route.path === '/')
             ? 'active'
             : ''
         "
         class="btn btn-outline-dark"
-        :to="{ path: '/meniu', query: { categorie: 'all' } }"
+        :to="{ path: '/meniu', query: { categorie: 'Toate' } }"
         >Toate</router-link
       >
     </div>
     <div class="col-auto" v-for="cat in store.storeData.categories" :key="cat">
       <router-link
+        @click="activeCat = cat.name"
         :class="route.query.categorie === cat.name ? 'active' : ''"
         class="btn btn-outline-dark"
         :to="{ path: '/meniu', query: { categorie: cat.name } }"

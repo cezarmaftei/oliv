@@ -35,7 +35,10 @@ showMenuProductCats.value = true;
 
 <template>
   <HeaderInternal />
-  <section v-if="store.currentPage" class="section-product-single">
+  <section
+    v-if="store.currentPage"
+    class="section-product-single overflow-hidden py-10"
+  >
     <div class="container">
       <ProductListing
         :product="store.currentPage"
@@ -47,6 +50,9 @@ showMenuProductCats.value = true;
   <section v-if="store.isLoaded" class="section-related-products">
     <div class="container">
       <div class="row">
+        <div class="col-12">
+          <h2>Produse Similare</h2>
+        </div>
         <div
           class="col-12 col-sm-6 col-md-4 col-lg-3"
           v-for="(product, productCount) in relatedProducts(store.currentPage)"

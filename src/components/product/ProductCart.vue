@@ -1,21 +1,86 @@
 <script setup>
 import { useOlivStore } from "@/stores/oliv.js";
-import { inject, ref } from "vue";
+import { inject } from "vue";
 import ErrorProduct from "@/components/partials/ErrorProduct.vue";
 import LoadImage from "@/components/partials/LoadImage.vue";
 import IconDelete from "@/components/icons/IconDelete.vue";
 
 const store = useOlivStore();
 
-const cartItemsInputs = inject("cartItemsInputs");
 const cartDrawerItems = inject("cartDrawerItems");
-const productExtras = ref([]);
 
-defineProps({
+const props = defineProps({
   cartItemIndex: Number,
   cartItem: Object,
   isCheckout: Boolean,
 });
+
+/**
+ *
+ * @param {String/Float} value the new value OR the value to be added/removed
+ * @param {Bool} isNewValue if true it means that value is replacing the old value
+ * @param {Bool} isFocusOut if true and value is empty or smaller than 1, remove the product from cart
+ */
+const updateCartItemQty = (value, isNewValue) => {
+  const addedValue = parseFloat(value);
+
+  const oldValue = store.cartData.items[props.cartItemIndex].productQty;
+  let newValue = isNewValue ? addedValue : oldValue + addedValue;
+
+  if (newValue < 1) {
+    removeFromCart();
+    return;
+  }
+
+  if (isNaN(newValue)) newValue = 1;
+  store.$patch(
+    (state) => (state.cartData.items[props.cartItemIndex].productQty = newValue)
+  );
+};
+
+/**
+ * Update cart item extra qty
+ */
+const updateCartItemExtraQty = (extraIndex, value, isNewValue, isFocusOut) => {
+  const addedValue = parseFloat(value);
+
+  // He didn't stopped typing
+  if (isNaN(addedValue) && !isFocusOut) return;
+
+  const oldValue =
+    store.cartData.items[props.cartItemIndex].productExtras[extraIndex]
+      .extraQty;
+  let newValue = isNewValue ? addedValue : oldValue + addedValue;
+
+  // If he entered negative number or left blank
+  if (newValue < 0 || isNaN(newValue)) {
+    // Do not patch
+    // The following line is triggering a reactive change
+    // If deleted, sometimes the user can add a negative number and the input value doesn't update
+    store.cartData.items[props.cartItemIndex].productExtras[
+      extraIndex
+    ].extraQty = newValue;
+    newValue = 0;
+  }
+
+  // Update with new value
+  store.$patch(
+    (state) =>
+      (state.cartData.items[props.cartItemIndex].productExtras[
+        extraIndex
+      ].extraQty = newValue)
+  );
+};
+
+/**
+ * Remove product from cart
+ */
+const removeFromCart = () => {
+  // Remove
+  store.$patch((state) => {
+    state.cartData.items.splice(props.cartItemIndex, 1);
+  });
+};
 </script>
 
 <template>
@@ -34,7 +99,7 @@ defineProps({
       <button
         class="btn btn-remove"
         v-if="!isCheckout"
-        @click="store.removeFromCart(cartItemIndex)"
+        @click="removeFromCart()"
       >
         <IconDelete />
       </button>
@@ -73,31 +138,14 @@ defineProps({
       </div>
 
       <div v-if="!isCheckout" class="cart-item-actions d-flex">
-        <button
-          @click="store.updateCartItems('sub', cartItem, cartItemIndex, 1)"
-        >
-          -
-        </button>
+        <button @click="updateCartItemQty(-1)">-</button>
         <input
           type="number"
           min="0"
-          :ref="(el) => (cartItemsInputs[cartItemIndex] = el)"
-          @keyup="
-            if (cartItemsInputs[cartItemIndex].value)
-              store.updateCartItems(
-                'update',
-                cartItem,
-                cartItemIndex,
-                cartItemsInputs[cartItemIndex].value
-              );
-          "
-          :value="cartItem.productQty"
+          @keyup="updateCartItemQty($event.target.value, true)"
+          :value="store.cartData.items[cartItemIndex].productQty"
         />
-        <button
-          @click="store.updateCartItems('add', cartItem, cartItemIndex, 1)"
-        >
-          +
-        </button>
+        <button @click="updateCartItemQty(1)">+</button>
       </div>
 
       <div
@@ -106,20 +154,12 @@ defineProps({
       >
         <div
           class="d-flex"
-          v-for="extra in cartItem.productExtras"
+          v-for="(extra, extraIndex) in cartItem.productExtras"
           :key="extra"
         >
           <button
             v-if="!isCheckout"
-            @click="
-              store.handleExtra(
-                'sub',
-                productExtras[cartItem.id][extra._id],
-                cartItem,
-                extra,
-                false
-              )
-            "
+            @click="updateCartItemExtraQty(extraIndex, -1)"
           >
             -
           </button>
@@ -128,39 +168,25 @@ defineProps({
             type="number"
             min="0"
             max="10"
-            :ref="
-              (el) => {
-                if (!productExtras[cartItem.id])
-                  productExtras[cartItem.id] = {};
-
-                productExtras[cartItem.id][extra._id] = {
-                  element: el,
-                  price: extra._price,
-                };
-              }
+            :value="
+              store.cartData.items[cartItemIndex].productExtras[extraIndex]
+                .extraQty
             "
-            :value="extra.extraQty"
             @keyup="
-              store.handleExtra(
-                'update',
-                productExtras[cartItem.id][extra._id],
-                cartItem,
-                extra,
-                false
+              updateCartItemExtraQty(extraIndex, $event.target.value, true)
+            "
+            @focusout="
+              updateCartItemExtraQty(
+                extraIndex,
+                $event.target.value,
+                true,
+                true
               )
             "
           />
           <button
             v-if="!isCheckout"
-            @click="
-              store.handleExtra(
-                'add',
-                productExtras[cartItem.id][extra._id],
-                cartItem,
-                extra,
-                false
-              )
-            "
+            @click="updateCartItemExtraQty(extraIndex, 1)"
           >
             +
           </button>

@@ -15,6 +15,7 @@ const store = useOlivStore();
       type="email"
       id="user-email"
       required
+      autocomplete="username"
       v-model.lazy="store.userData.credentials.user"
     /><br />
     <button type="submit">Reseteaza parola</button>

@@ -15,6 +15,7 @@ const store = useOlivStore();
       type="email"
       id="user-email"
       required
+      autocomplete="username"
       v-model.lazy="store.userData.credentials.user"
     /><br />
 
@@ -23,6 +24,7 @@ const store = useOlivStore();
       type="password"
       id="user-password"
       required
+      autocomplete="new-password"
       v-model.lazy="store.userData.credentials.pass"
     /><br />
 

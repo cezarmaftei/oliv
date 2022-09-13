@@ -16,11 +16,13 @@ const store = useOlivStore();
     <input
       type="text"
       required
+      autocomplete="username"
       v-model.lazy="store.userData.credentials.user"
     /><br />
     <input
       type="password"
       required
+      autocomplete="current-password"
       v-model.lazy="store.userData.credentials.pass"
     /><br />
     <button type="" submit>Log In</button>

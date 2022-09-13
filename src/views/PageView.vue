@@ -31,7 +31,11 @@ provide("showUserMenuItems", showUserMenuItems);
 
 <template>
   <HeaderInternal />
-  <div v-if="store.isLoaded && store.currentPage">
+  <main
+    id="main-content"
+    class="main-content"
+    v-if="store.isLoaded && store.currentPage"
+  >
     <section
       v-for="pageSection in store.currentPage.acf.page_sections"
       :key="pageSection"
@@ -56,7 +60,7 @@ provide("showUserMenuItems", showUserMenuItems);
         :content="pageSection"
       ></SectionAccount>
     </section>
-  </div>
+  </main>
   <div v-else-if="store.isLoaded">
     <h1>Not found!</h1>
   </div>

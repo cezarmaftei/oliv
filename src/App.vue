@@ -12,6 +12,9 @@ store.initWebsite();
 const showMenuProductCats = ref(false);
 provide("showMenuProductCats", showMenuProductCats);
 
+const activeCat = ref("Toate");
+provide("activeCat", activeCat);
+
 // Update currentPage on load
 store.$subscribe((mutation, state) => {
   if (mutation.payload && mutation.payload.isLoaded) {
@@ -29,18 +32,14 @@ watch(
 </script>
 
 <template>
-  <div class="page">
+  <div class="page d-flex flex-column">
     <SectionSearchResults />
     <RouterView />
   </div>
 </template>
 
 <style scoped lang="scss">
-:deep {
-  svg,
-  img {
-    display: block;
-    width: 50px;
-  }
+.page {
+  min-height: 100vh;
 }
 </style>

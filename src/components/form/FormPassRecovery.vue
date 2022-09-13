@@ -18,7 +18,11 @@ const route = useRoute();
       )
     "
   >
-    <input type="text" v-model.lazy="store.userData.credentials.pass" /><br />
+    <input
+      type="text"
+      autocomplete="new-password"
+      v-model.lazy="store.userData.credentials.pass"
+    /><br />
     <button type="submit">Seteaza parola noua</button>
   </form>
 

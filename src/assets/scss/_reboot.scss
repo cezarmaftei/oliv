@@ -375,6 +375,11 @@ label {
 button {
   // stylelint-disable-next-line property-disallowed-list
   border-radius: 0;
+  @include transition($transition-base);
+
+  &:focus-visible {
+    outline: 0;
+  }
 }
 
 // Explicitly remove focus outline in Chromium when it shouldn't be

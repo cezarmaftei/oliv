@@ -229,22 +229,24 @@ export const useOlivStore = defineStore({
      * @param {Object} state the store's state
      * @returns {Array} products
      */
-    getAllProductsByCategory: (state) => {
-      let products = [];
-      if (state.storeData.products) {
-        Object.entries(state.storeData.categories).forEach(
-          ([catNumber, catData]) => {
-            state.storeData.products.filter((product) => {
-              product.categories.every((cat) => {
-                if (cat.id === catData.term_id) {
-                  products.push(product);
-                }
-              });
-            });
+    getProductsByCategory: (state) => {
+      return (productCat) => {
+        if (productCat === "Toate") {
+          return state.storeData.products;
+        } else {
+          let products = [];
+          for (const productId in state.storeData.products) {
+            const product = state.storeData.products[productId];
+            for (const catCount in product.categories) {
+              if (product.categories[catCount].name === productCat) {
+                products.push(product);
+                break;
+              }
+            }
           }
-        );
-      }
-      return products;
+          return products;
+        }
+      };
     },
 
     /**
@@ -444,6 +446,24 @@ export const useOlivStore = defineStore({
 
       await productsCatData().then((data) => {
         this.storeData.categories = data.data;
+
+        // Order products by categories
+        let orderedProducts = [];
+        if (this.storeData.products) {
+          Object.entries(this.storeData.categories).forEach(
+            ([catNumber, catData]) => {
+              this.storeData.products.filter((product) => {
+                product.categories.every((cat) => {
+                  if (cat.id === catData.term_id) {
+                    orderedProducts.push(product);
+                  }
+                });
+              });
+            }
+          );
+
+          this.storeData.products = orderedProducts;
+        }
       });
 
       await shippingData().then((data) => {
@@ -741,155 +761,28 @@ export const useOlivStore = defineStore({
     },
 
     /**
-     * Add product to cart
-     * @param {Object} product Woo product object
-     * @param {Object} extras "extra ID": { element: "extra input ref", price: extra price }
-     * @param {Int} quantity
-     * @param {Bool} isFirstTime This happens on products listing page.
-     *                           If true, you can add extras to the already added to cart product until the next action,
-     *                           like add tyo cart, or edit a cart product
-     */
-    addToCart(product, extras, quantity, isFirstTime) {
-      // Fisrt this.mergeCartProducts() to set all isFirstTime to false and merge the products
-      this.mergeCartProducts();
-
-      const sameProductCartItem = this.getProductFromCartIfExists(
-        product,
-        extras
-      );
-
-      if (sameProductCartItem) {
-        sameProductCartItem.productQty += quantity;
-      } else {
-        // Cart product object:
-        //
-        // id -> product ID === Is added here
-        // productQty -> quantity === Is added here
-        // productPrice -> product price === Is added here
-        // productExtras -> array with extra options: === Is added here
-        //    _id -> extra ID === Is added here
-        //    extraName -> extra name === Is added here
-        //    extraQty -> extra quantity === Is added here
-        //    extraPrice -> extra price === Is added here
-        // productWithExtrasPrice -> product price including extras
-        // itemTotal -> productQty * productWithExtrasPrice - item total price
-        // isFirstTime -> bool - Used to add extras on "quick add" === Is added here
-        let cartProductExtras = [];
-        let currentProductExtras = this.getProductExtras(product);
-
-        if (currentProductExtras) {
-          for (const [extraId, extraData] of Object.entries(extras)) {
-            for (const [currentExtraId, currentExtraData] of Object.entries(
-              currentProductExtras
-            )) {
-              if (currentExtraData._id === extraId) {
-                cartProductExtras.push({
-                  _id: currentExtraData._id,
-                  extraName: currentExtraData._name,
-                  extraQty: extraData.element.value,
-                  extraPrice: currentExtraData._price,
-                });
-              }
-            }
-          }
-        }
-
-        this.cartData.items.push({
-          id: product.id,
-          productQty: quantity,
-          productPrice: product.price,
-          productExtras: cartProductExtras,
-          productWithExtrasPrice: 0, // Will be updated with this.updateCartTotals()
-          itemTotal: 0, // Will be updated with this.updateCartTotals()
-          isFirstTime: isFirstTime,
-        });
-      }
-
-      // Update totals
-      this.updateCartTotals();
-    },
-
-    /**
-     * Remove product from cart
-     * @param {Int} index the index of the product that is being removed
-     */
-    removeFromCart(index) {
-      // Remove
-      this.cartData.items.splice(index, 1);
-
-      // Update totals
-      this.updateCartTotals();
-    },
-
-    /**
      * Check for identical products in cart and merge them
      */
     mergeCartProducts() {
-      // Check if there is already a first time item and add it to the rest
-      const itemFirstTime = this.cartData.items.find(
-        (item) => item.isFirstTime
-      );
-
-      // Add it to the rest
-      if (itemFirstTime) {
-        // Merge it with another identical product
-        this.cartData.items.find((item) => {
+      this.cartData.items.forEach((compareItem, compareItemIndex) => {
+        this.cartData.items.filter((compareToItem, compareToItemIndex) => {
           if (
-            item.id === itemFirstTime.id &&
-            item.productExtras === itemFirstTime.productExtras &&
-            !item.isFirstTime
+            compareItemIndex !== compareToItemIndex &&
+            compareItem.id === compareToItem.id &&
+            JSON.stringify(compareItem.productExtras) ===
+              JSON.stringify(compareToItem.productExtras)
           ) {
-            item.productQty += itemFirstTime.productQty;
+            this.$patch((state) => {
+              // Update qty
+              state.cartData.items[compareItemIndex].productQty +=
+                compareToItem.productQty;
+
+              // Remove product
+              state.cartData.items.splice(compareToItemIndex, 1);
+            });
           }
         });
-
-        itemFirstTime.isFirstTime = false;
-      } else {
-        this.cartData.items.forEach((compareItem, compareItemIndex) => {
-          this.cartData.items.filter((compareToItem, compareToItemIndex) => {
-            if (
-              compareItemIndex !== compareToItemIndex &&
-              compareItem.id === compareToItem.id &&
-              JSON.stringify(compareItem.productExtras) ===
-                JSON.stringify(compareToItem.productExtras)
-            ) {
-              compareItem.productQty += compareToItem.productQty;
-              this.removeFromCart(compareToItemIndex);
-            }
-          });
-        });
-      }
-
-      // Update totals
-      this.updateCartTotals();
-    },
-
-    /**
-     * Update cart products from the numeric inputs
-     * @param {String} action add, sub, update
-     * @param {Object} item the cart product
-     * @param {Int} index the index of the cart product
-     * @param {Int} qty the quantity
-     */
-    updateCartItems(action, item, index, qty) {
-      if (action === "update") {
-        if (qty > 0) {
-          item.productQty = qty;
-        } else {
-          this.removeFromCart(index);
-        }
-      }
-
-      if (action === "add") {
-        item.productQty += qty;
-      }
-
-      if (action === "sub" && item.productQty - qty > -1) {
-        item.productQty -= qty;
-        if (item.productQty == 0) {
-          this.removeFromCart(index);
-        }
-      }
+      });
 
       // Update totals
       this.updateCartTotals();
@@ -901,54 +794,6 @@ export const useOlivStore = defineStore({
     checkCart() {
       const userCart = cookies.get("oliv_cart");
       if (userCart) this.cartData = userCart;
-    },
-
-    /**
-     * Handle product extras
-     * @param {String} action add, sub, update
-     * @param {DOMElement} eventTarget the input that holds the quantity
-     * @param {Object} product cart item
-     * @param {Object} extra
-     * @param {Bool} onlyFirstTime if this is done from the products listing page,
-     *                             when a product has just been added to cart
-     */
-    handleExtra(action, eventTarget, product, extra, onlyFirstTime) {
-      // Update extra on first time add to cart
-
-      // Limit to maximum 10 extras
-      if (action === "add" && eventTarget.element.value < 10)
-        eventTarget.element.value++;
-      if (action === "sub" && eventTarget.element.value > 0)
-        eventTarget.element.value--;
-
-      // Limit to maximum 10 extras
-      if (action === "update" && eventTarget.element.value > 10)
-        eventTarget.element.value = 10;
-      if (action === "update" && eventTarget.element.value < 0)
-        eventTarget.element.value = 0;
-
-      if (onlyFirstTime) {
-        const itemFirstTime = this.cartData.items.find((item) => {
-          if (item.isFirstTime && item.id === product.id) return item;
-        });
-
-        if (itemFirstTime) {
-          itemFirstTime.productExtras.find((productExtra) => {
-            if (productExtra._id == extra._id)
-              productExtra.extraQty = eventTarget.element.value;
-          });
-        }
-      } else {
-        product.productExtras.find((productExtra) => {
-          if (productExtra._id == extra._id)
-            productExtra.extraQty = eventTarget.element.value;
-        });
-
-        this.mergeCartProducts();
-      }
-
-      // Update totals
-      this.updateCartTotals();
     },
 
     /**
@@ -1098,13 +943,13 @@ export const useOlivStore = defineStore({
           // Init coupon.codes
           if (!this.cartData.coupon.codes) this.cartData.coupon.codes = [];
           // Coupoon exists, add it to cartData
-          this.cartData.coupon.codes.push({
-            code: coupon,
-            discount_type: couponData[0].discount_type,
-            amount: couponData[0].amount,
+          this.$patch((state) => {
+            state.cartData.coupon.codes.push({
+              code: coupon,
+              discount_type: couponData[0].discount_type,
+              amount: couponData[0].amount,
+            });
           });
-
-          this.updateCartTotals();
         } else {
           this.cartData.coupon.error = "Cupon invalid!";
         }
@@ -1123,12 +968,12 @@ export const useOlivStore = defineStore({
       );
 
       if (couponIndexToRemove) {
-        this.cartData.coupon.codes.splice(
-          this.cartData.coupon.codes[couponIndexToRemove],
-          1
-        );
-
-        this.updateCartTotals();
+        this.$patch((state) => {
+          state.cartData.coupon.codes.splice(
+            state.cartData.coupon.codes[couponIndexToRemove],
+            1
+          );
+        });
       }
     },
 
@@ -1300,21 +1145,25 @@ export const useOlivStore = defineStore({
         );
       }
 
-      this.cartData.addresses.pool = userAddresses;
-
       // Update new shipping
       const newShippingIndex = userAddresses.findIndex(
         (address) => address.shipping
       );
-      this.cartData.addresses.shipping =
-        newShippingIndex !== -1 ? userAddresses[newShippingIndex] : false;
 
       // Update new billing
       const newBillingIndex = userAddresses.findIndex(
         (address) => address.billing
       );
-      this.cartData.addresses.billing =
-        newBillingIndex !== -1 ? userAddresses[newBillingIndex] : false;
+
+      this.$patch((state) => {
+        state.cartData.addresses.pool = userAddresses;
+
+        state.cartData.addresses.shipping =
+          newShippingIndex !== -1 ? userAddresses[newShippingIndex] : false;
+
+        state.cartData.addresses.billing =
+          newBillingIndex !== -1 ? userAddresses[newBillingIndex] : false;
+      });
 
       // Update cart cookie
       cookies.set("oliv_cart", JSON.stringify(this.cartData), "7D");
@@ -1596,6 +1445,11 @@ export const useOlivStore = defineStore({
         }
       });
     },
+    /**
+     * Get image data from wordpress
+     * @param {Int} id
+     * @returns {Array} of sizes. Eg: ['full' :{ scrset: '...', sizes: '...', url: '...'}]
+     */
     async fetchImageData(id) {
       return await getImageData(id).then((data) => data.data);
     },
