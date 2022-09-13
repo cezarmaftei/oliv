@@ -29,7 +29,7 @@ watch(
             : ''
         "
         class="btn btn-outline-dark"
-        :to="{ path: '/meniu', query: { categorie: 'Toate' } }"
+        :to="{ path: '/', query: { categorie: 'Toate' } }"
         >Toate</router-link
       >
     </div>
@@ -38,7 +38,7 @@ watch(
         @click="activeCat = cat.name"
         :class="route.query.categorie === cat.name ? 'active' : ''"
         class="btn btn-outline-dark"
-        :to="{ path: '/meniu', query: { categorie: cat.name } }"
+        :to="{ path: '/', query: { categorie: cat.name } }"
       >
         {{ cat.name }}
       </router-link>
