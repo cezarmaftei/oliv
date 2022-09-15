@@ -4,12 +4,11 @@ import FormLogin from "@/components/form/FormLogin.vue";
 import MenuProductCategories from "@/components/menu/MenuProductCategories.vue";
 import MenuUserAccount from "@/components/menu/MenuUserAccount.vue";
 import FormSearch from "@/components/form/FormSearch.vue";
-import LogoOliv from "@icons/LogoOliv.vue";
-import SplashGreen from "@icons/SplashGreen.vue";
+import NavbarBrand from "@/components/partials/NavbarBrand.vue";
 import IconCart from "@icons/IconCart.vue";
 import IconMenu from "@icons/IconMenu.vue";
 import IconLoading from "@icons/IconLoading.vue";
-import { inject, onMounted, onBeforeUnmount, ref } from "vue";
+import { inject, onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import { useOlivStore } from "@/stores/oliv.js";
 
@@ -52,26 +51,29 @@ onMounted(() => {
     }"
   >
     <div class="container">
-      <div class="navbar-top d-flex justify-content-end align-items-center">
+      <div
+        class="navbar-top d-flex justify-content-end align-items-center overflow-hidden"
+      >
         <div class="navbar-brand-wrapper me-auto">
-          <router-link class="navbar-brand d-flex align-items-end" to="/">
-            <SplashGreen />
-            <LogoOliv />
-          </router-link>
+          <NavbarBrand />
         </div>
-        <div
-          v-if="!isClone"
-          class="navbar-content-wrapper text-center d-none d-md-block"
-        >
-          <v-runtime-template
-            v-if="
-              store.currentPage &&
-              store.currentPage.acf &&
-              store.currentPage.acf.page_header_content
-            "
-            :template="store.currentPage.acf.page_header_content"
-          ></v-runtime-template>
-        </div>
+
+        <transition name="show-element">
+          <div
+            v-if="!isClone && store.isLoaded"
+            class="navbar-content-wrapper text-center d-none d-md-block"
+          >
+            <v-runtime-template
+              v-if="
+                store.currentPage &&
+                store.currentPage.acf &&
+                store.currentPage.acf.page_header_content
+              "
+              :template="store.currentPage.acf.page_header_content"
+            ></v-runtime-template>
+          </div>
+        </transition>
+
         <div class="navbar-features-wrapper d-flex align-items-center ms-auto">
           <a
             v-if="store.websiteOptions.global_settings"
@@ -103,26 +105,33 @@ onMounted(() => {
               </div>
             </div>
 
-            <div class="navbar-cart-wrapper text-center">
-              <button
-                v-if="store.isLoaded && route.params.slug !== 'finalizare'"
-                class="btn navbar-cart"
-                @click="store.showCartDrawerAction"
-              >
-                <IconCart />
-                <span
-                  class="d-flex align-items-center justify-content-center"
-                  v-if="store.cartData.totalQty > 0"
-                  >{{ store.cartData.totalQty }}</span
+            <div
+              class="navbar-cart-wrapper d-flex align-items-center text-center"
+            >
+              <transition name="show-element">
+                <button
+                  v-if="store.isLoaded && route.params.slug !== 'finalizare'"
+                  class="btn navbar-cart"
+                  @click="store.showCartDrawerAction"
                 >
-              </button>
-              <button class="btn navbar-cart" v-else><IconLoading /></button>
-              <div
-                v-if="store.isLoaded && store.cartData.totalPrice"
-                class="navbar-total-price"
-              >
-                {{ store.cartData.totalPrice }} lei
-              </div>
+                  <IconCart />
+                  <span
+                    class="d-flex align-items-center justify-content-center"
+                    v-if="store.cartData.totalQty > 0"
+                    >{{ store.cartData.totalQty }}</span
+                  >
+                </button>
+                <button class="btn navbar-cart" v-else><IconLoading /></button>
+              </transition>
+
+              <transition name="show-element">
+                <div
+                  v-if="store.isLoaded && store.cartData.totalPrice"
+                  class="navbar-total-price"
+                >
+                  {{ store.cartData.totalPrice }} lei
+                </div>
+              </transition>
             </div>
 
             <button
@@ -170,6 +179,23 @@ onMounted(() => {
 </template>
 
 <style scoped lang="scss">
+.show-element-leave-active {
+  @include transition(all 0.1s cubic-bezier(0.75, 0.25, 0.13, 0.92));
+}
+
+.show-element-enter-active {
+  @include transition(all 0.15s 0.1s cubic-bezier(0.75, 0.25, 0.13, 0.92));
+}
+
+.show-element-enter-from,
+.show-element-leave-to {
+  transform: scale(0);
+}
+
+.show-element-enter-to,
+.show-element-leave-from {
+  transform: scale(1);
+}
 .main-nav {
   &.scrolling {
     background: $body-bg;
@@ -190,21 +216,6 @@ onMounted(() => {
   padding-top: 1rem;
   padding-bottom: 1rem;
   border-bottom: 2px solid $border-color;
-}
-
-.navbar-brand {
-  width: 7rem;
-
-  :deep {
-    svg {
-      flex: 1 0 60%;
-
-      &:last-child {
-        margin-left: -20%;
-        margin-bottom: 1rem;
-      }
-    }
-  }
 }
 
 .navbar-call-us {
@@ -249,16 +260,18 @@ onMounted(() => {
 }
 
 .navbar-cart-wrapper {
-  margin-right: 1rem;
+  margin-right: 0.5rem;
+  white-space: nowrap;
 }
 
 .navbar-cart {
   position: relative;
   padding: 0;
+  margin-right: 0.5rem;
 
   span {
     border-radius: 50%;
-    background: $orange;
+    background: $olive;
     color: $white;
     font-size: 1.3rem;
     width: 1.5rem;
@@ -318,6 +331,10 @@ onMounted(() => {
       @include transition($transition-base);
       max-height: 100px;
     }
+
+    .btn-outline-dark {
+      width: 100%;
+    }
   }
 }
 
@@ -342,6 +359,7 @@ onMounted(() => {
 
       .btn-outline-dark {
         padding: 0.3rem 0.5rem;
+        width: 100%;
       }
     }
   }
@@ -368,6 +386,17 @@ onMounted(() => {
         }
       }
     }
+
+    .navbar-call-us {
+      display: flex;
+      align-items: center;
+      margin: 0;
+      margin-right: 3rem;
+
+      span {
+        margin-left: 1.5rem;
+      }
+    }
   }
 }
 
@@ -379,9 +408,6 @@ onMounted(() => {
 
   .navbar-bot {
     padding: 0;
-  }
-  .navbar-brand {
-    width: 12rem;
   }
   .navbar-call-us {
     margin-right: 0;
@@ -396,9 +422,6 @@ onMounted(() => {
   }
 
   .navbar-cart-wrapper {
-    display: flex;
-    align-items: center;
-    white-space: nowrap;
     margin-right: auto;
   }
 
@@ -423,11 +446,6 @@ onMounted(() => {
   .scrolling {
     .navbar-top {
       padding-left: 0;
-      overflow: hidden;
-    }
-    .navbar-brand {
-      width: 10rem;
-      margin: -2.5rem 0 0 -2rem;
     }
     .navbar-content-wrapper {
       display: none !important;
@@ -438,15 +456,7 @@ onMounted(() => {
     }
 
     .navbar-call-us {
-      display: flex;
-      align-items: center;
       font-size: 2.4rem;
-      margin: 0;
-      margin-right: 3rem;
-
-      span {
-        margin-left: 1.5rem;
-      }
     }
 
     .mobile-menu-trigger {
@@ -464,16 +474,8 @@ onMounted(() => {
 }
 
 @include media-breakpoint-up(lg) {
-  .navbar-brand {
-    width: 15rem;
-  }
-
   .navbar-call-us {
     margin-bottom: 2rem;
-  }
-
-  .navbar-cart {
-    margin-right: 0.5rem;
   }
 
   .navbar-content-wrapper {
@@ -491,10 +493,6 @@ onMounted(() => {
   .scrolling {
     .navbar-call-us {
       font-size: 2.8rem;
-    }
-
-    .navbar-brand {
-      width: 12rem;
     }
 
     .navbar-bot {
@@ -555,10 +553,6 @@ onMounted(() => {
   }
 
   .scrolling {
-    .navbar-brand {
-      width: 14rem;
-      margin: -4rem 0 0 -2rem;
-    }
     .navbar-buttons {
       margin-top: 0;
       margin-left: 3rem;
@@ -573,12 +567,6 @@ onMounted(() => {
         min-width: 225px;
       }
     }
-  }
-}
-
-@include media-breakpoint-up(xxl) {
-  .navbar-brand {
-    width: 21rem;
   }
 }
 </style>

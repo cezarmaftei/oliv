@@ -1,10 +1,9 @@
 <script setup>
 import { useOlivStore } from "@/stores/oliv.js";
 import VRuntimeTemplate from "vue3-runtime-template";
-import LogoOliv from "@icons/LogoOliv.vue";
 import LogoFacebook from "@icons/LogoFacebook.vue";
 import LogoInstagram from "@icons/LogoInstagram.vue";
-import SplashGreen from "@icons/SplashGreen.vue";
+import NavbarBrand from "@/components/partials/NavbarBrand.vue";
 
 const store = useOlivStore();
 </script>
@@ -15,13 +14,7 @@ const store = useOlivStore();
         <div class="col-12">
           <div class="footer-top d-flex justify-content-center">
             <div class="footer-brand-wrapper">
-              <router-link
-                class="footer-brand d-flex align-items-end me-auto"
-                to="/"
-              >
-                <SplashGreen />
-                <LogoOliv />
-              </router-link>
+              <NavbarBrand class="footer-brand" />
             </div>
 
             <nav
@@ -32,24 +25,18 @@ const store = useOlivStore();
               ></v-runtime-template>
             </nav>
 
-            <div class="footer-brand-wrapper invisible d-none d-sm-block">
-              <router-link
-                class="footer-brand d-flex align-items-end ms-auto"
-                to="/"
-              >
-                <SplashGreen />
-                <LogoOliv />
-              </router-link>
+            <div class="footer-brand-wrapper d-none d-sm-block">
+              <NavbarBrand class="invisible footer-brand" />
             </div>
           </div>
           <div v-if="store.currentPage" class="footer-bot">
             <div class="row align-items-center">
-              <div class="col-8">
+              <div class="col-12 col-sm-8 col-md-6">
                 <v-runtime-template
                   :template="store.websiteOptions.footer.footer_copyright"
                 ></v-runtime-template>
               </div>
-              <div class="col-4">
+              <div class="col-12 col-sm-4 col-md-6">
                 <ul>
                   <li>
                     <a
@@ -85,25 +72,12 @@ const store = useOlivStore();
 
 .footer-top {
   border: 2px solid $border-color;
+  border-right-color: transparent;
+  border-left-color: transparent;
   overflow: hidden;
   @include padding-bottom(2.2rem);
-}
-
-.footer-brand {
-  width: 8rem;
-  margin-top: -0.5rem;
-  margin-left: -1rem;
-
-  :deep {
-    svg {
-      flex: 1 0 60%;
-
-      &:last-child {
-        margin-left: -20%;
-        margin-bottom: 1rem;
-      }
-    }
-  }
+  flex-direction: column;
+  align-items: center;
 }
 
 .invisible .footer-brand {
@@ -133,9 +107,10 @@ const store = useOlivStore();
 }
 
 .footer-bot {
-  border: 2px solid $border-color;
+  border-top: 2px solid $border-color;
   margin-top: -2px;
   @include padding(1.5rem 3rem);
+  text-align: center;
 
   :deep {
     font-size: 1.2rem;
@@ -147,12 +122,12 @@ const store = useOlivStore();
     ul {
       list-style: none;
       display: flex;
-      justify-content: flex-end;
+      justify-content: center;
       padding: 0;
-      margin: 0;
+      margin: 1.5rem 0 0;
 
       li {
-        margin-left: 2rem;
+        margin: 0 1rem;
       }
 
       svg {
@@ -164,16 +139,42 @@ const store = useOlivStore();
   }
 }
 
-@include media-breakpoint-up(md) {
-  .footer-brand {
-    width: 12rem;
-    margin-top: -1.5rem;
-    margin-left: -2rem;
+@include media-breakpoint-up(sm) {
+  .site-footer {
+    padding-top: 0;
+    margin-top: auto;
+  }
+  .footer-top {
+    border: 2px solid $border-color;
+    flex-direction: row;
+    padding: 0 0 2rem;
   }
 
-  .invisible .footer-brand {
-    margin-right: -2rem;
+  .footer-bot {
+    border: 2px solid $border-color;
+    text-align: left;
+
+    ul {
+      margin: 0;
+      justify-content: flex-end;
+
+      li {
+        margin: 0 0 0 2rem;
+      }
+    }
   }
+}
+
+@include media-breakpoint-up(md) {
+  // .footer-brand {
+  //   width: 12rem;
+  //   margin-top: -1.5rem;
+  //   margin-left: -2rem;
+  // }
+
+  // .invisible .footer-brand {
+  //   margin-right: -2rem;
+  // }
 
   .footer-bot {
     :deep {
@@ -183,15 +184,15 @@ const store = useOlivStore();
 }
 
 @include media-breakpoint-up(lg) {
-  .footer-brand {
-    width: 16rem;
-    margin-top: -2rem;
-    margin-left: -2.5rem;
-  }
+  // .footer-brand {
+  //   width: 16rem;
+  //   margin-top: -2rem;
+  //   margin-left: -2.5rem;
+  // }
 
-  .invisible .footer-brand {
-    margin-right: -2.5rem;
-  }
+  // .invisible .footer-brand {
+  //   margin-right: -2.5rem;
+  // }
 }
 
 // @include media-breakpoint-up(xl) {

@@ -2,7 +2,7 @@
 import { useOlivStore } from "@/stores/oliv.js";
 import { useRoute } from "vue-router";
 import ProductListing from "@/components/product/ProductListing.vue";
-import { inject, ref } from "vue";
+import { inject } from "vue";
 
 const store = useOlivStore();
 const route = useRoute();
@@ -25,7 +25,7 @@ if (route.query.categorie) activeCat.value = route.query.categorie;
     <div class="row row-products gy-2">
       <TransitionGroup name="show-product">
         <div
-          class="col-12 col-sm-6 col-lg-4 col-xl-3"
+          class="col-12 col-sm-6 col-xl-4 col-xxl-3"
           v-for="(product, productCount) in store.getProductsByCategory(
             activeCat
           )"
@@ -59,7 +59,7 @@ if (route.query.categorie) activeCat.value = route.query.categorie;
 
 @include media-breakpoint-up(sm) {
   .row-products {
-    margin: 0;
+    margin: 0 0 -2px;
     border-top: 2px solid $border-color;
 
     [class*="col"] {
@@ -75,7 +75,7 @@ if (route.query.categorie) activeCat.value = route.query.categorie;
   }
 }
 
-@include media-breakpoint-up(lg) {
+@include media-breakpoint-up(xl) {
   .row-products {
     [class*="col"] {
       &:nth-child(2n) {
@@ -90,7 +90,7 @@ if (route.query.categorie) activeCat.value = route.query.categorie;
   }
 }
 
-@include media-breakpoint-up(xl) {
+@include media-breakpoint-up(xxl) {
   .row-products {
     [class*="col"] {
       &:nth-child(3n),

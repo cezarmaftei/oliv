@@ -18,8 +18,11 @@ watch(
 </script>
 <template>
   <h3 class="mb-2 text-center d-md-none">Categorii:</h3>
-  <div class="row row-categories justify-content-center g-50">
-    <div class="col-auto">
+  <div
+    v-if="store.isLoaded"
+    class="row row-categories justify-content-center g-50"
+  >
+    <div class="col-auto flex-grow-1">
       <router-link
         @click="activeCat = 'Toate'"
         :class="
@@ -33,7 +36,11 @@ watch(
         >Toate</router-link
       >
     </div>
-    <div class="col-auto" v-for="cat in store.storeData.categories" :key="cat">
+    <div
+      class="col-auto flex-grow-1"
+      v-for="cat in store.storeData.categories"
+      :key="cat"
+    >
       <router-link
         @click="activeCat = cat.name"
         :class="route.query.categorie === cat.name ? 'active' : ''"
@@ -47,6 +54,14 @@ watch(
 </template>
 
 <style scoped lang="scss">
+@include media-breakpoint-up(sm) {
+  .row-categories {
+    [class*="col-"] {
+      min-width: 20%;
+    }
+  }
+}
+
 @include media-breakpoint-up(md) {
   .row-categories {
     margin: -2px 0;
@@ -55,7 +70,7 @@ watch(
     [class*="col-"] {
       padding: 0;
       margin: 0;
-      flex-grow: 1;
+      min-width: 1px;
 
       &:first-child {
         .btn {

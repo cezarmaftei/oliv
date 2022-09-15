@@ -162,10 +162,8 @@ const currentProductPrice = computed(() => {
     </figure>
     <div class="product-description">
       <div v-html="product.description"></div>
-      <strong
-        class="product-weight d-none d-sm-inline-block"
-        v-if="product.weight"
-      >
+
+      <div class="product-weight" v-if="isSingle && product.weight">
         {{ product.weight
         }}<span
           v-if="
@@ -174,7 +172,7 @@ const currentProductPrice = computed(() => {
           "
           >ml</span
         ><span v-else>g</span>
-      </strong>
+      </div>
       <!-- <div v-if="isSingle" v-html="product.short_description"></div> -->
     </div>
     <!-- Single product -->
@@ -200,9 +198,10 @@ const currentProductPrice = computed(() => {
           v-for="extra in currentProductExtras"
           :key="extra"
         >
-          <div class="extra-name">
-            {{ extra._name }} +<strong>{{ extra._price }}</strong> lei
-          </div>
+          <p class="extra-name mb-1">
+            {{ extra._name }}
+            <span>+{{ extra._price }} lei</span>
+          </p>
           <div class="quantity-wrap">
             <button @click="updateProductExtraQty(extra._id, -1)">-</button>
             <input
@@ -329,6 +328,19 @@ const currentProductPrice = computed(() => {
         z-index: -1;
         transform: translate(0, 0);
         font-size: 130%;
+
+        &:before {
+          content: "";
+          display: inline-block;
+          vertical-align: middle;
+          @include rfs(2.2rem, width);
+          @include rfs(2.2rem, height);
+          margin-right: 1rem;
+          background: escape-svg(
+              url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1489.73 1486" fill="#{$dark}"><path d="M1489.67,1327.53,1438.93,152.62C1438.06,68,1368.59,0,1283.34,0h-1077C121.08,0,51.65,68,50.77,152.63L.06,1327.8c0,1-.06,2-.06,3C0,1416.3,69.8,1486,155.59,1486H1334.15c85.79,0,155.58-69.83,155.58-155.38,0-.95,0-2.14-.06-3.09M1334.15,1354H155.59a23.25,23.25,0,0,1-23.43-22.34L182.84,156.71c0-1,.06-1.51.06-2.46,0-12.69,10.28-22.25,23.41-22.25h1077c13.15,0,23.46,9.48,23.46,22.17,0,1,0,1.67.06,2.62l50.71,1175a23.14,23.14,0,0,1-23.42,22.22"/><path d="M965.5,256.6c-36.49,0-66.5,29.58-66.5,66.07V522.35c0,84.12-68.81,152.56-153.54,152.56S592,606.47,592,522.35V322.67a66,66,0,1,0-132,0V522.35c0,157,128.42,284.7,286,284.7s286-127.72,286-284.7V322.67c0-36.49-30-66.07-66.5-66.07"/></svg>')
+            )
+            no-repeat center center / 100% auto;
+        }
       }
 
       &.done {
@@ -449,39 +461,34 @@ const currentProductPrice = computed(() => {
   flex-direction: column;
 
   h2 {
-    font-size: 5rem;
+    font-size: 5.6rem;
   }
 
   h3 {
-    font-size: 2.5rem;
+    font-size: 3rem;
+    margin-bottom: 1rem;
   }
 
   figure {
     position: relative;
     order: 0;
-    width: 100%;
-    margin-bottom: 2rem;
+    width: 74%;
+    margin: 0 auto 2rem;
 
     &:before {
       content: "";
-      display: block;
-      height: 360%;
-      width: 150%;
-      background: $white;
-      position: absolute;
-      bottom: -3rem;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: -1;
-      border-radius: 50%;
+      padding-top: 100%;
     }
 
     :deep {
       img {
-        width: 16rem;
-        height: 16rem;
+        width: 100%;
+        height: 100%;
         object-fit: cover;
         border-radius: 50%;
+        position: absolute;
+        left: 0;
+        top: 0;
       }
     }
   }
@@ -496,8 +503,33 @@ const currentProductPrice = computed(() => {
     order: 2;
     position: relative;
     text-align: center;
-    border-bottom: 1px solid $gray-200;
-    margin-bottom: 1.5rem;
+    margin-bottom: 2.5rem;
+
+    .product-weight {
+      font-family: $font-family-lanekcut;
+      line-height: 0.8;
+      font-size: 3rem;
+      color: $gray-500;
+    }
+
+    &:after {
+      content: "";
+      display: block;
+      height: 2px;
+      background-image: linear-gradient(
+        to right,
+        $body-color 8px,
+        transparent 8px
+      );
+      background-size: 15px 2px;
+      margin-top: 2.5rem;
+    }
+  }
+
+  .extra-name {
+    span {
+      color: $gray-500;
+    }
   }
 
   .single-product-actions {
@@ -507,9 +539,10 @@ const currentProductPrice = computed(() => {
   .single-product-add {
     display: flex;
     font-family: $font-family-lanekcut;
-    line-height: 1.2;
+    line-height: 0.8;
     font-size: 2.6rem;
-    border-top: 2px solid $border-color;
+    border: 2px solid $border-color;
+    margin-top: 3rem;
 
     > * {
       padding: 1rem;
@@ -534,6 +567,19 @@ const currentProductPrice = computed(() => {
         z-index: -1;
         transform: translate(0, 0);
         font-size: 130%;
+
+        &:before {
+          content: "";
+          display: inline-block;
+          vertical-align: middle;
+          @include rfs(3.2rem, width);
+          @include rfs(3.2rem, height);
+          margin-right: 1rem;
+          background: escape-svg(
+              url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1489.73 1486" fill="#{$dark}"><path d="M1489.67,1327.53,1438.93,152.62C1438.06,68,1368.59,0,1283.34,0h-1077C121.08,0,51.65,68,50.77,152.63L.06,1327.8c0,1-.06,2-.06,3C0,1416.3,69.8,1486,155.59,1486H1334.15c85.79,0,155.58-69.83,155.58-155.38,0-.95,0-2.14-.06-3.09M1334.15,1354H155.59a23.25,23.25,0,0,1-23.43-22.34L182.84,156.71c0-1,.06-1.51.06-2.46,0-12.69,10.28-22.25,23.41-22.25h1077c13.15,0,23.46,9.48,23.46,22.17,0,1,0,1.67.06,2.62l50.71,1175a23.14,23.14,0,0,1-23.42,22.22"/><path d="M965.5,256.6c-36.49,0-66.5,29.58-66.5,66.07V522.35c0,84.12-68.81,152.56-153.54,152.56S592,606.47,592,522.35V322.67a66,66,0,1,0-132,0V522.35c0,157,128.42,284.7,286,284.7s286-127.72,286-284.7V322.67c0-36.49-30-66.07-66.5-66.07"/></svg>')
+            )
+            no-repeat center center / 100% auto;
+        }
       }
 
       &.done {
@@ -544,6 +590,86 @@ const currentProductPrice = computed(() => {
           opacity: 0;
         }
       }
+    }
+  }
+
+  @include media-breakpoint-between(sm, md) {
+    .single-product-extras-actions {
+      display: flex;
+
+      .extra-wrap:last-child {
+        margin-left: 2rem;
+      }
+    }
+  }
+
+  @include media-breakpoint-up(sm) {
+    .single-product-add {
+      button {
+        &:before {
+          content: "";
+          display: inline-block;
+          vertical-align: middle;
+          @include rfs(2.2rem, width);
+          @include rfs(2.2rem, height);
+          margin-right: 1rem;
+          background: escape-svg(
+              url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1489.73 1486" fill="#{$dark}"><path d="M1489.67,1327.53,1438.93,152.62C1438.06,68,1368.59,0,1283.34,0h-1077C121.08,0,51.65,68,50.77,152.63L.06,1327.8c0,1-.06,2-.06,3C0,1416.3,69.8,1486,155.59,1486H1334.15c85.79,0,155.58-69.83,155.58-155.38,0-.95,0-2.14-.06-3.09M1334.15,1354H155.59a23.25,23.25,0,0,1-23.43-22.34L182.84,156.71c0-1,.06-1.51.06-2.46,0-12.69,10.28-22.25,23.41-22.25h1077c13.15,0,23.46,9.48,23.46,22.17,0,1,0,1.67.06,2.62l50.71,1175a23.14,23.14,0,0,1-23.42,22.22"/><path d="M965.5,256.6c-36.49,0-66.5,29.58-66.5,66.07V522.35c0,84.12-68.81,152.56-153.54,152.56S592,606.47,592,522.35V322.67a66,66,0,1,0-132,0V522.35c0,157,128.42,284.7,286,284.7s286-127.72,286-284.7V322.67c0-36.49-30-66.07-66.5-66.07"/></svg>')
+            )
+            no-repeat center center / 100% auto;
+        }
+      }
+    }
+  }
+
+  @include media-breakpoint-up(md) {
+    position: relative;
+    padding-left: calc(50% - 2px);
+    border: 2px solid $border-color;
+
+    figure {
+      margin: 0;
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 50%;
+      height: 100%;
+
+      :deep {
+        img {
+          border-radius: 0;
+        }
+      }
+    }
+
+    .product-title {
+      @include padding(4rem 3rem 0);
+      text-align: left;
+    }
+
+    .product-description {
+      text-align: left;
+
+      > * {
+        @include padding(0 3rem);
+      }
+
+      :deep {
+        p {
+          margin-bottom: 1rem;
+        }
+      }
+    }
+
+    .single-product-actions {
+      @include padding(0 3rem);
+    }
+
+    .single-product-add {
+      @include margin(4rem -3rem 0);
+      border-right: 0;
+      border-left: 0;
+      border-bottom: 0;
     }
   }
 }
