@@ -32,7 +32,7 @@ watch(
 </script>
 
 <template>
-  <div class="page d-flex flex-column">
+  <div class="page d-flex flex-column pb-14">
     <SectionSearchResults />
     <RouterView />
   </div>
@@ -41,5 +41,18 @@ watch(
 <style scoped lang="scss">
 .page {
   min-height: 100vh;
+}
+
+@include media-breakpoint-up(md) {
+  .page {
+    background: $bg-single-product-page no-repeat bottom center / 100vw auto;
+  }
+}
+
+@media (min-width: 1600px) {
+  .page {
+    background-size: 1600px auto;
+    background-repeat: space;
+  }
 }
 </style>

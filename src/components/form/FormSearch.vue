@@ -8,14 +8,16 @@ defineProps({
 </script>
 
 <template>
-  <div class="search-wrapper">
-    <input
-      type="search"
-      name="q"
-      placeholder="cauta"
-      v-model="store.searchData.searchString"
-      :focus="isMain && store.searchData.searchString.length"
-    />
+  <div class="search-wrapper" @submit.prevent>
+    <form autocomplete="off">
+      <input
+        type="search"
+        name="q"
+        placeholder="cauta"
+        v-model="store.searchData.searchString"
+        :focus="isMain && store.searchData.searchString.length"
+      />
+    </form>
   </div>
 </template>
 

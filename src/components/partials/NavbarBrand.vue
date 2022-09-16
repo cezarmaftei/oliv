@@ -27,21 +27,21 @@
 
   &.footer-brand {
     position: relative;
-    margin-top: 2rem;
+    margin-top: 1rem;
 
     &:before {
       position: absolute;
       right: 100%;
       bottom: 100%;
-      width: 13rem;
-      height: 11.2rem;
-      transform: translate(1rem, 6rem);
+      width: 8rem;
+      height: 6rem;
+      transform: translate(1rem, 4rem);
     }
 
     &:after {
       position: relative;
-      width: 9rem;
-      height: 5rem;
+      width: 7rem;
+      height: 4rem;
       margin-bottom: 1rem;
       margin-left: -1rem;
     }

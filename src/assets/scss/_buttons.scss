@@ -39,15 +39,16 @@
 .btn-outline-dark {
   border-color: $dark;
   color: $dark;
+  background: $bg-btn-yellow no-repeat center center / 0 0;
 
   &:hover:not(.active) {
-    color: $white;
-    background-color: $dark;
+    color: $dark;
+    background-size: 100% 100px;
   }
 
   &.active {
     color: $white;
-    background: $red;
+    background: $bg-btn-red no-repeat center center / 100% auto;
   }
 }
 
@@ -85,46 +86,6 @@
       &:before {
         left: 0.4rem;
       }
-    }
-  }
-}
-
-.quantity-wrap {
-  display: flex;
-  border: 2px solid $gray-500;
-  width: 10.4rem;
-  border-radius: 2.5rem;
-
-  button {
-    border: 0;
-    background: none;
-    padding: 0;
-    flex: 0 0 3rem;
-    max-width: 3rem;
-    font-size: 2.2rem;
-    line-height: 1;
-    text-align: center;
-  }
-
-  input {
-    background: none;
-    border: none;
-    flex: 0 0 4rem;
-    max-width: 4rem;
-    text-align: center;
-    height: 3.6rem;
-    font-family: $font-family-lanekcut;
-    font-size: 2.2rem;
-    -moz-appearance: textfield;
-
-    &:focus-visible {
-      outline: 0;
-    }
-
-    &:-webkit-outer-spin-button,
-    &:-webkit-inner-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
     }
   }
 }

@@ -197,18 +197,19 @@ onMounted(() => {
   transform: scale(1);
 }
 .main-nav {
-  &.scrolling {
-    background: $body-bg;
-  }
   &.cloned {
     transform: translateY(-100%);
     @include transition($transition-base);
-    background: $body-bg;
 
     &.scrolling {
       transform: translateY(0);
     }
   }
+}
+
+.navbar-top,
+.secondary-navbar {
+  background: $body-bg;
 }
 .navbar-top {
   position: relative;
@@ -348,8 +349,7 @@ onMounted(() => {
 
 .scrolling {
   .navbar-bot {
-    padding-top: 1rem;
-    padding-bottom: 1rem;
+    padding: 0;
 
     :deep {
       h3 {
@@ -362,6 +362,11 @@ onMounted(() => {
         width: 100%;
       }
     }
+  }
+
+  .secondary-navbar {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
   }
 }
 
@@ -447,6 +452,11 @@ onMounted(() => {
     .navbar-top {
       padding-left: 0;
     }
+
+    .secondary-navbar {
+      padding: 0;
+    }
+
     .navbar-content-wrapper {
       display: none !important;
     }

@@ -1,6 +1,9 @@
 <script setup>
 import { useOlivStore } from "@/stores/oliv.js";
 import LoadImage from "@/components/partials/LoadImage.vue";
+import AddToCart from "@/components/button/AddToCart.vue";
+import ProductWeight from "@/components/product/ProductWeight.vue";
+import ProductPrice from "@/components/product/ProductPrice.vue";
 import { onMounted, ref } from "vue";
 import { computed } from "vue";
 
@@ -14,6 +17,7 @@ const store = useOlivStore();
 const currentProductExtras = store.getProductExtras(props.product);
 const productPrice = ref(parseFloat(props.product.price));
 const productQtys = ref({});
+const productDescriptionTrimmed = ref("");
 
 onMounted(() => {
   productQtys.value["productQty"] = 1;
@@ -25,6 +29,15 @@ onMounted(() => {
       productQtys.value[currentExtraData._id] = 0;
     }
   }
+
+  const desc = document.createElement("div");
+  desc.innerHTML = props.product.description;
+  const maxLength = 55;
+
+  productDescriptionTrimmed.value =
+    desc.textContent.length > maxLength
+      ? desc.textContent.substring(0, maxLength) + "..."
+      : desc.textContent.substring(0, maxLength);
 });
 
 /**
@@ -121,6 +134,9 @@ const updateProductExtraQty = (extraId, value, isNewValue, isFocusOut) => {
   productQtys.value[extraId] = newValue;
 };
 
+/**
+ * Update product price on single product display
+ */
 const currentProductPrice = computed(() => {
   let price = productQtys.value.productQty * props.product.price;
 
@@ -161,19 +177,14 @@ const currentProductPrice = computed(() => {
       /></router-link>
     </figure>
     <div class="product-description">
-      <div v-html="product.description"></div>
-
-      <div class="product-weight" v-if="isSingle && product.weight">
-        {{ product.weight
-        }}<span
-          v-if="
-            product.categories.filter((cat) => cat.slug === 'bauturi').length >
-            0
-          "
-          >ml</span
-        ><span v-else>g</span>
-      </div>
-      <!-- <div v-if="isSingle" v-html="product.short_description"></div> -->
+      <p class="mb-1" v-if="!isSingle">{{ productDescriptionTrimmed }}</p>
+      <div v-else v-html="product.description"></div>
+      <ProductWeight :product="product" v-if="isSingle" />
+      <ProductWeight
+        :product="product"
+        v-if="!isSingle"
+        class="d-none d-sm-block"
+      />
     </div>
     <!-- Single product -->
     <div class="single-product-actions" v-if="isSingle">
@@ -181,8 +192,7 @@ const currentProductPrice = computed(() => {
       <div class="quantity-wrap">
         <button @click="updateProductQty(-1)">-</button>
         <input
-          type="number"
-          min="0"
+          type="text"
           @keyup="updateProductQty($event.target.value, true)"
           :value="productQtys.productQty"
           :v-model="productQtys.productQty"
@@ -205,9 +215,7 @@ const currentProductPrice = computed(() => {
           <div class="quantity-wrap">
             <button @click="updateProductExtraQty(extra._id, -1)">-</button>
             <input
-              type="number"
-              min="0"
-              max="10"
+              type="text"
               :value="productQtys[extra._id]"
               @keyup="
                 updateProductExtraQty(extra._id, $event.target.value, true)
@@ -228,31 +236,20 @@ const currentProductPrice = computed(() => {
       </div>
 
       <div class="single-product-add">
-        <div class="price">{{ currentProductPrice }} Lei</div>
-
-        <button @click="addToCart(productQtys.productQty, $event.target)">
-          adauga in cos
+        <span class="price-tag d-none d-md-block pe-0">Pret</span>
+        <ProductPrice :price="currentProductPrice" />
+        <AddToCart @click="addToCart(productQtys.productQty, $event.target)">
           <span>+{{ productQtys.productQty }}</span>
-        </button>
+        </AddToCart>
       </div>
     </div>
     <!-- Product listing -->
     <div v-else class="product-actions d-flex align-items-center">
-      <div class="product-weight d-sm-none" v-if="product.weight">
-        {{ product.weight
-        }}<span
-          v-if="
-            product.categories.filter((cat) => cat.slug === 'bauturi').length >
-            0
-          "
-          >ml</span
-        ><span v-else>g</span>
-      </div>
-      <span class="price">{{ productPrice }} lei</span>
-      <button @click="addToCart(1, $event.target)">
-        adauga in cos
+      <ProductWeight :product="product" class="d-sm-none" />
+      <ProductPrice :price="productPrice" />
+      <AddToCart @click="addToCart(1, $event.target)">
         <span>+1</span>
-      </button>
+      </AddToCart>
     </div>
   </div>
 </template>
@@ -302,7 +299,6 @@ const currentProductPrice = computed(() => {
     .product-weight {
       padding-left: 0;
       text-align: left;
-      color: $gray-500;
     }
 
     .price {
@@ -313,10 +309,10 @@ const currentProductPrice = computed(() => {
     button {
       position: relative;
       margin: 0;
-      background: none;
       border: 0;
       border-top: 2px solid $border-color;
-      background: $yellow-200;
+      background: $bg-btn-yellow no-repeat center center / 100% auto;
+      @include transition($transition-base);
 
       span {
         display: block;
@@ -376,20 +372,23 @@ const currentProductPrice = computed(() => {
   }
 
   @include media-breakpoint-up(sm) {
-    @include padding(3rem 3rem 10rem);
+    @include padding(3rem 0 0);
     height: 100%;
     text-align: center;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-end;
+
+    figure,
+    .product-title,
+    .product-description {
+      @include padding-left(3rem);
+      @include padding-right(3rem);
+    }
 
     .product-title {
       margin-bottom: auto;
-    }
-
-    .product-description {
-      margin-top: auto;
     }
 
     figure {
@@ -416,10 +415,9 @@ const currentProductPrice = computed(() => {
     }
 
     .product-actions {
-      position: absolute;
-      left: 0;
-      bottom: 0;
       width: 100%;
+      @include font-size(3rem);
+      @include margin-top(2rem);
 
       > * {
         padding-top: 0.5rem;
@@ -432,11 +430,14 @@ const currentProductPrice = computed(() => {
 
       button {
         border-left: 2px solid $border-color;
-        background: transparent;
+        background: $bg-btn-yellow no-repeat center center / 0 0;
 
         &:hover {
-          background-color: $yellow-200;
-          border-left-color: $yellow-200;
+          background-size: 100% 100px;
+
+          &:before {
+            animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+          }
         }
 
         &:before {
@@ -474,6 +475,7 @@ const currentProductPrice = computed(() => {
     order: 0;
     width: 74%;
     margin: 0 auto 2rem;
+    background: $bg-single-product-splash no-repeat center center / 100% 100%;
 
     &:before {
       content: "";
@@ -482,13 +484,14 @@ const currentProductPrice = computed(() => {
 
     :deep {
       img {
-        width: 100%;
-        height: 100%;
+        width: calc(100% - 3rem);
+        height: calc(100% - 3rem);
         object-fit: cover;
         border-radius: 50%;
         position: absolute;
-        left: 0;
-        top: 0;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
       }
     }
   }
@@ -555,7 +558,8 @@ const currentProductPrice = computed(() => {
       margin: 0;
       background: none;
       border: 0;
-      background: $yellow-200;
+      background: $bg-btn-yellow no-repeat center center / 100% auto;
+      @include transition($transition-base);
 
       span {
         display: block;
@@ -572,8 +576,8 @@ const currentProductPrice = computed(() => {
           content: "";
           display: inline-block;
           vertical-align: middle;
-          @include rfs(3.2rem, width);
-          @include rfs(3.2rem, height);
+          @include rfs(2.2rem, width);
+          @include rfs(2.2rem, height);
           margin-right: 1rem;
           background: escape-svg(
               url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1489.73 1486" fill="#{$dark}"><path d="M1489.67,1327.53,1438.93,152.62C1438.06,68,1368.59,0,1283.34,0h-1077C121.08,0,51.65,68,50.77,152.63L.06,1327.8c0,1-.06,2-.06,3C0,1416.3,69.8,1486,155.59,1486H1334.15c85.79,0,155.58-69.83,155.58-155.38,0-.95,0-2.14-.06-3.09M1334.15,1354H155.59a23.25,23.25,0,0,1-23.43-22.34L182.84,156.71c0-1,.06-1.51.06-2.46,0-12.69,10.28-22.25,23.41-22.25h1077c13.15,0,23.46,9.48,23.46,22.17,0,1,0,1.67.06,2.62l50.71,1175a23.14,23.14,0,0,1-23.42,22.22"/><path d="M965.5,256.6c-36.49,0-66.5,29.58-66.5,66.07V522.35c0,84.12-68.81,152.56-153.54,152.56S592,606.47,592,522.35V322.67a66,66,0,1,0-132,0V522.35c0,157,128.42,284.7,286,284.7s286-127.72,286-284.7V322.67c0-36.49-30-66.07-66.5-66.07"/></svg>')
@@ -605,6 +609,9 @@ const currentProductPrice = computed(() => {
 
   @include media-breakpoint-up(sm) {
     .single-product-add {
+      @include font-size(3rem);
+    }
+    .single-product-add {
       button {
         &:before {
           content: "";
@@ -618,11 +625,22 @@ const currentProductPrice = computed(() => {
             )
             no-repeat center center / 100% auto;
         }
+
+        &:before {
+          @include transition($transition-base);
+        }
+
+        &:hover {
+          &:before {
+            animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+          }
+        }
       }
     }
   }
 
   @include media-breakpoint-up(md) {
+    background: $body-bg;
     position: relative;
     padding-left: calc(50% - 2px);
     border: 2px solid $border-color;
@@ -634,10 +652,13 @@ const currentProductPrice = computed(() => {
       top: 0;
       width: 50%;
       height: 100%;
+      background: none;
 
       :deep {
         img {
           border-radius: 0;
+          width: 100%;
+          height: 100%;
         }
       }
     }
@@ -670,6 +691,61 @@ const currentProductPrice = computed(() => {
       border-right: 0;
       border-left: 0;
       border-bottom: 0;
+
+      > * {
+        flex-shrink: 1;
+        flex-grow: 0;
+        text-align: left;
+
+        &:first-child {
+          @include padding-left(3rem);
+        }
+      }
+
+      button {
+        @include padding-right(4rem);
+        @include padding-left(4rem);
+        text-align: center;
+        margin-left: auto;
+      }
+
+      .price-tag {
+        color: $gray-500;
+      }
+    }
+  }
+}
+
+.quantity-wrap {
+  display: flex;
+  border: 2px solid $gray-500;
+  width: 10.4rem;
+  border-radius: 2.5rem;
+
+  button {
+    border: 0;
+    background: none;
+    padding: 0;
+    flex: 0 0 3rem;
+    max-width: 3rem;
+    font-size: 2.2rem;
+    line-height: 1;
+    text-align: center;
+  }
+
+  input {
+    background: none;
+    border: none;
+    flex: 0 0 4rem;
+    max-width: 4rem;
+    text-align: center;
+    justify-content: center;
+    height: 3.6rem;
+    font-family: $font-family-lanekcut;
+    font-size: 2.2rem;
+
+    &:focus-visible {
+      outline: 0;
     }
   }
 }

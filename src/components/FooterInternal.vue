@@ -31,12 +31,12 @@ const store = useOlivStore();
           </div>
           <div v-if="store.currentPage" class="footer-bot">
             <div class="row align-items-center">
-              <div class="col-12 col-sm-8 col-md-6">
+              <div class="col-12 col-sm-8 col-lg-6">
                 <v-runtime-template
                   :template="store.websiteOptions.footer.footer_copyright"
                 ></v-runtime-template>
               </div>
-              <div class="col-12 col-sm-4 col-md-6">
+              <div class="col-12 col-sm-4 col-lg-6">
                 <ul>
                   <li>
                     <a
@@ -68,6 +68,11 @@ const store = useOlivStore();
 .site-footer {
   margin-top: auto;
   @include padding-top(5rem);
+}
+
+.footer-top,
+.footer-bot {
+  background: $body-bg;
 }
 
 .footer-top {
