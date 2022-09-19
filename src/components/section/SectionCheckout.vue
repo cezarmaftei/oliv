@@ -1,7 +1,7 @@
 <script setup>
 import { useRouter } from "vue-router";
 import { useOlivStore } from "@/stores/oliv.js";
-import CartContent from "@/components/partials/CartContent.vue";
+import CartContent from "@/components/cart/CartContent.vue";
 import UserAddresses from "@/components/partials/UserAddresses.vue";
 import PaymentMethods from "@/components/partials/PaymentMethods.vue";
 import OrderExtras from "@/components/partials/OrderExtras.vue";

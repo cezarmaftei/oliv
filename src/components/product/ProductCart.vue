@@ -1,11 +1,14 @@
 <script setup>
 import { useOlivStore } from "@/stores/oliv.js";
-import { inject } from "vue";
-import ErrorProduct from "@/components/partials/ErrorProduct.vue";
+import { inject, ref } from "vue";
+import ErrorProduct from "@/components/error/ErrorProduct.vue";
 import LoadImage from "@/components/partials/LoadImage.vue";
-import IconDelete from "@/components/icons/IconDelete.vue";
+import ProductPrice from "@/components/product/ProductPrice.vue";
+import ProductWeight from "@/components/product/ProductWeight.vue";
+import { computed } from "vue";
 
 const store = useOlivStore();
+const showExtras = ref(false);
 
 const cartDrawerItems = inject("cartDrawerItems");
 
@@ -81,11 +84,25 @@ const removeFromCart = () => {
     state.cartData.items.splice(props.cartItemIndex, 1);
   });
 };
+
+/**
+ * Item extras count
+ */
+const itemExtrasCount = computed(() => {
+  let extrasCount = 0;
+  if (props.cartItem.productExtras.length > 0) {
+    props.cartItem.productExtras.forEach((extra) => {
+      extrasCount += extra.extraQty;
+    });
+  }
+
+  return extrasCount;
+});
 </script>
 
 <template>
   <div
-    class="card card-product-cart bg-white d-flex p-1"
+    class="card card-product-cart bg-white d-flex"
     v-if="cartDrawerItems[cartItemIndex]"
   >
     <ErrorProduct v-if="cartItem.errorMsg" :productIndex="cartItemIndex" />
@@ -96,115 +113,116 @@ const removeFromCart = () => {
       />
     </figure>
     <div class="card-content">
-      <button
-        class="btn btn-remove"
-        v-if="!isCheckout"
-        @click="removeFromCart()"
-      >
-        <IconDelete />
-      </button>
-      <h4 class="mb-0">{{ cartDrawerItems[cartItemIndex].name }}</h4>
+      <button class="btn btn-delete" @click="removeFromCart()"></button>
+      <h3 class="mb-0">{{ cartDrawerItems[cartItemIndex].name }}</h3>
 
       <div class="product-small-details d-flex">
-        <div v-if="cartDrawerItems[cartItemIndex].weight">
-          {{ cartDrawerItems[cartItemIndex].weight
-          }}<span
-            v-if="
-              cartDrawerItems[cartItemIndex].categories.filter(
-                (cat) => cat.slug === 'bauturi'
-              ).length > 0
-            "
-            >ml</span
-          ><span v-else>g</span>
-        </div>
-        <div
-          class="price ms-auto"
-          v-html="cartDrawerItems[cartItemIndex].price_html"
-        ></div>
+        <ProductWeight :product="cartDrawerItems[cartItemIndex]" />
+        <ProductPrice class="ms-auto" :price="cartItem.itemTotal" />
       </div>
 
-      <div
-        v-if="cartDrawerItems[cartItemIndex].short_description"
-        v-html="cartDrawerItems[cartItemIndex].short_description"
-      ></div>
-
-      <div class="d-flex">
-        <div
-          class="price"
-          v-html="cartDrawerItems[cartItemIndex].price_html"
-        ></div>
-
-        <div v-if="isCheckout">X {{ cartItem.productQty }}</div>
-      </div>
-
-      <div v-if="!isCheckout" class="cart-item-actions d-flex">
-        <button @click="updateCartItemQty(-1)">-</button>
-        <input
-          type="number"
-          min="0"
-          @keyup="updateCartItemQty($event.target.value, true)"
-          :value="store.cartData.items[cartItemIndex].productQty"
-        />
-        <button @click="updateCartItemQty(1)">+</button>
-      </div>
-
-      <div
-        v-if="cartItem.productExtras.length > 0"
-        class="cart-item-extras-actions"
-      >
-        <div
-          class="d-flex"
-          v-for="(extra, extraIndex) in cartItem.productExtras"
-          :key="extra"
-        >
-          <button
-            v-if="!isCheckout"
-            @click="updateCartItemExtraQty(extraIndex, -1)"
-          >
-            -
-          </button>
+      <div class="cart-item-actions d-flex align-items-center">
+        <div class="quantity-wrap">
+          <button @click="updateCartItemQty(-1)">-</button>
           <input
-            :disabled="isCheckout"
-            type="number"
-            min="0"
-            max="10"
-            :value="
-              store.cartData.items[cartItemIndex].productExtras[extraIndex]
-                .extraQty
-            "
-            @keyup="
-              updateCartItemExtraQty(extraIndex, $event.target.value, true)
-            "
-            @focusout="
-              updateCartItemExtraQty(
-                extraIndex,
-                $event.target.value,
-                true,
-                true
-              )
-            "
+            type="text"
+            @keyup="updateCartItemQty($event.target.value, true)"
+            :value="store.cartData.items[cartItemIndex].productQty"
+            readonly
           />
-          <button
-            v-if="!isCheckout"
-            @click="updateCartItemExtraQty(extraIndex, 1)"
+          <button @click="updateCartItemQty(1)">+</button>
+        </div>
+
+        <ProductPrice
+          class="ms-auto"
+          :showX="true"
+          :price="cartItem.productPrice"
+        />
+      </div>
+
+      <p
+        class="show-extras mb-0"
+        :class="{ 'is-open': showExtras }"
+        @click="showExtras = !showExtras"
+      >
+        <span v-if="itemExtrasCount > 0">
+          Editeaza extra
+          <strong>({{ itemExtrasCount }})</strong>
+        </span>
+        <span v-else> Adauga extra </span>
+      </p>
+
+      <transition name="show-element">
+        <div
+          v-show="showExtras"
+          v-if="cartItem.productExtras.length > 0"
+          class="cart-item-extras-actions"
+        >
+          <div
+            class="extra-wrap d-flex"
+            v-for="(extra, extraIndex) in cartItem.productExtras"
+            :key="extra"
           >
-            +
-          </button>
-          <div class="extra-name">
-            <span v-if="isCheckout">X</span>
-            {{ extra.extraName }}<br />
-            <strong>{{ extra.extraPrice }}</strong> lei
+            <div class="quantity-wrap">
+              <button @click="updateCartItemExtraQty(extraIndex, -1)">-</button>
+              <input
+                type="text"
+                readonly
+                :value="
+                  store.cartData.items[cartItemIndex].productExtras[extraIndex]
+                    .extraQty
+                "
+                @keyup="
+                  updateCartItemExtraQty(extraIndex, $event.target.value, true)
+                "
+                @focusout="
+                  updateCartItemExtraQty(
+                    extraIndex,
+                    $event.target.value,
+                    true,
+                    true
+                  )
+                "
+              />
+              <button @click="updateCartItemExtraQty(extraIndex, 1)">+</button>
+            </div>
+
+            <ProductPrice :showX="true" :price="extra.extraPrice" />
+            <p class="extra-name m-0">
+              {{ extra.extraName }}
+            </p>
           </div>
         </div>
-      </div>
-
-      <div class="total">{{ cartItem.itemTotal }}</div>
+      </transition>
     </div>
   </div>
 </template>
 
 <style scoped lang="scss">
+.show-element-enter-active,
+.show-element-leave-active {
+  @include transition($transition-base);
+  overflow: hidden;
+}
+
+.show-element-enter-from,
+.show-element-leave-to {
+  max-height: 0;
+}
+
+.show-element-enter-to,
+.show-element-leave-from {
+  max-height: 300px;
+}
+
 .card-product-cart {
+  @include padding-bottom(2rem);
+  @include margin-bottom(2rem);
+  border-bottom: 1px solid $gray-200;
+}
+
+h3 {
+  font-size: 2.2rem;
 }
 
 figure {
@@ -224,11 +242,47 @@ figure {
   }
 }
 
-.card-content {
-  position: relative;
+.show-extras {
+  margin-top: 1rem;
+  font-weight: $font-weight-bold;
+
+  span {
+    position: relative;
+
+    &:after {
+      content: "";
+      position: absolute;
+      left: 100%;
+      top: 50%;
+      margin-top: -0.5rem;
+      margin-left: 0.5rem;
+      transform: rotate(90deg);
+      width: 1rem;
+      height: 1rem;
+      background: escape-svg(
+          url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 266.39 209.56"><path d="M266.39,104.78,161.61,0l-20,20.13,70.45,70.44H0V119H212.07l-70.45,70.44,20,20.13L266.39,104.78Z"/></svg>')
+        )
+        no-repeat center center / 100% auto;
+      @include transition($transition-base);
+    }
+  }
+
+  &.is-open {
+    span {
+      &:after {
+        transform: rotate(-90deg);
+      }
+    }
+  }
 }
 
-.btn-remove {
+.card-content {
+  position: relative;
+  flex-grow: 1;
+}
+
+.btn-remove,
+.btn-delete {
   position: absolute;
   right: 0;
   top: 0;
@@ -239,12 +293,49 @@ figure {
 
 .product-small-details {
   font-family: $font-family-lanekcut;
+  margin-top: 0.5rem;
   font-size: 2.2rem;
   color: $gray-500;
+  line-height: 2rem;
 
   .price {
     font-size: 2.4rem;
     color: $body-color;
+  }
+}
+
+.cart-item-actions,
+.cart-item-extras-actions {
+  margin-top: 1rem;
+
+  .price {
+    font-weight: $font-weight-bold;
+  }
+}
+.extra-wrap {
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  align-items: center;
+
+  .extra-name {
+    flex: 0 0 100%;
+    max-width: 100%;
+    order: 0;
+  }
+
+  .quantity-wrap {
+    order: 1;
+  }
+
+  .price {
+    order: 2;
+    margin-left: auto;
+  }
+}
+
+@include media-breakpoint-up(xs) {
+  h3 {
+    font-size: 2.6rem;
   }
 }
 </style>

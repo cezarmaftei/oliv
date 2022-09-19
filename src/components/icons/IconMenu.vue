@@ -3,6 +3,7 @@
     xmlns="http://www.w3.org/2000/svg"
     xmlns:xlink="http://www.w3.org/1999/xlink"
     viewBox="0 0 40.28 39.5"
+    class="icon-menu"
   >
     <defs>
       <clipPath id="a" transform="translate(0 0)">
@@ -88,3 +89,21 @@
     </g>
   </svg>
 </template>
+
+<style scoped lang="scss">
+.mobile-menu-trigger {
+  .icon-menu {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+}
+
+.navbar-cart {
+  .icon-menu {
+    display: block;
+    width: 2.2rem;
+    height: 2.2rem;
+  }
+}
+</style>

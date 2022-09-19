@@ -8,6 +8,8 @@ import CurrentYear from "@/components/partials/CurrentYear.vue";
 
 import "./assets/scss/bootstrap.scss";
 
+import { Offcanvas } from "bootstrap";
+
 const app = createApp(App);
 
 app.component("CurrentYear", CurrentYear);

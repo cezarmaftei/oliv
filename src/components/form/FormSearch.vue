@@ -60,4 +60,16 @@ defineProps({
     }
   }
 }
+
+@include media-breakpoint-up(xl) {
+  .search-wrapper {
+    max-width: 225px;
+  }
+
+  .scrolling {
+    .search-wrapper {
+      min-width: 225px;
+    }
+  }
+}
 </style>

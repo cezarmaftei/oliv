@@ -1,8 +1,9 @@
 <script setup>
-defineProps({
-  price: Number,
-});
+defineProps(["price", "showX"]);
 </script>
 <template>
-  <div class="price">{{ price }} lei</div>
+  <span class="price"
+    ><span class="price-multiplier" v-show="showX">x</span>
+    {{ price }} lei</span
+  >
 </template>

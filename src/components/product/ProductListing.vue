@@ -715,38 +715,4 @@ const currentProductPrice = computed(() => {
     }
   }
 }
-
-.quantity-wrap {
-  display: flex;
-  border: 2px solid $gray-500;
-  width: 10.4rem;
-  border-radius: 2.5rem;
-
-  button {
-    border: 0;
-    background: none;
-    padding: 0;
-    flex: 0 0 3rem;
-    max-width: 3rem;
-    font-size: 2.2rem;
-    line-height: 1;
-    text-align: center;
-  }
-
-  input {
-    background: none;
-    border: none;
-    flex: 0 0 4rem;
-    max-width: 4rem;
-    text-align: center;
-    justify-content: center;
-    height: 3.6rem;
-    font-family: $font-family-lanekcut;
-    font-size: 2.2rem;
-
-    &:focus-visible {
-      outline: 0;
-    }
-  }
-}
 </style>

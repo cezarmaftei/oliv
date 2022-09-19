@@ -4,7 +4,7 @@ import { useRoute } from "vue-router";
 import { provide, ref } from "vue";
 import { MutationType } from "pinia";
 import UpdateLoading from "@/components/partials/UpdateLoading.vue";
-import ErrorCoupon from "@/components/partials/ErrorCoupon.vue";
+import FormCoupon from "@/components/form/FormCoupon.vue";
 import NoProductsInCart from "@/components/partials/NoProductsInCart.vue";
 import ProductCart from "@/components/product/ProductCart.vue";
 
@@ -16,9 +16,6 @@ provide("cartItemsInputs", cartItemsInputs);
 
 const cartDrawerItems = ref([]);
 provide("cartDrawerItems", cartDrawerItems);
-
-const couponCode = ref(false);
-provide("couponCode", couponCode);
 
 defineProps({
   isCheckout: Boolean,
@@ -53,59 +50,48 @@ store.$subscribe((mutation, state) => {
         />
       </div>
       <div v-if="!store.cartData.coupon.codes.length && !isCheckout">
-        <form @submit.prevent="store.addOrderCoupon(couponCode.value)">
-          <input
-            type="text"
-            ref="couponCode"
-            placeholder="Cod promotional..."
-            required
-          />
-          <button type="submit" class="btn btn-primary">Aplica codul</button>
-          <div v-if="store.cartData.coupon.error">
-            <ErrorCoupon :errorMsg="store.cartData.coupon.error" />
-          </div>
-        </form>
+        <FormCoupon />
       </div>
       <div>
-        <div class="d-flex">
+        <div class="d-flex cart-bordered-element">
           <div>Subtotal</div>
-          <div>{{ store.cartData.subTotal }}</div>
+          <div class="ms-auto">{{ store.cartData.subTotal }} lei</div>
         </div>
         <div v-if="store.cartData.coupon.codes">
           <div
             v-for="couponData in store.cartData.coupon.codes"
             :key="couponData"
-            class="d-flex"
+            class="d-flex align-items-center cart-bordered-element"
           >
             <div>Coupon "{{ couponData.code }}" discount:</div>
-            <div>{{ couponData.discount }}</div>
+            <div class="ms-auto">{{ couponData.discount }}</div>
             <button
-              class="btn btn-primary"
+              class="btn btn-delete"
               v-if="!isCheckout"
               @click="store.removeOrderCoupon"
-            >
-              x
-            </button>
+            ></button>
           </div>
         </div>
-        <div class="d-flex">
+        <div class="d-flex cart-bordered-element">
           <div>Cost livrare</div>
-          <div>
+          <div class="ms-auto">
             <strong>{{ store.cartData.totalShipping }}</strong>
           </div>
         </div>
-        <div class="d-flex">
+        <div class="d-flex cart-bordered-element">
           <div>Total</div>
-          <div>
+          <div class="ms-auto">
             <strong>{{ store.cartData.totalPrice }}</strong>
           </div>
         </div>
       </div>
-      <div v-if="route.params.slug !== 'finalizare'" class="d-flex">
-        <router-link
-          class="btn btn-success"
-          @click="store.showCartDrawer = false"
-          to="/finalizare"
+      <div
+        v-if="route.params.slug !== 'finalizare'"
+        class="d-flex"
+        data-bs-dismiss="offcanvas"
+        aria-label="Close"
+      >
+        <router-link class="btn btn-success" to="/finalizare"
           >Checkout</router-link
         >
       </div>
@@ -119,5 +105,11 @@ store.$subscribe((mutation, state) => {
 <style scoped lang="scss">
 .cart-content {
   position: relative;
+}
+
+.cart-bordered-element {
+  @include margin-top(2rem);
+  padding-bottom: 1rem;
+  border-bottom: 1px solid $gray-200;
 }
 </style>

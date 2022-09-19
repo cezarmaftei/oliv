@@ -12,6 +12,9 @@ export default defineConfig({
       "@icons": fileURLToPath(
         new URL("./src/components/icons", import.meta.url)
       ),
+      // "@bootstrap": fileURLToPath(
+      //   new URL("./node_modules/bootstrap", import.meta.url)
+      // ),
       vue: "vue/dist/vue.esm-bundler.js",
     },
   },

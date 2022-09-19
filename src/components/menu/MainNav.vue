@@ -4,6 +4,7 @@ import FormLogin from "@/components/form/FormLogin.vue";
 import MenuProductCategories from "@/components/menu/MenuProductCategories.vue";
 import MenuUserAccount from "@/components/menu/MenuUserAccount.vue";
 import FormSearch from "@/components/form/FormSearch.vue";
+import CartQty from "@/components/cart/CartQty.vue";
 import NavbarBrand from "@/components/partials/NavbarBrand.vue";
 import IconCart from "@icons/IconCart.vue";
 import IconMenu from "@icons/IconMenu.vue";
@@ -112,14 +113,15 @@ onMounted(() => {
                 <button
                   v-if="store.isLoaded && route.params.slug !== 'finalizare'"
                   class="btn navbar-cart"
-                  @click="store.showCartDrawerAction"
+                  data-bs-toggle="offcanvas"
+                  data-bs-target="#cart-drawer"
+                  aria-controls="cart-drawer"
+                  @click="store.mergeCartProducts"
                 >
                   <IconCart />
-                  <span
+                  <CartQty
                     class="d-flex align-items-center justify-content-center"
-                    v-if="store.cartData.totalQty > 0"
-                    >{{ store.cartData.totalQty }}</span
-                  >
+                  />
                 </button>
                 <button class="btn navbar-cart" v-else><IconLoading /></button>
               </transition>
@@ -232,32 +234,10 @@ onMounted(() => {
     font-size: 2.3rem;
     color: $body-color;
   }
-
-  @include media-breakpoint-between(sm, md) {
-    font-size: 2.2rem;
-
-    span {
-      font-size: 2.8rem;
-    }
-  }
-
-  @include media-breakpoint-up(lg) {
-    font-size: 2.2rem;
-
-    span {
-      font-size: 2.8rem;
-    }
-  }
 }
 .mobile-menu-trigger {
   padding: 0;
   width: 2.5rem;
-
-  :deep {
-    svg {
-      max-width: 100%;
-    }
-  }
 }
 
 .navbar-cart-wrapper {
@@ -280,14 +260,6 @@ onMounted(() => {
     position: absolute;
     right: -0.5rem;
     top: -0.75rem;
-  }
-
-  :deep {
-    svg {
-      display: block;
-      width: 2.2rem;
-      height: 2.2rem;
-    }
   }
 }
 
@@ -325,18 +297,6 @@ onMounted(() => {
 .navbar-bot {
   @include padding(3rem 0);
   @include transition($transition-base);
-
-  :deep {
-    h3 {
-      overflow: hidden;
-      @include transition($transition-base);
-      max-height: 100px;
-    }
-
-    .btn-outline-dark {
-      width: 100%;
-    }
-  }
 }
 
 .navbar-total-price {
@@ -350,18 +310,6 @@ onMounted(() => {
 .scrolling {
   .navbar-bot {
     padding: 0;
-
-    :deep {
-      h3 {
-        max-height: 0;
-        margin: 0 !important;
-      }
-
-      .btn-outline-dark {
-        padding: 0.3rem 0.5rem;
-        width: 100%;
-      }
-    }
   }
 
   .secondary-navbar {
@@ -370,28 +318,8 @@ onMounted(() => {
   }
 }
 
-@include media-breakpoint-up(xs) {
-  .scrolling {
-    .navbar-bot {
-      :deep {
-        .btn-outline-dark {
-          padding: 0.3rem 0.7rem;
-        }
-      }
-    }
-  }
-}
-
 @include media-breakpoint-up(sm) {
   .scrolling {
-    .navbar-bot {
-      :deep {
-        .btn-outline-dark {
-          padding: 0.7rem 1.2rem;
-        }
-      }
-    }
-
     .navbar-call-us {
       display: flex;
       align-items: center;
@@ -401,6 +329,16 @@ onMounted(() => {
       span {
         margin-left: 1.5rem;
       }
+    }
+  }
+}
+
+@include media-breakpoint-between(sm, md) {
+  .navbar-call-us {
+    font-size: 2.2rem;
+
+    span {
+      font-size: 2.8rem;
     }
   }
 }
@@ -472,20 +410,17 @@ onMounted(() => {
     .mobile-menu-trigger {
       margin-left: 3rem;
     }
-    .navbar-bot {
-      padding: 0;
-      :deep {
-        .btn-outline-dark {
-          padding: 0.5rem 1rem;
-        }
-      }
-    }
   }
 }
 
 @include media-breakpoint-up(lg) {
   .navbar-call-us {
     margin-bottom: 2rem;
+    font-size: 2.2rem;
+
+    span {
+      font-size: 2.8rem;
+    }
   }
 
   .navbar-content-wrapper {
@@ -504,24 +439,10 @@ onMounted(() => {
     .navbar-call-us {
       font-size: 2.8rem;
     }
-
-    .navbar-bot {
-      padding: 0;
-      :deep {
-        .btn-outline-dark {
-          padding: 1.2rem 1rem;
-        }
-      }
-    }
   }
 }
 
 @include media-breakpoint-up(xl) {
-  :deep {
-    .search-wrapper {
-      max-width: 225px;
-    }
-  }
   .navbar-call-us {
     display: flex;
     justify-content: flex-end;
@@ -570,12 +491,6 @@ onMounted(() => {
 
     .navbar-cart-wrapper {
       margin-left: 3rem;
-    }
-
-    :deep {
-      .search-wrapper {
-        min-width: 225px;
-      }
     }
   }
 }

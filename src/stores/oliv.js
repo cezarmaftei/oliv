@@ -58,7 +58,7 @@ export const useOlivStore = defineStore({
       items: [],
       coupon: {
         codes: false,
-        error: false,
+        errorMsg: false,
       },
       addresses: {
         billing: false,
@@ -797,14 +797,6 @@ export const useOlivStore = defineStore({
     },
 
     /**
-     * Show the cart sidebar drawer
-     */
-    showCartDrawerAction() {
-      this.mergeCartProducts();
-      this.showCartDrawer = !this.showCartDrawer;
-    },
-
-    /**
      * Create order parameters to be sent to Woo via API and create a new order
      * @returns {Object} orderParams
      */
@@ -916,7 +908,7 @@ export const useOlivStore = defineStore({
     async addOrderCoupon(coupon) {
       // Check if the coupon input field is not empty
       if (!coupon) {
-        this.cartData.coupon.error = "Te rugam introdu codul cuponului!";
+        this.cartData.coupon.errorMsg = "Te rugam introdu codul cuponului!";
         return false;
       }
 
@@ -930,7 +922,7 @@ export const useOlivStore = defineStore({
       //     (couponData) => couponData.code === coupon
       //   );
       //   if (couponExists.length) {
-      //     this.cartData.coupon.error = "Cuponul este deja aplicat!";
+      //     this.cartData.coupon.errorMsg = "Cuponul este deja aplicat!";
       //     return false;
       //   }
       // }
@@ -951,7 +943,7 @@ export const useOlivStore = defineStore({
             });
           });
         } else {
-          this.cartData.coupon.error = "Cupon invalid!";
+          this.cartData.coupon.errorMsg = "Cupon invalid!";
         }
         this.storeLiveUpdate = false;
       });
