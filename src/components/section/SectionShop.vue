@@ -23,7 +23,7 @@ if (route.query.categorie) activeCat.value = route.query.categorie;
 <template>
   <div class="container" v-if="store.storeData.products">
     <div class="row row-products gy-2">
-      <TransitionGroup name="show-product">
+      <TransitionGroup name="scale-element">
         <div
           class="col-12 col-sm-6 col-xl-4 col-xxl-3"
           v-for="(product, productCount) in store.getProductsByCategory(
@@ -39,24 +39,6 @@ if (route.query.categorie) activeCat.value = route.query.categorie;
 </template>
 
 <style scoped lang="scss">
-.show-product-leave-active {
-  @include transition(all 0.1s cubic-bezier(0.75, 0.25, 0.13, 0.92));
-}
-
-.show-product-enter-active {
-  @include transition(all 0.15s 0.1s cubic-bezier(0.75, 0.25, 0.13, 0.92));
-}
-
-.show-product-enter-from,
-.show-product-leave-to {
-  transform: scale(0);
-}
-
-.show-product-enter-to,
-.show-product-leave-from {
-  transform: scale(1);
-}
-
 @include media-breakpoint-up(sm) {
   .row-products {
     margin: 0 0 -2px;

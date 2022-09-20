@@ -1,4 +1,5 @@
 <script setup>
+import ItemPrice from "@/components/partials/ItemPrice.vue";
 import { useOlivStore } from "@/stores/oliv.js";
 import { computed } from "vue";
 const store = useOlivStore();
@@ -14,10 +15,10 @@ const addressDistanceFees = computed(() =>
 <template>
   <div v-if="address.distance && addressDistanceFees">
     Pentru aceasta adresa comanda minima este de
-    {{ addressDistanceFees.min_amount }}lei<br />
-    Transportul costa {{ addressDistanceFees.fee }}lei<br />
+    <ItemPrice :price="addressDistanceFees.min_amount" /><br />
+    Transportul costa <ItemPrice :price="addressDistanceFees.fee" /><br />
     Pentru a beneficia de transport gratuit, comanda minima este de
-    {{ addressDistanceFees.free }}
+    <ItemPrice :price="addressDistanceFees.free" />
   </div>
   <div v-else>
     <p>

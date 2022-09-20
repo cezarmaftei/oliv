@@ -1,7 +1,6 @@
 <script setup>
+import CartHeader from "@/components/cart/CartHeader.vue";
 import CartContent from "@/components/cart/CartContent.vue";
-import CartQty from "@/components/cart/CartQty.vue";
-import BtnClose from "@/components/button/BtnClose.vue";
 </script>
 <template>
   <div
@@ -10,14 +9,17 @@ import BtnClose from "@/components/button/BtnClose.vue";
     id="cart-drawer"
     aria-labelledby="cart-drawer-label"
   >
-    <div class="offcanvas-header p-4">
-      <h2 class="offcanvas-title" id="cart-drawer-label">
-        Cosul tau <CartQty />
-      </h2>
-      <BtnClose type="button" data-bs-dismiss="offcanvas" aria-label="Close" />
-    </div>
-    <div class="offcanvas-body p-4 pt-0">
-      <CartContent />
+    <CartHeader :isOffCanvas="true" />
+    <div class="offcanvas-body">
+      <div class="offcanvas-content d-flex flex-column">
+        <CartContent :isOffCanvas="true" />
+      </div>
     </div>
   </div>
 </template>
+
+<style scoped lang="scss">
+.offcanvas-content {
+  height: 100%;
+}
+</style>

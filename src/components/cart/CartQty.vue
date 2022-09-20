@@ -24,7 +24,8 @@ const store = useOlivStore();
   }
 }
 
-.cart-drawer {
+.cart-drawer,
+.cart-page-header-title {
   .cart-qty {
     color: $gray-500;
 

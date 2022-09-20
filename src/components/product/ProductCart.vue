@@ -3,7 +3,7 @@ import { useOlivStore } from "@/stores/oliv.js";
 import { inject, ref } from "vue";
 import ErrorProduct from "@/components/error/ErrorProduct.vue";
 import LoadImage from "@/components/partials/LoadImage.vue";
-import ProductPrice from "@/components/product/ProductPrice.vue";
+import ItemPrice from "@/components/partials/ItemPrice.vue";
 import ProductWeight from "@/components/product/ProductWeight.vue";
 import { computed } from "vue";
 
@@ -16,6 +16,7 @@ const props = defineProps({
   cartItemIndex: Number,
   cartItem: Object,
   isCheckout: Boolean,
+  isOffCanvas: Boolean,
 });
 
 /**
@@ -102,8 +103,9 @@ const itemExtrasCount = computed(() => {
 
 <template>
   <div
-    class="card card-product-cart bg-white d-flex"
+    class="card card-product-cart d-flex"
     v-if="cartDrawerItems[cartItemIndex]"
+    :class="{ 'bg-white': isOffCanvas }"
   >
     <ErrorProduct v-if="cartItem.errorMsg" :productIndex="cartItemIndex" />
     <figure>
@@ -118,7 +120,7 @@ const itemExtrasCount = computed(() => {
 
       <div class="product-small-details d-flex">
         <ProductWeight :product="cartDrawerItems[cartItemIndex]" />
-        <ProductPrice class="ms-auto" :price="cartItem.itemTotal" />
+        <ItemPrice class="ms-auto" :price="cartItem.itemTotal" />
       </div>
 
       <div class="cart-item-actions d-flex align-items-center">
@@ -132,8 +134,7 @@ const itemExtrasCount = computed(() => {
           />
           <button @click="updateCartItemQty(1)">+</button>
         </div>
-
-        <ProductPrice
+        <ItemPrice
           class="ms-auto"
           :showX="true"
           :price="cartItem.productPrice"
@@ -149,10 +150,12 @@ const itemExtrasCount = computed(() => {
           Editeaza extra
           <strong>({{ itemExtrasCount }})</strong>
         </span>
-        <span v-else> Adauga extra </span>
+        <span v-else-if="cartItem.productExtras.length > 0">
+          Adauga extra
+        </span>
       </p>
 
-      <transition name="show-element">
+      <transition name="scale-element">
         <div
           v-show="showExtras"
           v-if="cartItem.productExtras.length > 0"
@@ -187,7 +190,7 @@ const itemExtrasCount = computed(() => {
               <button @click="updateCartItemExtraQty(extraIndex, 1)">+</button>
             </div>
 
-            <ProductPrice :showX="true" :price="extra.extraPrice" />
+            <ItemPrice :showX="true" :price="extra.extraPrice" />
             <p class="extra-name m-0">
               {{ extra.extraName }}
             </p>
@@ -199,22 +202,6 @@ const itemExtrasCount = computed(() => {
 </template>
 
 <style scoped lang="scss">
-.show-element-enter-active,
-.show-element-leave-active {
-  @include transition($transition-base);
-  overflow: hidden;
-}
-
-.show-element-enter-from,
-.show-element-leave-to {
-  max-height: 0;
-}
-
-.show-element-enter-to,
-.show-element-leave-from {
-  max-height: 300px;
-}
-
 .card-product-cart {
   @include padding-bottom(2rem);
   @include margin-bottom(2rem);
@@ -223,6 +210,7 @@ const itemExtrasCount = computed(() => {
 
 h3 {
   font-size: 2.2rem;
+  padding-right: 2.5rem;
 }
 
 figure {
@@ -336,6 +324,25 @@ figure {
 @include media-breakpoint-up(xs) {
   h3 {
     font-size: 2.6rem;
+  }
+
+  figure {
+    flex: 0 0 10rem;
+    height: 10rem;
+  }
+}
+
+@include media-breakpoint-up(lg) {
+  .cart-page-inner {
+    h3 {
+      font-size: 3.2rem;
+    }
+
+    .product-small-details {
+      .price {
+        font-size: 3.2rem;
+      }
+    }
   }
 }
 </style>

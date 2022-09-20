@@ -1,5 +1,6 @@
 <script setup>
 import ProductOrder from "@/components/product/ProductOrder.vue";
+import ItemPrice from "@/components/partials/ItemPrice.vue";
 
 defineProps({
   order: Object,
@@ -38,7 +39,7 @@ const dateToLocale = (dateString) => {
       <div class="order-totals text-end">
         <div class="order-subtotal d-flex">
           <div>Subtotal</div>
-          <div>{{ order.total }}lei</div>
+          <div><ItemPrice :price="order.total" /></div>
         </div>
         <div class="order-coupons" v-if="order.coupon_lines.length">
           <div

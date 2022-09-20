@@ -7,6 +7,7 @@ import FooterInternal from "@/components/FooterInternal.vue";
 // Dynamic components
 import SectionSplash from "@/components/section/SectionSplash.vue";
 import SectionShop from "@/components/section/SectionShop.vue";
+import SectionCart from "@/components/section/SectionCart.vue";
 import SectionCheckout from "@/components/section/SectionCheckout.vue";
 import SectionAccount from "@/components/section/SectionAccount.vue";
 
@@ -49,6 +50,11 @@ provide("showUserMenuItems", showUserMenuItems);
         v-if="pageSection.acf_fc_layout === 'SectionShop'"
         :content="pageSection"
       ></SectionShop>
+
+      <SectionCart
+        v-if="pageSection.acf_fc_layout === 'SectionCart'"
+        :content="pageSection"
+      ></SectionCart>
 
       <SectionCheckout
         v-if="pageSection.acf_fc_layout === 'SectionCheckout'"

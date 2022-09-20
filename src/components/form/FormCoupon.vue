@@ -18,28 +18,13 @@ const couponCode = ref("");
   >
     <input type="text" v-model="couponCode" placeholder="xxxxxx" required />
     <button type="submit" class="btn">Aplica codul</button>
-    <transition name="show-element">
+    <transition name="scale-element">
       <ErrorCoupon v-if="store.cartData.coupon.errorMsg" />
     </transition>
   </form>
 </template>
 
 <style scoped lang="scss">
-.show-element-enter-active,
-.show-element-leave-active {
-  @include transition($transition-base);
-  overflow: hidden;
-}
-
-.show-element-enter-from,
-.show-element-leave-to {
-  max-height: 0;
-}
-
-.show-element-enter-to,
-.show-element-leave-from {
-  max-height: 300px;
-}
 ::placeholder {
   color: $body-color;
   opacity: 1;
@@ -77,8 +62,8 @@ const couponCode = ref("");
     padding-right: 1rem;
 
     &:hover {
-      background: $olive;
-      color: $white;
+      background: $yellow-200;
+      color: $body-color;
     }
   }
 
@@ -88,7 +73,8 @@ const couponCode = ref("");
     padding: 1rem;
   }
 
-  @include media-breakpoint-up(md) {
+  @include media-breakpoint-up(xs) {
+    .btn,
     input {
       font-size: 2.6rem;
     }

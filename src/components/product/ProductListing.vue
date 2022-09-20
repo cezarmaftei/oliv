@@ -3,7 +3,7 @@ import { useOlivStore } from "@/stores/oliv.js";
 import LoadImage from "@/components/partials/LoadImage.vue";
 import AddToCart from "@/components/button/AddToCart.vue";
 import ProductWeight from "@/components/product/ProductWeight.vue";
-import ProductPrice from "@/components/product/ProductPrice.vue";
+import ItemPrice from "@/components/partials/ItemPrice.vue";
 import { onMounted, ref } from "vue";
 import { computed } from "vue";
 
@@ -137,7 +137,7 @@ const updateProductExtraQty = (extraId, value, isNewValue, isFocusOut) => {
 /**
  * Update product price on single product display
  */
-const currentProductPrice = computed(() => {
+const currentItemPrice = computed(() => {
   let price = productQtys.value.productQty * props.product.price;
 
   if (currentProductExtras) {
@@ -210,7 +210,7 @@ const currentProductPrice = computed(() => {
         >
           <p class="extra-name mb-1">
             {{ extra._name }}
-            <span>+{{ extra._price }} lei</span>
+            <span>+ <ItemPrice :price="extra._price" /></span>
           </p>
           <div class="quantity-wrap">
             <button @click="updateProductExtraQty(extra._id, -1)">-</button>
@@ -237,7 +237,7 @@ const currentProductPrice = computed(() => {
 
       <div class="single-product-add">
         <span class="price-tag d-none d-md-block pe-0">Pret</span>
-        <ProductPrice :price="currentProductPrice" />
+        <ItemPrice :price="currentItemPrice" />
         <AddToCart @click="addToCart(productQtys.productQty, $event.target)">
           <span>+{{ productQtys.productQty }}</span>
         </AddToCart>
@@ -246,7 +246,7 @@ const currentProductPrice = computed(() => {
     <!-- Product listing -->
     <div v-else class="product-actions d-flex align-items-center">
       <ProductWeight :product="product" class="d-sm-none" />
-      <ProductPrice :price="productPrice" />
+      <ItemPrice :price="productPrice" />
       <AddToCart @click="addToCart(1, $event.target)">
         <span>+1</span>
       </AddToCart>

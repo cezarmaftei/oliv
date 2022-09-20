@@ -51,6 +51,15 @@
     background: $bg-btn-red no-repeat center center / 200px;
   }
 
+  &.reverse {
+    background-size: 200px;
+
+    &:hover:not(.active) {
+      color: $dark;
+      background-size: 0;
+    }
+  }
+
   @include media-breakpoint-up(lg) {
     &.active,
     &:hover:not(.active) {
@@ -137,6 +146,20 @@
 
     &:focus-visible {
       outline: 0;
+    }
+  }
+}
+
+.card-product-cart {
+  @include media-breakpoint-between(xxs, xs) {
+    .quantity-wrap {
+      width: 9.4rem;
+
+      input {
+        flex: 0 0 3rem;
+        max-width: 3rem;
+        height: 3rem;
+      }
     }
   }
 }

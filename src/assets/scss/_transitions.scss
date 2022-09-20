@@ -25,3 +25,21 @@
   }
 }
 // scss-docs-end collapse-classes
+
+.scale-element-leave-active {
+  @include transition(all 0.1s cubic-bezier(0.75, 0.25, 0.13, 0.92));
+}
+
+.scale-element-enter-active {
+  @include transition(all 0.15s 0.1s cubic-bezier(0.75, 0.25, 0.13, 0.92));
+}
+
+.scale-element-enter-from,
+.scale-element-leave-to {
+  transform: scale(0);
+}
+
+.scale-element-enter-to,
+.scale-element-leave-from {
+  transform: scale(1);
+}

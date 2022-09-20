@@ -6,12 +6,14 @@ import MenuUserAccount from "@/components/menu/MenuUserAccount.vue";
 import FormSearch from "@/components/form/FormSearch.vue";
 import CartQty from "@/components/cart/CartQty.vue";
 import NavbarBrand from "@/components/partials/NavbarBrand.vue";
+import ItemPrice from "@/components/partials/ItemPrice.vue";
 import IconCart from "@icons/IconCart.vue";
 import IconMenu from "@icons/IconMenu.vue";
 import IconLoading from "@icons/IconLoading.vue";
 import { inject, onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import { useOlivStore } from "@/stores/oliv.js";
+import { computed } from "vue";
 
 const route = useRoute();
 const store = useOlivStore();
@@ -40,6 +42,16 @@ onMounted(() => {
     };
   }
 });
+
+const showMenuCart = computed(() => {
+  if (
+    route.params.slug &&
+    route.params.slug.indexOf(["finalizare", "cos"]) === -1
+  )
+    return false;
+
+  return true;
+});
 </script>
 <template>
   <nav
@@ -59,7 +71,7 @@ onMounted(() => {
           <NavbarBrand />
         </div>
 
-        <transition name="show-element">
+        <transition name="scale-element">
           <div
             v-if="!isClone && store.isLoaded"
             class="navbar-content-wrapper text-center d-none d-md-block"
@@ -105,13 +117,13 @@ onMounted(() => {
                 </div>
               </div>
             </div>
-
             <div
+              v-if="showMenuCart"
               class="navbar-cart-wrapper d-flex align-items-center text-center"
             >
-              <transition name="show-element">
+              <transition name="scale-element">
                 <button
-                  v-if="store.isLoaded && route.params.slug !== 'finalizare'"
+                  v-if="store.isLoaded"
                   class="btn navbar-cart"
                   data-bs-toggle="offcanvas"
                   data-bs-target="#cart-drawer"
@@ -126,12 +138,12 @@ onMounted(() => {
                 <button class="btn navbar-cart" v-else><IconLoading /></button>
               </transition>
 
-              <transition name="show-element">
+              <transition name="scale-element">
                 <div
                   v-if="store.isLoaded && store.cartData.totalPrice"
                   class="navbar-total-price"
                 >
-                  {{ store.cartData.totalPrice }} lei
+                  <ItemPrice :price="store.cartData.totalPrice" />
                 </div>
               </transition>
             </div>
@@ -181,27 +193,10 @@ onMounted(() => {
 </template>
 
 <style scoped lang="scss">
-.show-element-leave-active {
-  @include transition(all 0.1s cubic-bezier(0.75, 0.25, 0.13, 0.92));
-}
-
-.show-element-enter-active {
-  @include transition(all 0.15s 0.1s cubic-bezier(0.75, 0.25, 0.13, 0.92));
-}
-
-.show-element-enter-from,
-.show-element-leave-to {
-  transform: scale(0);
-}
-
-.show-element-enter-to,
-.show-element-leave-from {
-  transform: scale(1);
-}
 .main-nav {
   &.cloned {
     transform: translateY(-100%);
-    @include transition($transition-base);
+    @include transition(transform 0.2s linear);
 
     &.scrolling {
       transform: translateY(0);

@@ -23,4 +23,9 @@
   @include rfs(2rem, top);
   @include rfs(2rem, right);
 }
+
+.offcanvas-header .btn-close {
+  @include rfs(4rem, top);
+  @include rfs(4rem, right);
+}
 </style>
