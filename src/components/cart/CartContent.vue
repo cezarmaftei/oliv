@@ -72,7 +72,7 @@ store.$subscribe((mutation, state) => {
     :class="{ 'd-flex flex-column flex-grow-1': isOffCanvas }"
   >
     <div class="cart-subtotal" :class="{ 'px-4': isOffCanvas }">
-      <div class="d-flex cart-bordered-element">
+      <div class="d-flex cart-bordered-element mt-0">
         <div>Total produse</div>
         <div class="ms-auto">
           <strong><ItemPrice :price="store.cartData.subTotal" /></strong>
@@ -134,9 +134,14 @@ store.$subscribe((mutation, state) => {
 
 <style scoped lang="scss">
 .cart-bordered-element {
-  @include margin-top(2rem);
+  margin-top: 1rem;
   padding-bottom: 1rem;
   border-bottom: 1px solid $gray-200;
+
+  @include media-breakpoint-up(lg) {
+    margin-top: 1.5rem;
+    padding-bottom: 1.5rem;
+  }
 }
 
 .cart-total {
@@ -164,20 +169,14 @@ store.$subscribe((mutation, state) => {
   .cart-page-inner {
     .cart-content {
       flex-grow: 1;
-      max-width: 55%;
+      max-width: 50%;
     }
     .cart-totals {
       background: $white;
-      max-width: 380px;
+      max-width: 40rem;
       margin-left: auto;
       position: sticky;
       top: 110px;
-    }
-
-    .cart-subtotal {
-      > .cart-bordered-element:first-child {
-        margin-top: 0;
-      }
     }
 
     .cart-subtotal,
@@ -190,6 +189,14 @@ store.$subscribe((mutation, state) => {
     .cart-total > *:first-child {
       border-top: 0;
       @include padding(4rem 4rem 0);
+    }
+  }
+}
+
+@include media-breakpoint-up(xl) {
+  .cart-page-inner {
+    .cart-content {
+      max-width: 55%;
     }
   }
 }

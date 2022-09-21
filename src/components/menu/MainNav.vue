@@ -3,10 +3,10 @@ import VRuntimeTemplate from "vue3-runtime-template";
 import FormLogin from "@/components/form/FormLogin.vue";
 import MenuProductCategories from "@/components/menu/MenuProductCategories.vue";
 import MenuUserAccount from "@/components/menu/MenuUserAccount.vue";
-import FormSearch from "@/components/form/FormSearch.vue";
 import CartQty from "@/components/cart/CartQty.vue";
 import NavbarBrand from "@/components/partials/NavbarBrand.vue";
 import ItemPrice from "@/components/partials/ItemPrice.vue";
+import BtnSearch from "@/components/button/BtnSearch.vue";
 import IconCart from "@icons/IconCart.vue";
 import IconMenu from "@icons/IconMenu.vue";
 import IconLoading from "@icons/IconLoading.vue";
@@ -46,7 +46,7 @@ onMounted(() => {
 const showMenuCart = computed(() => {
   if (
     route.params.slug &&
-    route.params.slug.indexOf(["finalizare", "cos"]) === -1
+    ["finalizare", "cos"].indexOf(route.params.slug) !== -1
   )
     return false;
 
@@ -99,7 +99,7 @@ const showMenuCart = computed(() => {
             }}</span></a
           >
 
-          <FormSearch class="d-none d-xl-block" />
+          <BtnSearch class="d-none d-xl-inline-block" />
 
           <div class="navbar-buttons d-flex justify-content-end">
             <div
@@ -110,11 +110,9 @@ const showMenuCart = computed(() => {
                 <router-link to="/contul-meu">Contul Meu</router-link>
               </div>
               <div v-else>
-                <button @click="showLoginForm = !showLoginForm">Login</button>
-                <div class="login-form" v-show="showLoginForm">
-                  <p>Introdu numele de utilizator si parola:</p>
-                  <FormLogin />
-                </div>
+                <a data-bs-toggle="modal" href="#login-modal" role="button"
+                  >Contul Meu</a
+                >
               </div>
             </div>
             <div
@@ -168,14 +166,12 @@ const showMenuCart = computed(() => {
             <router-link to="/contul-meu">Contul Meu</router-link>
           </div>
           <div v-else>
-            <button @click="showLoginForm = !showLoginForm">Login</button>
-            <div class="login-form" v-show="showLoginForm">
-              <p>Introdu numele de utilizator si parola:</p>
-              <FormLogin />
-            </div>
+            <a data-bs-toggle="modal" href="#login-modal" role="button"
+              >Contul Meu</a
+            >
           </div>
         </div>
-        <FormSearch />
+        <BtnSearch />
       </div>
     </div>
     <div

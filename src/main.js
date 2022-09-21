@@ -8,7 +8,7 @@ import CurrentYear from "@/components/partials/CurrentYear.vue";
 
 import "./assets/scss/bootstrap.scss";
 
-import { Offcanvas } from "bootstrap";
+import { Offcanvas, Modal } from "bootstrap";
 
 const app = createApp(App);
 

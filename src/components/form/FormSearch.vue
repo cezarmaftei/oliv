@@ -11,11 +11,11 @@ defineProps({
   <div class="search-wrapper" @submit.prevent>
     <form autocomplete="off">
       <input
+        id="search-input"
         type="search"
         name="q"
         placeholder="cauta"
         v-model="store.searchData.searchString"
-        :focus="isMain && store.searchData.searchString.length"
       />
     </form>
   </div>

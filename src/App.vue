@@ -3,7 +3,8 @@ import { RouterView, useRoute } from "vue-router";
 import { useOlivStore } from "@/stores/oliv.js";
 import { MutationType } from "pinia";
 import { provide, ref, watch } from "vue";
-import SectionSearchResults from "@/components/section/SectionSearchResults.vue";
+import ModalSearchResults from "@/components/partials/ModalSearchResults.vue";
+import ModalLogin from "@/components/partials/ModalLogin.vue";
 
 const route = useRoute();
 const store = useOlivStore();
@@ -33,7 +34,8 @@ watch(
 
 <template>
   <div class="page d-flex flex-column pb-14">
-    <SectionSearchResults />
+    <ModalLogin />
+    <ModalSearchResults />
     <RouterView />
   </div>
 </template>

@@ -767,6 +767,51 @@ $offcanvas-backdrop-bg:             $black !default;
 $offcanvas-backdrop-opacity:        0.4 !default;
 // scss-docs-end offcanvas-variables
 
+// Modals
+
+// scss-docs-start modal-variables
+$modal-inner-padding:               4rem !default;
+
+$modal-footer-margin-between:       1rem !default;
+
+$modal-dialog-margin:               1rem !default;
+$modal-dialog-margin-y-sm-up:       3rem !default;
+
+$modal-title-line-height:           $line-height-base !default;
+
+$modal-content-color:               null !default;
+$modal-content-bg:                  $white !default;
+$modal-content-border-color:        var(--#{$prefix}border-color-translucent) !default;
+$modal-content-border-width:        $border-width !default;
+$modal-content-border-radius:       $border-radius-lg !default;
+$modal-content-inner-border-radius: subtract($modal-content-border-radius, $modal-content-border-width) !default;
+$modal-content-box-shadow-xs:       $box-shadow-sm !default;
+$modal-content-box-shadow-sm-up:    $box-shadow !default;
+
+$modal-backdrop-bg:                 $black !default;
+$modal-backdrop-opacity:            .5 !default;
+
+$modal-header-border-color:         var(--#{$prefix}border-color) !default;
+$modal-header-border-width:         $modal-content-border-width !default;
+$modal-header-padding-y:            $modal-inner-padding !default;
+$modal-header-padding-x:            $modal-inner-padding !default;
+$modal-header-padding:              $modal-header-padding-y $modal-header-padding-x !default; // Keep this for backwards compatibility
+
+$modal-footer-bg:                   null !default;
+$modal-footer-border-color:         $modal-header-border-color !default;
+$modal-footer-border-width:         $modal-header-border-width !default;
+
+$modal-sm:                          300px !default;
+$modal-md:                          500px !default;
+$modal-lg:                          800px !default;
+$modal-xl:                          1140px !default;
+
+$modal-fade-transform:              translate(0, -50px) !default;
+$modal-show-transform:              none !default;
+$modal-transition:                  transform .3s ease-out !default;
+$modal-scale-transform:             scale(1.02) !default;
+// scss-docs-end modal-variables
+
 // Icons
 $logo-oliv-bg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 86.67 47.2'%3E%3Cpath d='M27.84 32.65c0 8.68-5.6 14.55-13.9 14.55S0 41.33 0 32.65 5.6 18.16 13.94 18.16s13.9 5.76 13.9 14.49m-20.36.11c0 4.65 2.6 7.83 6.46 7.83s6.47-3.18 6.47-7.83-2.65-7.83-6.47-7.83S7.48 28.1 7.48 32.76' /%3E%3Crect x='29.16' y='7.44' width='7.35' height='39.44' /%3E%3Cpolygon points='59.99 46.88 49.2 18.48 57.61 18.42 64.33 39.16 70.99 18.42 79.08 18.42 68.35 46.88 59.99 46.88' /%3E%3Crect x='39.56' y='18.44' width='8.16' height='28.44' /%3E%3Cpath d='M47.93 0S37.11 3.27 42.56 16.1c0 0 8.51-5.26 5.37-16.1M43.39 13.28c-3-4.39 1.42-9.67 2.9-11.23.27-.29.45-.45.45-.45C42.28 9 43.39 13.28 43.39 13.28' /%3E%3Cpath d='M86.67 20.45a2.3 2.3 0 0 1-2.3 2.31 2.27 2.27 0 0 1-2.28-2.29 2.29 2.29 0 1 1 4.58 0m-.38 0a1.91 1.91 0 1 0-1.92 1.91 1.91 1.91 0 0 0 1.92-1.91m-1.41.32.53.77H85l-.43-.69H83.9v.69h-.39V19.25h.92c.6 0 .93.28.93.78a.74.74 0 0 1-.48.74m-.45-.25c.35 0 .56-.17.56-.48s-.21-.47-.56-.47H83.9v.95Z' /%3E%3C/svg%3E") !default;
 
