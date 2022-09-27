@@ -19,7 +19,12 @@ const router = createRouter({
     {
       path: "/meniu/:slug",
       name: "product",
-      component: () => import("@/views/ProductView.vue"),
+      component: () => import("@/views/PageView.vue"),
+    },
+    {
+      path: "/contul-meu/:slug",
+      name: "account",
+      component: () => import("@/views/PageView.vue"),
     },
     {
       path: "/:pathMatch(.*)*",

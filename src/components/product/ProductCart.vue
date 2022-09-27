@@ -1,6 +1,6 @@
 <script setup>
 import { useOlivStore } from "@/stores/oliv.js";
-import { inject, ref } from "vue";
+import { ref } from "vue";
 import ErrorProduct from "@/components/error/ErrorProduct.vue";
 import LoadImage from "@/components/partials/LoadImage.vue";
 import ItemPrice from "@/components/partials/ItemPrice.vue";
@@ -9,8 +9,6 @@ import { computed } from "vue";
 
 const store = useOlivStore();
 const showExtras = ref(false);
-
-const cartDrawerItems = inject("cartDrawerItems");
 
 const props = defineProps({
   cartItemIndex: Number,
@@ -104,35 +102,35 @@ const itemExtrasCount = computed(() => {
 <template>
   <div
     class="card card-product-cart d-flex"
-    v-if="cartDrawerItems[cartItemIndex]"
     :class="{ 'bg-white': isOffCanvas }"
   >
     <ErrorProduct v-if="cartItem.errorMsg" :productIndex="cartItemIndex" />
     <figure>
-      <LoadImage
-        :id="cartDrawerItems[cartItemIndex].images[0].id"
-        size="medium"
-      />
+      <LoadImage :id="cartItem.thumbId" size="medium" />
     </figure>
     <div class="card-content">
-      <button class="btn btn-delete" @click="removeFromCart()"></button>
-      <h3 class="mb-0">{{ cartDrawerItems[cartItemIndex].name }}</h3>
+      <button
+        type="button"
+        class="btn btn-delete"
+        @click="removeFromCart()"
+      ></button>
+      <h3 class="mb-0">{{ cartItem.name }}</h3>
 
       <div class="product-small-details d-flex">
-        <ProductWeight :product="cartDrawerItems[cartItemIndex]" />
+        <ProductWeight :weight="cartItem.productWeight" />
         <ItemPrice class="ms-auto" :price="cartItem.itemTotal" />
       </div>
 
       <div class="cart-item-actions d-flex align-items-center">
         <div class="quantity-wrap">
-          <button @click="updateCartItemQty(-1)">-</button>
+          <button type="button" @click="updateCartItemQty(-1)">-</button>
           <input
             type="text"
             @keyup="updateCartItemQty($event.target.value, true)"
             :value="store.cartData.items[cartItemIndex].productQty"
             readonly
           />
-          <button @click="updateCartItemQty(1)">+</button>
+          <button type="button" @click="updateCartItemQty(1)">+</button>
         </div>
         <ItemPrice
           class="ms-auto"
@@ -155,7 +153,7 @@ const itemExtrasCount = computed(() => {
         </span>
       </p>
 
-      <transition name="scale-element">
+      <transition name="height-element-sm">
         <div
           v-show="showExtras"
           v-if="cartItem.productExtras.length > 0"
@@ -167,7 +165,12 @@ const itemExtrasCount = computed(() => {
             :key="extra"
           >
             <div class="quantity-wrap">
-              <button @click="updateCartItemExtraQty(extraIndex, -1)">-</button>
+              <button
+                type="button"
+                @click="updateCartItemExtraQty(extraIndex, -1)"
+              >
+                -
+              </button>
               <input
                 type="text"
                 readonly
@@ -187,7 +190,12 @@ const itemExtrasCount = computed(() => {
                   )
                 "
               />
-              <button @click="updateCartItemExtraQty(extraIndex, 1)">+</button>
+              <button
+                type="button"
+                @click="updateCartItemExtraQty(extraIndex, 1)"
+              >
+                +
+              </button>
             </div>
 
             <ItemPrice :showX="true" :price="extra.extraPrice" />

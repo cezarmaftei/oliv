@@ -1,0 +1,82 @@
+::placeholder {
+  /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: $gray-400;
+  opacity: 1; /* Firefox */
+}
+
+:-ms-input-placeholder {
+  /* Internet Explorer 10-11 */
+  color: $gray-400;
+}
+
+::-ms-input-placeholder {
+  /* Microsoft Edge */
+  color: $gray-400;
+}
+
+.form-control {
+  width: 100%;
+  background: none;
+  border: 2px solid $border-color;
+  color: $gray-500;
+  font-family: $font-family-lanekcut;
+  font-size: 2rem;
+  line-height: 0.6;
+  height: 4.2rem;
+  padding: 1.5rem;
+
+  @include media-breakpoint-up(md) {
+    height: 5.2rem;
+    font-size: 2.6rem;
+  }
+}
+
+textarea.form-control {
+  height: 10rem;
+  resize: none;
+}
+
+label.form-control {
+  input {
+    display: inline-block;
+    margin-right: 0.5rem;
+    vertical-align: middle;
+    width: 1.4rem;
+    height: 1.4rem;
+    background-color: $white;
+    background-size: contain;
+    box-shadow: inset 0px 0px 0px 1px rgba($white, 1);
+    border: 2px solid $border-color;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    -webkit-print-color-adjust: exact;
+    color-adjust: exact;
+    print-color-adjust: exact;
+
+    &:checked {
+      background-color: $olive;
+    }
+
+    &[type="radio"] {
+      border-radius: 50%;
+    }
+  }
+
+  &.form-link {
+    border: 0;
+    padding: 0;
+  }
+}
+
+.checkout-inner {
+  .form-group {
+    @include padding-bottom(3rem);
+    @include margin-bottom(3rem);
+    border-bottom: 1px solid $gray-300;
+  }
+
+  h3 {
+    @include margin-bottom(2rem);
+  }
+}

@@ -1,8 +1,6 @@
 <script setup>
 import VRuntimeTemplate from "vue3-runtime-template";
-import FormLogin from "@/components/form/FormLogin.vue";
 import MenuProductCategories from "@/components/menu/MenuProductCategories.vue";
-import MenuUserAccount from "@/components/menu/MenuUserAccount.vue";
 import CartQty from "@/components/cart/CartQty.vue";
 import NavbarBrand from "@/components/partials/NavbarBrand.vue";
 import ItemPrice from "@/components/partials/ItemPrice.vue";
@@ -10,7 +8,7 @@ import BtnSearch from "@/components/button/BtnSearch.vue";
 import IconCart from "@icons/IconCart.vue";
 import IconMenu from "@icons/IconMenu.vue";
 import IconLoading from "@icons/IconLoading.vue";
-import { inject, onMounted, ref } from "vue";
+import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import { useOlivStore } from "@/stores/oliv.js";
 import { computed } from "vue";
@@ -18,9 +16,6 @@ import { computed } from "vue";
 const route = useRoute();
 const store = useOlivStore();
 
-const showMenuProductCats = inject("showMenuProductCats");
-
-const showLoginForm = ref(false);
 const showMobileMenu = ref(false);
 
 const mainNav = ref(false);
@@ -44,10 +39,7 @@ onMounted(() => {
 });
 
 const showMenuCart = computed(() => {
-  if (
-    route.params.slug &&
-    ["finalizare", "cos"].indexOf(route.params.slug) !== -1
-  )
+  if (route.params.slug && ["finalizare", "cos"].includes(route.params.slug))
     return false;
 
   return true;
@@ -73,16 +65,11 @@ const showMenuCart = computed(() => {
 
         <transition name="scale-element">
           <div
-            v-if="!isClone && store.isLoaded"
+            v-if="!isClone && store.getPageBySlug(route).acf"
             class="navbar-content-wrapper text-center d-none d-md-block"
           >
             <v-runtime-template
-              v-if="
-                store.currentPage &&
-                store.currentPage.acf &&
-                store.currentPage.acf.page_header_content
-              "
-              :template="store.currentPage.acf.page_header_content"
+              :template="store.getPageBySlug(route).acf.page_header_content"
             ></v-runtime-template>
           </div>
         </transition>
@@ -115,34 +102,32 @@ const showMenuCart = computed(() => {
                 >
               </div>
             </div>
-            <div
-              v-if="showMenuCart"
-              class="navbar-cart-wrapper d-flex align-items-center text-center"
-            >
+            <div v-if="showMenuCart" class="navbar-cart-wrapper">
               <transition name="scale-element">
                 <button
                   v-if="store.isLoaded"
-                  class="btn navbar-cart"
+                  class="btn navbar-cart d-flex align-items-center text-center"
                   data-bs-toggle="offcanvas"
                   data-bs-target="#cart-drawer"
                   aria-controls="cart-drawer"
                   @click="store.mergeCartProducts"
                 >
-                  <IconCart />
-                  <CartQty
-                    class="d-flex align-items-center justify-content-center"
-                  />
+                  <span class="cart-icon">
+                    <IconCart />
+                    <CartQty
+                      class="d-flex align-items-center justify-content-center"
+                    />
+                  </span>
+
+                  <span class="navbar-total-price">
+                    <ItemPrice
+                      v-if="store.cartData.totalPrice"
+                      :price="store.cartData.totalPrice"
+                    />
+                    <ItemPrice v-else :price="0" />
+                  </span>
                 </button>
                 <button class="btn navbar-cart" v-else><IconLoading /></button>
-              </transition>
-
-              <transition name="scale-element">
-                <div
-                  v-if="store.isLoaded && store.cartData.totalPrice"
-                  class="navbar-total-price"
-                >
-                  <ItemPrice :price="store.cartData.totalPrice" />
-                </div>
               </transition>
             </div>
 
@@ -174,14 +159,10 @@ const showMenuCart = computed(() => {
         <BtnSearch />
       </div>
     </div>
-    <div
-      v-if="showMenuProductCats || route.params.slug === 'contul-meu'"
-      class="navbar-bot"
-    >
+    <div class="navbar-bot">
       <div class="container">
         <div class="secondary-navbar">
-          <MenuProductCategories v-if="showMenuProductCats" />
-          <MenuUserAccount v-if="route.params.slug === 'contul-meu'" />
+          <MenuProductCategories />
         </div>
       </div>
     </div>
@@ -237,11 +218,13 @@ const showMenuCart = computed(() => {
 }
 
 .navbar-cart {
-  position: relative;
-  padding: 0;
-  margin-right: 0.5rem;
+  .cart-icon {
+    position: relative;
+    padding: 0;
+    margin-right: 0.5rem;
+  }
 
-  span {
+  .cart-qty {
     border-radius: 50%;
     background: $olive;
     color: $white;
@@ -357,6 +340,10 @@ const showMenuCart = computed(() => {
 
   .navbar-cart-wrapper {
     margin-right: auto;
+  }
+
+  .navbar-cart {
+    padding: 0;
   }
 
   .mobile-menu-trigger {

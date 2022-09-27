@@ -10,15 +10,20 @@ const store = useOlivStore();
       store.userActions('reset', null, store.userData.credentials.user, null)
     "
   >
-    <label for="user-email">Introdu adresa de email:</label><br />
-    <input
-      type="email"
-      id="user-email"
-      required
-      autocomplete="username"
-      v-model.lazy="store.userData.credentials.user"
-    /><br />
-    <button type="submit">Reseteaza parola</button>
+    <div class="mb-2">
+      <input
+        class="form-control"
+        placeholder="Introdu adresa de email"
+        type="email"
+        id="user-email"
+        required
+        autocomplete="username"
+        v-model.lazy="store.userData.credentials.user"
+      />
+    </div>
+    <button class="btn btn-outline-dark reverse" type="submit">
+      Reseteaza parola
+    </button>
     <div class="error-message" v-if="store.userData.error">
       {{ store.userData.error }}
     </div>

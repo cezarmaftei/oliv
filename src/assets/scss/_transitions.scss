@@ -43,3 +43,35 @@
 .scale-element-leave-from {
   transform: scale(1);
 }
+
+.height-element-enter-active,
+.height-element-leave-active {
+  @include transition($transition-base);
+  overflow: hidden;
+}
+
+.height-element-enter-from,
+.height-element-leave-to {
+  max-height: 0;
+}
+
+.height-element-enter-to,
+.height-element-leave-from {
+  max-height: 100rem;
+}
+
+.height-element-sm-enter-active,
+.height-element-sm-leave-active {
+  @include transition($transition-base);
+  overflow: hidden;
+}
+
+.height-element-sm-enter-from,
+.height-element-sm-leave-to {
+  max-height: 0;
+}
+
+.height-element-sm-enter-to,
+.height-element-sm-leave-from {
+  max-height: 30rem;
+}

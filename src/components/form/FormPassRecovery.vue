@@ -19,11 +19,15 @@ const route = useRoute();
     "
   >
     <input
+      class="form-control"
+      placeholder="Introdu parola noua"
       type="text"
       autocomplete="new-password"
       v-model.lazy="store.userData.credentials.pass"
     /><br />
-    <button type="submit">Seteaza parola noua</button>
+    <button class="btn btn-outline-dark reverse" type="submit">
+      Seteaza parola noua
+    </button>
   </form>
 
   <div class="error-message" v-if="store.userData.error">

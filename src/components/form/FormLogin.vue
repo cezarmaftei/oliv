@@ -27,32 +27,49 @@ const cancelledEmitAction = () => {
 </script>
 <template>
   <form @submit.prevent="logInUser">
-    <input
-      type="text"
-      required
-      autocomplete="username"
-      v-model.lazy="store.userData.credentials.user"
-    /><br />
-    <input
-      type="password"
-      required
-      autocomplete="current-password"
-      v-model.lazy="store.userData.credentials.pass"
-    /><br />
-    <button type="submit">Log In</button>
+    <div class="mb-2">
+      <input
+        class="form-control"
+        placeholder="utilizator"
+        type="text"
+        required
+        autocomplete="username"
+        v-model.lazy="store.userData.credentials.user"
+      />
+    </div>
+
+    <div class="mb-2">
+      <input
+        class="form-control"
+        placeholder="parola"
+        type="password"
+        required
+        autocomplete="current-password"
+        v-model.lazy="store.userData.credentials.pass"
+      /><br />
+    </div>
+
+    <button class="btn btn-outline-dark reverse" type="submit">
+      Intra in cont
+    </button>
     <div class="success-message" v-if="store.userData.loggedIn">
       {{ store.userData.loggedIn }}
     </div>
     <div class="error-message" v-if="store.userData.error">
       {{ store.userData.error }}
     </div>
+
+    <div class="d-xs-flex mt-2" v-if="!store.userData.loggedIn">
+      <router-link to="/contul-meu?action=reset" @click="cancelledEmitAction"
+        >Mi-am uitat parola</router-link
+      >
+      <br class="d-xs-none" />
+      <router-link
+        to="/contul-meu?action=create"
+        class="ms-auto"
+        @click="cancelledEmitAction"
+        >Creeaza cont nou</router-link
+      >
+    </div>
   </form>
-  <div v-if="!store.userData.loggedIn">
-    <router-link to="/contul-meu?action=reset" @click="cancelledEmitAction"
-      >Mi-am uitat parola</router-link
-    >
-    <router-link to="/contul-meu?action=create" @click="cancelledEmitAction"
-      >Creeaza cont nou</router-link
-    >
-  </div>
 </template>

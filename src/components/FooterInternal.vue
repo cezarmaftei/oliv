@@ -29,7 +29,7 @@ const store = useOlivStore();
               <NavbarBrand class="invisible footer-brand" />
             </div>
           </div>
-          <div v-if="store.currentPage" class="footer-bot">
+          <div class="footer-bot">
             <div class="row align-items-center">
               <div class="col-12 col-sm-8 col-lg-6">
                 <v-runtime-template

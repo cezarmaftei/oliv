@@ -1,6 +1,6 @@
 <script setup>
-import { provide, ref } from "vue";
 import { useOlivStore } from "@/stores/oliv.js";
+import { useRoute } from "vue-router";
 import HeaderInternal from "@/components/HeaderInternal.vue";
 import FooterInternal from "@/components/FooterInternal.vue";
 
@@ -10,68 +10,77 @@ import SectionShop from "@/components/section/SectionShop.vue";
 import SectionCart from "@/components/section/SectionCart.vue";
 import SectionCheckout from "@/components/section/SectionCheckout.vue";
 import SectionAccount from "@/components/section/SectionAccount.vue";
+import SectionSingleProduct from "../components/section/SectionSingleProduct.vue";
+import SectionRelatedProducts from "../components/section/SectionRelatedProducts.vue";
+import UserOrders from "@/components/user-account/UserOrders.vue";
+import UserAddresses from "@/components/user-account/UserAddresses.vue";
+import UserGeneral from "@/components/user-account/UserGeneral.vue";
 
 const store = useOlivStore();
+const route = useRoute();
 
-const showUserMenuItems = ref({
-  orders: {
-    show: true,
-    title: "Comenzi",
-  },
-  addresses: {
-    show: false,
-    title: "Adresele Mele",
-  },
-  general: {
-    show: false,
-    title: "Detalii Cont",
-  },
-});
-provide("showUserMenuItems", showUserMenuItems);
+const pageTemplates = {
+  SectionSplash,
+  SectionShop,
+  SectionCart,
+  SectionCheckout,
+  SectionAccount,
+};
+
+const accountSections = {
+  "comenzile-mele": UserOrders,
+  "adresele-mele": UserAddresses,
+  "detalii-cont": UserGeneral,
+};
 </script>
 
 <template>
-  <HeaderInternal />
-  <main
-    id="main-content"
-    class="main-content"
-    v-if="store.isLoaded && store.currentPage"
-  >
-    <section
-      v-for="pageSection in store.currentPage.acf.page_sections"
-      :key="pageSection"
+  <div id="page" class="page d-flex flex-column">
+    <HeaderInternal />
+    <main
+      id="main-content"
+      class="main-content container d-flex flex-column flex-grow-1"
+      v-if="store.isLoaded"
     >
-      <SectionSplash
-        v-if="pageSection.acf_fc_layout === 'SectionSplash'"
-        :content="pageSection"
-      ></SectionSplash>
+      <!-- page layout -->
+      <section v-if="['home', 'page'].includes(route.name)" class="flex-grow-1">
+        <component
+          :is="
+            pageTemplates[
+              store.getPageBySlug(route).acf.page_sections[0].acf_fc_layout
+            ]
+          "
+        ></component>
+      </section>
+      <!-- /.page layout -->
 
-      <SectionShop
-        v-if="pageSection.acf_fc_layout === 'SectionShop'"
-        :content="pageSection"
-      ></SectionShop>
+      <!-- single product layout -->
+      <SectionSingleProduct v-if="route.name === 'product'" />
+      <SectionRelatedProducts v-if="route.name === 'product'" />
+      <!-- /.single product layout -->
 
-      <SectionCart
-        v-if="pageSection.acf_fc_layout === 'SectionCart'"
-        :content="pageSection"
-      ></SectionCart>
-
-      <SectionCheckout
-        v-if="pageSection.acf_fc_layout === 'SectionCheckout'"
-        :content="pageSection"
-      ></SectionCheckout>
-
-      <SectionAccount
-        v-if="pageSection.acf_fc_layout === 'SectionAccount'"
-        :content="pageSection"
-      ></SectionAccount>
-    </section>
-  </main>
-  <div v-else-if="store.isLoaded">
-    <h1>Not found!</h1>
+      <!-- account layout -->
+      <section
+        class="section-my-account overflow-hidden flex-grow-1 mb-8"
+        v-if="route.name === 'account'"
+      >
+        <div class="container">
+          <component :is="accountSections[route.params.slug]"></component>
+        </div>
+      </section>
+      <!-- /.account layout -->
+    </main>
+    <FooterInternal />
   </div>
-
-  <FooterInternal />
 </template>
 
-<style></style>
+<style scoped lang="scss">
+.page {
+  min-height: 100vh;
+}
+
+.section-my-account {
+  border: 2px solid $border-color;
+  border-top: 0;
+}
+</style>

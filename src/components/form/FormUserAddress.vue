@@ -54,16 +54,16 @@ const submitUserAddress = () => {
 /**
  * Reset formData
  */
-const formAction = store.addressForm.action
-  ? store.addressForm.action
-  : "create";
+// const formAction = store.addressForm.action
+//   ? store.addressForm.action
+//   : "create";
 
-if (store.addressForm.formData === false || formAction === "create") {
-  store.addressForm.action = "create";
-  store.addressForm.buttonText = "Adauga adresa";
+// if (store.addressForm.formData === false || formAction === "create") {
+//   store.addressForm.action = "create";
+//   store.addressForm.buttonText = "Adauga adresa";
 
-  store.resetAddressForm();
-}
+//   store.resetAddressForm();
+// }
 </script>
 
 <template>
@@ -112,9 +112,9 @@ if (store.addressForm.formData === false || formAction === "create") {
         </label>
         <input
           v-if="
-            ['text', 'tel'].indexOf(
+            ['text', 'tel'].includes(
               store.addressForm.addressFieldsMapping[addressField].type
-            ) !== -1
+            )
           "
           :type="store.addressForm.addressFieldsMapping[addressField].type"
           :name="addressField"

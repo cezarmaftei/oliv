@@ -12,29 +12,21 @@ showMenuProductCats.value = true;
 
 const activeCat = inject("activeCat");
 if (route.query.categorie) activeCat.value = route.query.categorie;
-// const showProduct = (categories) => {
-//   if (route.query.categorie === "all" || !route.query.categorie) return true;
-
-//   const hasCat = categories.filter((cat) => cat.name === route.query.categorie);
-//   return hasCat.length > 0;
-// };
 </script>
 
 <template>
-  <div class="container" v-if="store.storeData.products">
-    <div class="row row-products gy-2">
-      <TransitionGroup name="scale-element">
-        <div
-          class="col-12 col-sm-6 col-xl-4 col-xxl-3"
-          v-for="(product, productCount) in store.getProductsByCategory(
-            activeCat
-          )"
-          :key="product"
-        >
-          <ProductListing :product="product" :productCount="productCount" />
-        </div>
-      </TransitionGroup>
-    </div>
+  <div class="row row-products gy-2" v-if="store.storeData.products">
+    <TransitionGroup name="scale-element">
+      <div
+        class="col-12 col-sm-6 col-xl-4 col-xxl-3"
+        v-for="(product, productCount) in store.getProductsByCategory(
+          activeCat
+        )"
+        :key="product"
+      >
+        <ProductListing :product="product" :productCount="productCount" />
+      </div>
+    </TransitionGroup>
   </div>
 </template>
 

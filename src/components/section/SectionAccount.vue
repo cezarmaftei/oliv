@@ -5,17 +5,11 @@ import FormLogin from "@/components/form/FormLogin.vue";
 import FormRegistration from "@/components/form/FormRegistration.vue";
 import FormResetPass from "@/components/form/FormResetPass.vue";
 import FormPassRecovery from "@/components/form/FormPassRecovery.vue";
-import UserOrders from "@/components/partials/UserOrders.vue";
-import UserAddresses from "@/components/partials/UserAddresses.vue";
-import UserGeneral from "@/components/partials/UserGeneral.vue";
 import UpdateLoading from "@/components/partials/UpdateLoading.vue";
-import { inject } from "vue";
 
 const route = useRoute();
 const router = useRouter();
 const store = useOlivStore();
-
-const showUserMenuItems = inject("showUserMenuItems");
 
 if (route.query.action === "aa") {
   store
@@ -34,14 +28,14 @@ if (route.query.action === "aa") {
 }
 </script>
 <template>
-  <div class="container">
+  <div class="overflow-hidden container mb-8">
     <UpdateLoading />
     <div
       class="activation-container"
       v-show="route.query.action === 'aa' && !store.userData.loggedIn"
     >
       <div v-if="!store.userData.error">
-        <h3>Se activeaza contul</h3>
+        <h3 class="mb-2">Se activeaza contul</h3>
       </div>
       <div v-if="store.userData.error">
         <h5>{{ store.userData.error }}</h5>
@@ -49,31 +43,44 @@ if (route.query.action === "aa") {
     </div>
 
     <div v-if="store.userData.loggedIn">
-      <div v-for="(menuItem, slug) in showUserMenuItems" :key="slug">
-        <UserOrders v-if="slug === 'orders' && menuItem.show" />
-        <UserAddresses v-if="slug === 'addresses' && menuItem.show" />
-        <UserGeneral v-if="slug === 'general' && menuItem.show" />
-      </div>
+      <router-link to="/contul-meu/comenzile-mele/"
+        >Istoric comenzi</router-link
+      >
+      <router-link to="/contul-meu/adresele-mele/">Adresele mele</router-link>
+      <router-link to="/contul-meu/detalii-cont/">Detalii cont</router-link>
+      <button
+        type="button"
+        class="btn btn-outline-dark"
+        @click="store.userActions('logout')"
+      >
+        Logout
+      </button>
     </div>
 
     <div
       v-if="
         !store.userData.loggedIn &&
-        ['create', 'reset', 'rp', 'aa'].indexOf(route.query.action) === -1
+        !['create', 'reset', 'rp', 'aa'].includes(route.query.action)
       "
     >
-      <h2>Intra in cont</h2>
-      <FormLogin />
+      <div class="form-outer-wrapper">
+        <h3 class="mb-2">Intra in contul tau</h3>
+        <FormLogin />
+      </div>
     </div>
 
     <div v-if="!store.userData.loggedIn && route.query.action === 'create'">
-      <h2>Creeaza-ti cont in cateva secunde!</h2>
-      <FormRegistration />
+      <div class="form-outer-wrapper">
+        <h3 class="mb-2">Creeaza-ti cont in cateva secunde!</h3>
+        <FormRegistration />
+      </div>
     </div>
 
     <div v-if="!store.userData.loggedIn && route.query.action === 'reset'">
-      <h2>Reseteaza parola</h2>
-      <FormResetPass />
+      <div class="form-outer-wrapper">
+        <h3 class="mb-2">Resetaza parola</h3>
+        <FormResetPass />
+      </div>
     </div>
 
     <div
@@ -85,3 +92,47 @@ if (route.query.action === "aa") {
     </div>
   </div>
 </template>
+
+<style scoped lang="scss">
+h3 {
+  font-size: 3rem;
+
+  @include media-breakpoint-up(sm) {
+    font-size: 4rem;
+  }
+}
+
+.container {
+  padding: 0;
+}
+
+:deep {
+  .btn {
+    padding: 1rem 2rem;
+  }
+
+  a {
+    color: $body-color;
+
+    &:hover {
+      color: $olive;
+    }
+  }
+}
+
+.form-outer-wrapper {
+  background: $white;
+  border: 2px solid $border-color;
+  max-width: 40rem;
+  padding: 2rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@include media-breakpoint-up(md) {
+  .container {
+    border: 2px solid $border-color;
+    @include padding(7rem);
+  }
+}
+</style>

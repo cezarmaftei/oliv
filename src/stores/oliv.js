@@ -34,9 +34,6 @@ export const useOlivStore = defineStore({
   state: () => ({
     isLoaded: false,
     storeLiveUpdate: false,
-    showCartDrawer: false,
-    showAddressesModal: false,
-    currentPage: false,
     websiteOptions: [],
     pageData: [],
     articleData: [],
@@ -61,18 +58,14 @@ export const useOlivStore = defineStore({
         errorMsg: false,
       },
       addresses: {
-        billing: false,
         shipping: false,
-        pool: false,
+        billing: false,
       },
+      deliveryMethod: false,
       paymentMethod: false,
       orderExtras: {
         cutlery: {
-          title: "Da, doresc tacamuri",
-          active: false,
-        },
-        makepaw: {
-          title: "Make PAW not war!",
+          title: "Doresc tacamuri",
           active: false,
         },
       },
@@ -83,103 +76,123 @@ export const useOlivStore = defineStore({
       totalPrice: 0,
     },
     shippingData: false,
-    paymentData: {
-      methods: {
-        cashod: "Cash la livrare",
-        cardod: "Card la livrare",
+    shippingFieldsMapping: {
+      first_name: {
+        name: "Nume si Prenume",
+        type: "text",
+        required: true,
+        value: "",
+        priority: "core",
+      },
+      email: {
+        name: "Email",
+        type: "email",
+        required: true,
+        value: "",
+        priority: "core",
+      },
+      phone: {
+        name: "Telefon",
+        type: "tel",
+        required: true,
+        value: "",
+        priority: "core",
+      },
+      address_1: {
+        name: "Adresa",
+        type: "text",
+        required: true,
+        value: "",
+        priority: "regular",
+      },
+      city: {
+        name: "Oras/Localitate",
+        type: "text",
+        required: true,
+        value: "",
+        priority: "regular",
+      },
+      country: {
+        type: "hidden",
+        value: "Romania",
+      },
+      state: {
+        type: "hidden",
+        value: "Iasi",
       },
     },
-    addressForm: {
-      show: false,
-      title: false,
-      buttonText: false,
-      action: false,
-      addressIndex: false,
-      addressFor: false,
-      addressCeateError: false,
-      formData: false,
-      addressFieldsMapping: {
-        first_name: {
-          name: "Nume",
-          type: "text",
-          required: true,
-          value: "",
-        },
-        last_name: {
-          name: "Prenume",
-          type: "text",
-          required: true,
-          value: "",
-        },
-        company: {
-          name: "Companie",
-          type: "text",
-          required: false,
-          value: "",
-        },
-        address_1: {
-          name: "Adresa",
-          type: "text",
-          required: true,
-          value: "",
-        },
-        address_2: {
-          name: "Alte indicatii pentru a te gasi mai usor",
-          type: "textarea",
-          required: false,
-          value: "",
-        },
-        city: {
-          name: "Oras/Localitate",
-          required: true,
-          type: "text",
-          value: "",
-        },
-        phone: {
-          name: "Telefon",
-          type: "tel",
-          required: true,
-          value: "",
-        },
-        shipping: {
-          name: "Seteaza ca adresa de livrare",
-          type: "checkbox",
-          required: false,
-          value: false,
-        },
-        billing: {
-          name: "Seteaza ca adresa de facturare",
-          type: "checkbox",
-          required: false,
-          value: false,
-        },
-        // Not needed
-        postcode: {
-          name: "Cod Postal",
-          type: "hidden",
-          required: false,
-          value: "",
-        },
-        // Not needed - defaults to Romania
-        country: {
-          name: "Tara",
-          type: "hidden",
-          required: false,
-          value: "Romania",
-        },
-        // Not needed - defaults to Iasi
-        state: {
-          name: "Judet",
-          type: "hidden",
-          required: false,
-          value: "Iasi",
-        },
-        distance: {
-          name: "Distanta de la sediu pana la adresa",
-          type: "hidden",
-          required: false,
-          value: false,
-        },
+    billingFieldsMapping: {
+      first_name: {
+        name: "Nume si Prenume",
+        type: "text",
+        required: true,
+        value: "",
+      },
+      phone: {
+        name: "Telefon",
+        type: "tel",
+        required: false,
+        value: "",
+      },
+      email: {
+        name: "Email",
+        type: "email",
+        required: false,
+        value: "",
+      },
+      company: {
+        name: "Numele Firmei",
+        type: "text",
+        required: true,
+        value: "",
+      },
+      address_1: {
+        name: "Adresa",
+        type: "text",
+        required: true,
+        value: "",
+      },
+      city: {
+        name: "Oras/Localitate",
+        type: "text",
+        required: true,
+        value: "",
+      },
+      state: {
+        name: "Judet/Sector",
+        type: "text",
+        required: true,
+        value: "",
+      },
+      country: {
+        name: "Tara",
+        type: "text",
+        required: true,
+        value: "Romania",
+      },
+      vat_registration_number: {
+        name: "Codul Unic de Inregistrare(CUI)",
+        type: "text",
+        required: true,
+        value: "",
+      },
+      company_registration_number: {
+        name: "Numar de Ordine in Registrul Comertului",
+        type: "text",
+        required: true,
+        value: "",
+      },
+      company_bank_name: {
+        name: "Banca",
+        type: "text",
+        required: true,
+        value: "",
+      },
+      company_bank_account_number: {
+        name: "Numar Cont Bancar",
+        type: "text",
+        required: false,
+        value: "",
       },
     },
   }),
@@ -315,7 +328,7 @@ export const useOlivStore = defineStore({
       };
     },
 
-    /**
+    /** ??????
      * If user is logged in get his general info, addresses and order history
      * @param {Object} state the store's state
      * @returns nothing. It just updates the store's state.
@@ -330,18 +343,16 @@ export const useOlivStore = defineStore({
 
         // Get addresses
         data.data.meta_data.forEach((meta) => {
-          if (meta.key === "user_addresses") {
-            if (meta.value.length) {
-              // All addresses
-              state.cartData.addresses.pool = meta.value;
+          if (meta.key === "user_shipping_addresses" && meta.value.length) {
+            state.$patch((state) => {
+              state.cartData.addresses.shipping = meta.value;
+            });
+          }
 
-              // Set shipping and billing
-              meta.value.forEach((address) => {
-                if (address.shipping)
-                  state.cartData.addresses.shipping = address;
-                if (address.billing) state.cartData.addresses.billing = address;
-              });
-            }
+          if (meta.key === "user_billing_addresses" && meta.value.length) {
+            state.$patch((state) => {
+              state.cartData.addresses.billing = meta.value;
+            });
           }
         });
       });
@@ -351,28 +362,7 @@ export const useOlivStore = defineStore({
       );
     },
 
-    /**
-     * @param {Object} address the address object. See addressFieldsMapping.
-     * @returns {Int} the index number of the address
-     */
-    getAddressIndex() {
-      return (address) => {
-        let index = false;
-        this.cartData.addresses.pool.forEach(
-          (userAddress, userAddressIndex) => {
-            const addressExists = this.compareAddressObjects(
-              userAddress,
-              address
-            );
-            if (addressExists) index = userAddressIndex;
-          }
-        );
-
-        return index;
-      };
-    },
-
-    /**
+    /** ?????
      * Returns data about the cost of shipping
      * @param {Object} state the store's state
      * @param {Float} distance the distance from store to client
@@ -381,42 +371,35 @@ export const useOlivStore = defineStore({
     getDistanceFees: (state) => {
       return (distance) => {
         const fees = state.shippingData.shipping_options.exwfood_adv_feekm;
-        const results = fees.filter((fee) => parseFloat(fee.km) <= distance);
+        const results = fees.filter((fee) => state.toFloat(fee.km) <= distance);
         return results.length ? results[results.length - 1] : false;
       };
     },
 
-    /**
-     * Check if shipping and billing are the same
-     * @param {Object} state the store's state
-     * @returns {Bool}
-     */
-    getSameWithShipping(state) {
-      if (
-        !state.cartData.addresses.shipping ||
-        !state.cartData.addresses.billing
-      )
-        return false;
+    getCartItems: (state) => {
+      //
+      // Merge items
+      //
+      state.cartData.items.forEach((compareItem, compareItemIndex) => {
+        state.cartData.items.filter((compareToItem, compareToItemIndex) => {
+          if (
+            compareItemIndex !== compareToItemIndex &&
+            compareItem.id === compareToItem.id &&
+            JSON.stringify(compareItem.productExtras) ===
+              JSON.stringify(compareToItem.productExtras)
+          ) {
+            state.cartData.items[compareItemIndex].productQty +=
+              compareToItem.productQty;
 
-      return this.compareAddressObjects(
-        state.cartData.addresses.shipping,
-        state.cartData.addresses.billing
-      );
-    },
+            // Remove product
+            state.cartData.items.splice(compareToItemIndex, 1);
+          }
+        });
+      });
 
-    /**
-     * Get user addresses that are not billing and shipping
-     * @param {Object} state the store's state
-     * @returns {Array/Bool} addresses/false if there are none
-     */
-    getUserExtraAddresses(state) {
-      let extraAddresses = false;
-      if (state.cartData.addresses.pool.length)
-        extraAddresses = state.cartData.addresses.pool.filter(
-          (address) => !address.shipping && !address.billing
-        );
-
-      return extraAddresses.length ? extraAddresses : false;
+      return {
+        items: state.cartData.items,
+      };
     },
   },
 
@@ -587,6 +570,7 @@ export const useOlivStore = defineStore({
                   data.data.success.cookie,
                   data.data.success.expires
                 );
+
                 this.userData.loggedIn = true;
                 this.userData["ID"] = data.data.success.userData.ID;
                 this.getCustomerData;
@@ -606,12 +590,14 @@ export const useOlivStore = defineStore({
           this.userData.customerOrdersData = false;
           this.userData.credentials.user = "";
           this.userData.credentials.pass = "";
+
           // Reset addresses
-          this.cartData.addresses = {
-            shipping: false,
-            billing: false,
-            pool: false,
-          };
+          this.$patch((state) => {
+            state.cartData.addresses = {
+              shipping: false,
+              billing: false,
+            };
+          });
 
           // Remove logged in cookie
           cookies.remove("oliv_logged_in");
@@ -685,10 +671,72 @@ export const useOlivStore = defineStore({
      * @returns {Float}
      */
     toFloat(number) {
-      const numberSplit = number.split(",");
-      return parseInt(numberSplit[0]) + parseInt(numberSplit[0]) / 100;
+      let numberSplit = number.toString();
+      if (numberSplit.indexOf(",") !== -1) {
+        numberSplit = numberSplit.split(",");
+      } else if (numberSplit.indexOf(".") !== -1) {
+        numberSplit = numberSplit.split(".");
+      } else {
+        return parseInt(number);
+      }
+      return parseInt(numberSplit[0]) + parseInt(numberSplit[1]) / 100;
     },
 
+    //
+    // Merge cart Products
+    //
+    // mergeCartProducts() {
+    //   this.cartData.items.forEach((compareItem, compareItemIndex) => {
+    //     this.cartData.items.filter((compareToItem, compareToItemIndex) => {
+    //       if (
+    //         compareItemIndex !== compareToItemIndex &&
+    //         compareItem.id === compareToItem.id &&
+    //         JSON.stringify(compareItem.productExtras) ===
+    //           JSON.stringify(compareToItem.productExtras)
+    //       ) {
+    //         this.$patch((state) => {
+    //           // Update qty
+    //           state.cartData.items[compareItemIndex].productQty +=
+    //             compareToItem.productQty;
+
+    //           // Remove product
+    //           state.cartData.items.splice(compareToItemIndex, 1);
+    //         });
+    //       }
+    //     });
+    //   });
+    // },
+
+    setCartAddresses() {
+      if (this.cartData.addresses.shipping) {
+        for (const [name, value] of Object.entries(
+          this.cartData.addresses.shipping[0]
+        )) {
+          const stateName = name.replace("shipping_", "");
+          if (this.shippingFieldsMapping[stateName])
+            this.shippingFieldsMapping[stateName].value = value;
+        }
+      } else {
+        this.cartData.totalShipping = false;
+        for (const [name, data] of Object.entries(this.shippingFieldsMapping)) {
+          data.value = "";
+        }
+      }
+
+      if (this.cartData.addresses.billing) {
+        for (const [name, value] of Object.entries(
+          this.cartData.addresses.billing[0]
+        )) {
+          const stateName = name.replace("billing_", "");
+          if (this.billingFieldsMapping[stateName])
+            this.billingFieldsMapping[stateName].value = value;
+        }
+      } else {
+        for (const [name, data] of Object.entries(this.billingFieldsMapping)) {
+          data.value = "";
+        }
+      }
+    },
     /**
      * Update cart after quantities change
      */
@@ -706,6 +754,10 @@ export const useOlivStore = defineStore({
       // productWithExtrasPrice -> product price including extras === Is updated here
       // itemTotal -> productQty * productWithExtrasPrice - item total price === Is updated here
       // isFirstTime -> bool - Used to add extras on "quick add"
+
+      //
+      // Calculate totals
+      //
       let cartTotalQty = 0;
       let cartSubTotalPrice = 0;
       this.cartData.items.forEach((product) => {
@@ -726,7 +778,9 @@ export const useOlivStore = defineStore({
       this.cartData.totalQty = cartTotalQty;
       this.cartData.subTotal = cartSubTotalPrice;
 
+      //
       // Set coupon discount
+      //
       let cartDiscount = 0;
       if (this.cartData.coupon.codes.length) {
         this.cartData.coupon.codes.forEach((coupon) => {
@@ -739,22 +793,15 @@ export const useOlivStore = defineStore({
       }
       this.cartData.totalDiscount = cartDiscount;
 
+      //
       // Set shipping cost
-      const totalShipping = await this.addressShippingPrice().then(
-        (price) => price
-      );
+      //
+      let totalPrice = this.cartData.subTotal - this.cartData.totalDiscount;
 
-      if (totalShipping) {
-        this.cartData.totalShipping = this.toFloat(totalShipping);
-      } else {
-        this.cartData.totalShipping = 0;
-      }
+      if (typeof this.cartData.totalShipping === "number")
+        totalPrice += this.cartData.totalShipping;
 
-      const totalPrice =
-        cartSubTotalPrice -
-        this.cartData.totalDiscount +
-        this.cartData.totalShipping;
-      this.cartData.totalPrice = totalPrice;
+      this.cartData.totalPrice = totalPrice.toFixed(2);
 
       // Save cart in cookie for 1 week
       cookies.set("oliv_cart", JSON.stringify(this.cartData), "7D");
@@ -763,29 +810,43 @@ export const useOlivStore = defineStore({
     /**
      * Check for identical products in cart and merge them
      */
-    mergeCartProducts() {
-      this.cartData.items.forEach((compareItem, compareItemIndex) => {
-        this.cartData.items.filter((compareToItem, compareToItemIndex) => {
-          if (
-            compareItemIndex !== compareToItemIndex &&
-            compareItem.id === compareToItem.id &&
-            JSON.stringify(compareItem.productExtras) ===
-              JSON.stringify(compareToItem.productExtras)
-          ) {
-            this.$patch((state) => {
-              // Update qty
-              state.cartData.items[compareItemIndex].productQty +=
-                compareToItem.productQty;
+    async updateCartData() {
+      if (this.cartData.addresses.shipping) {
+        for (const [name, value] of Object.entries(
+          this.cartData.addresses.shipping[0]
+        )) {
+          const stateName = name.replace("shipping_", "");
+          if (this.shippingFieldsMapping[stateName])
+            this.shippingFieldsMapping[stateName].value = value;
+        }
+        if (this.cartData.deliveryMethod !== "pickup") {
+          const shippingFee = this.addressShippingFee(
+            this.cartData.addresses.shipping[0].distance
+          );
+          this.cartData.totalShipping = shippingFee;
+        } else {
+          this.cartData.totalShipping = 0;
+        }
+      } else {
+        this.cartData.totalShipping = false;
+        for (const [name, data] of Object.entries(this.shippingFieldsMapping)) {
+          data.value = "";
+        }
+      }
 
-              // Remove product
-              state.cartData.items.splice(compareToItemIndex, 1);
-            });
-          }
-        });
-      });
-
-      // Update totals
-      this.updateCartTotals();
+      if (this.cartData.addresses.billing) {
+        for (const [name, value] of Object.entries(
+          this.cartData.addresses.billing[0]
+        )) {
+          const stateName = name.replace("billing_", "");
+          if (this.billingFieldsMapping[stateName])
+            this.billingFieldsMapping[stateName].value = value;
+        }
+      } else {
+        for (const [name, data] of Object.entries(this.billingFieldsMapping)) {
+          data.value = "";
+        }
+      }
     },
 
     /**
@@ -935,12 +996,10 @@ export const useOlivStore = defineStore({
           // Init coupon.codes
           if (!this.cartData.coupon.codes) this.cartData.coupon.codes = [];
           // Coupoon exists, add it to cartData
-          this.$patch((state) => {
-            state.cartData.coupon.codes.push({
-              code: coupon,
-              discount_type: couponData[0].discount_type,
-              amount: couponData[0].amount,
-            });
+          this.cartData.coupon.codes.push({
+            code: coupon,
+            discount_type: couponData[0].discount_type,
+            amount: couponData[0].amount,
           });
         } else {
           this.cartData.coupon.errorMsg = "Cupon invalid!";
@@ -960,12 +1019,10 @@ export const useOlivStore = defineStore({
       );
 
       if (couponIndexToRemove) {
-        this.$patch((state) => {
-          state.cartData.coupon.codes.splice(
-            state.cartData.coupon.codes[couponIndexToRemove],
-            1
-          );
-        });
+        this.cartData.coupon.codes.splice(
+          this.cartData.coupon.codes[couponIndexToRemove],
+          1
+        );
       }
     },
 
@@ -1000,252 +1057,166 @@ export const useOlivStore = defineStore({
      * creates, updates, deletes, sends to Woo
      * @returns errors or updates cartData.addresses
      */
-    async handleUserAddress() {
+    async handleUserAddress(action, addressType, addressIndex) {
       // Show loading screen
       this.storeLiveUpdate = true;
 
-      // User addresses array. Gets sent with the user data to Woo
-      let userAddresses = this.cartData.addresses.pool.length
-        ? Object.values(Object.assign({}, this.cartData.addresses.pool))
+      // Allow a maximum of 5 addresses for each type
+      if (
+        action === "add" &&
+        this.cartData.addresses[addressType].length === 5
+      ) {
+        return {
+          error:
+            "Poti avea un numar maxim de 5 adrese pentru livrare si 5 pentru facturare.",
+        };
+      }
+
+      // Get shipping addresses
+      let userShippingAddresses = this.cartData.addresses.shipping.length
+        ? Object.values(Object.assign({}, this.cartData.addresses.shipping))
         : [];
 
-      // Address data
-      let newUserAddress = this.addressForm.formData;
+      let userBillingAddresses = this.cartData.addresses.billing.length
+        ? Object.values(Object.assign({}, this.cartData.addresses.billing))
+        : [];
 
-      // Get action - create, update, delete
-      const action = this.addressForm.action;
+      if (!["setfirst", "delete"].includes(action)) {
+        const addressData =
+          addressType === "shipping"
+            ? this.shippingFieldsMapping
+            : this.billingFieldsMapping;
 
-      if (action !== "delete") {
-        const addressFound = await gmapsCheckUserAddress(
-          this.shippingData,
-          `${newUserAddress.address_1}, ${newUserAddress.city}`,
-          "geocode"
-        ).then((result) => result);
+        // Object that will be also sent to Woo
+        // Also check for required fields
+        let userAddress = {};
+        for (const [fieldName, fieldData] of Object.entries(addressData)) {
+          // Check for empty
+          if (fieldData.required && fieldData["value"].length < 1)
+            return { error: `${fieldData.name} este obligatoriu!` };
 
-        // If is string it means the address was not found
-        if (typeof addressFound === "string") {
-          this.addressForm.addressCeateError = addressFound;
-          this.storeLiveUpdate = false;
-          return;
+          // Add to address object
+          userAddress[`${addressType}_${fieldName}`] = fieldData["value"];
         }
 
-        const distanceToAddress = await gmapsCheckUserAddress(
-          this.shippingData,
-          `${newUserAddress.address_1}, ${newUserAddress.city}`,
-          "getDistance"
-        ).then((result) => result);
-
-        // If is string it means the address is too far
-        if (typeof distanceToAddress === "string" && newUserAddress.shipping) {
-          this.addressForm.addressCeateError = distanceToAddress;
-          this.storeLiveUpdate = false;
-          return;
-        }
-
-        // If is number it means it's eligible for
-        if (typeof distanceToAddress === "number")
-          newUserAddress.distance = distanceToAddress;
-
-        const shippingIndex = userAddresses.findIndex(
-          (address) => address.shipping
-        );
-
-        const billingIndex = userAddresses.findIndex(
-          (address) => address.billing
-        );
-
-        // Set as shipping
-        if (shippingIndex !== -1) {
-          // User has a shipping address
-          if (newUserAddress.shipping && newUserAddress.distance) {
-            // Set it to false if newUserAddress.shipping = true
-            userAddresses[shippingIndex].shipping = false;
-          }
-        } else if (newUserAddress.distance) {
-          // Set it as shipping if none is present
-          newUserAddress.shipping = true;
-        }
-
-        // Set as billing
-        if (billingIndex !== -1) {
-          // User has a billing address
-          if (newUserAddress.billing) {
-            // Set it to false if newUserAddress.billing = true
-            userAddresses[billingIndex].billing = false;
-          }
-        } else {
-          // Set it as billing if none is present
-          newUserAddress.billing = true;
-        }
-      }
-
-      switch (action) {
-        case "create":
-          // Set default values for shipping/billing
-          if (typeof newUserAddress.shipping === "undefined")
-            newUserAddress.shipping = false;
-
-          if (typeof newUserAddress.billing === "undefined")
-            newUserAddress.billing = false;
-
-          userAddresses.push(newUserAddress);
-          break;
-
-        case "update":
-          userAddresses[this.addressForm.addressIndex] = newUserAddress;
-          break;
-
-        case "delete":
-          userAddresses.splice(this.addressForm.addressIndex, 1);
-
-          // If only 1 remains, set as billing and shipping
-          if (userAddresses.length === 1) {
-            // Set as shipping
-            if (typeof userAddresses[0].distance === "number") {
-              userAddresses[0].shipping = true;
-              this.cartData.addresses.shipping = userAddresses[0];
+        if (addressType === "shipping") {
+          // Check if exists
+          if (this.cartData.addresses.shipping.length > 0) {
+            for (const address of this.cartData.addresses.shipping) {
+              if (this.compareAddressObjects(address, userAddress)) {
+                this.storeLiveUpdate = false;
+                return {
+                  error: "Aceasta adresa exista deja!",
+                };
+              }
             }
-            // Set as billing
-            userAddresses[0].billing = true;
-            this.cartData.addresses.billing = userAddresses[0];
           }
-          break;
-      }
 
-      // Update in woo
-      if (this.userData.loggedIn) {
-        const userUpdate = {
-          id: this.userData.ID,
-          meta_data: [
-            {
-              key: "user_addresses",
-              value: userAddresses,
-            },
-          ],
-        };
+          // Check if is eligible for shipping
+          const distanceAndShippingPrice =
+            await this.addressDistanceAndShippingPrice((data) => data);
 
-        if (userAddresses.length === 1) {
-          userUpdate["first_name"] = userAddresses[0].first_name;
-          userUpdate["last_name"] = userAddresses[0].last_name;
+          if (distanceAndShippingPrice.error)
+            return { error: distanceAndShippingPrice.error };
+
+          /**
+           * It's eligible, now continue
+           */
+          // Add distance to address data
+          userAddress["distance"] = distanceAndShippingPrice.distance;
+
+          // Add address to userShippingAddresses
+          if (action === "add") userShippingAddresses.unshift(userAddress);
+
+          if (action === "edit")
+            userShippingAddresses[addressIndex] = userAddress;
         }
-        await updateUser(userUpdate);
-      } else {
-        // Remove addresses that have shipping and billing as false
-        // Do this to only allow 2 addresses to guest checkouts
-        userAddresses = userAddresses.filter(
-          (address) => address.shipping || address.billing
-        );
+
+        if (addressType === "billing") {
+          // Check if exists
+          if (this.cartData.addresses.billing.length > 0) {
+            for (const address of this.cartData.addresses.billing) {
+              if (this.compareAddressObjects(address, userAddress)) {
+                this.storeLiveUpdate = false;
+                return {
+                  error: "Aceasta adresa exista deja!",
+                };
+              }
+            }
+          }
+
+          // Add address to userBillingAddresses
+          if (action === "add") userBillingAddresses.unshift(userAddress);
+
+          if (action === "edit")
+            userBillingAddresses[addressIndex] = userAddress;
+        }
       }
 
-      // Update new shipping
-      const newShippingIndex = userAddresses.findIndex(
-        (address) => address.shipping
-      );
+      if (["setfirst", "delete"].includes(action)) {
+        if (addressType === "shipping") {
+          // First remove the item
+          const removedItem = userShippingAddresses.splice(addressIndex, 1);
 
-      // Update new billing
-      const newBillingIndex = userAddresses.findIndex(
-        (address) => address.billing
-      );
+          // Now set it first
+          if (action === "setfirst") {
+            userShippingAddresses.unshift(removedItem[0]);
+          }
+        }
 
-      this.$patch((state) => {
-        state.cartData.addresses.pool = userAddresses;
+        if (addressType === "billing") {
+          // First remove the item
+          const removedItem = userBillingAddresses.splice(addressIndex, 1);
 
-        state.cartData.addresses.shipping =
-          newShippingIndex !== -1 ? userAddresses[newShippingIndex] : false;
+          // Now set it first
+          if (action === "setfirst") {
+            userBillingAddresses.unshift(removedItem[0]);
+          }
+        }
+      }
 
-        state.cartData.addresses.billing =
-          newBillingIndex !== -1 ? userAddresses[newBillingIndex] : false;
-      });
+      const userUpdate = {
+        id: this.userData.ID,
+        meta_data: [
+          {
+            key:
+              addressType === "shipping"
+                ? "user_shipping_addresses"
+                : "user_billing_addresses",
+            value:
+              addressType === "shipping"
+                ? userShippingAddresses
+                : userBillingAddresses,
+          },
+        ],
+      };
 
-      // Update cart cookie
-      cookies.set("oliv_cart", JSON.stringify(this.cartData), "7D");
+      const updateWoo = await updateUser(userUpdate).then((data) => data.data);
 
-      // Reset stuff
-      this.addressForm.show = false;
-      this.resetAddressForm();
-      this.addressForm.addressIndex = false;
+      if (updateWoo.id) {
+        // Update store state
+        this.$patch((state) => {
+          if (addressType === "shipping")
+            state.cartData.addresses.shipping = userShippingAddresses;
+
+          if (addressType === "billing")
+            this.cartData.addresses.billing = userBillingAddresses;
+        });
+
+        // Update cart cookie
+        cookies.set("oliv_cart", JSON.stringify(this.cartData), "7D");
+      } else {
+        return {
+          error:
+            "A aparut o problema la crearea adresei. Te rugam revino mai tarziu!",
+        };
+      }
+
       this.storeLiveUpdate = false;
 
-      return;
-    },
-    /**
-     * Show user address create/update form
-     *
-     * @param {String} title The heading of the form
-     * @param {String} buttonText Submit button text
-     * @param {String} action The action for the current form data: create or update address
-     * @param {Int} addressIndex The index of the address that needs to be updated
-     * @returns updates the store state and shows the ModalUserAddress component
-     */
-    showUserAddressForm(title, buttonText, action, addressIndex) {
-      // Reset error message
-      this.addressForm.addressCeateError = false;
-
-      // Check if he reached the max number of addresses
-      if (
-        this.cartData.addresses.pool &&
-        this.cartData.addresses.pool.length >= 10 &&
-        action === "create"
-      ) {
-        alert(
-          "Ai atins numarul maxim de adrese! Editeaza sau sterge una dintre cele existente."
-        );
-        return;
-      }
-
-      // Set store addressForm data
-      this.addressForm.show = true;
-      this.addressForm.title = title;
-      this.addressForm.buttonText = buttonText;
-      this.addressForm.action = action;
-
-      if (action === "update") {
-        this.addressForm.formData = Object.assign(
-          {},
-          this.cartData.addresses.pool[addressIndex]
-        );
-        this.addressForm.addressIndex = addressIndex;
-      }
-
-      if (this.addressForm.formData === false) {
-        this.addressForm.formData = {};
-        for (const [fieldName, fieldData] of Object.entries(
-          this.addressForm.addressFieldsMapping
-        )) {
-          // Ignore shipping and billing values
-          if (["shipping", "billing"].indexOf(fieldName) === -1) {
-            this.addressForm.formData[fieldName] = fieldData.value;
-          }
-        }
-      }
-    },
-
-    /**
-     * Deletes user's address
-     * @param {Int} addressIndex
-     */
-    deleteUserAddress(addressIndex) {
-      this.addressForm.action = "delete";
-      this.addressForm.addressIndex = addressIndex;
-      this.handleUserAddress();
-    },
-
-    /**
-     * Sets user address for shipping or billing
-     * @param {Int} addressIndex
-     * @param {String} addressFor "shipping" or "billing"
-     */
-    updateUserAddressFor(addressIndex, addressFor) {
-      this.addressForm.action = "update";
-      this.addressForm.addressIndex = addressIndex;
-      this.addressForm.formData = Object.assign(
-        {},
-        this.cartData.addresses.pool[addressIndex]
-      );
-      this.addressForm.formData[addressFor] = true;
-
-      this.handleUserAddress();
-      this.showAddressesModal = false;
+      return {
+        success: updateWoo,
+      };
     },
 
     /**
@@ -1255,15 +1226,65 @@ export const useOlivStore = defineStore({
      * @param {String} clientAddress
      * @returns {Float/Bool} delivery distance/false
      */
-    checkUserAddress(clientAddress) {
+    addressDistance(clientAddress) {
       this.storeLiveUpdate = true;
       return gmapsCheckUserAddress(this.shippingData, clientAddress).then(
+        // If response is float then address exists and is in range
         (response) => {
-          // If response is float then address exists and is in range
           this.storeLiveUpdate = false;
           return response;
         }
       );
+    },
+
+    /**
+     * Get the shipping fee for a distance
+     * This assumes that the distance is in range of delivery
+     * The distance is obtained using addressDistance()
+     * @param {Float} distance
+     * @returns {Float} shipping fee
+     */
+    addressShippingFee(distance) {
+      const distanceFees = this.getDistanceFees(distance);
+      const cartSubTotal = this.cartData.subTotal - this.cartData.totalDiscount;
+
+      let shippingFee = 0;
+      if (cartSubTotal < this.toFloat(distanceFees.free)) {
+        shippingFee = this.toFloat(distanceFees.fee);
+      }
+
+      return shippingFee;
+    },
+
+    /**
+     * Get the distance and shipping price for the shipping address
+     * It's used in cart and it's considering the final cart price(eg. with discounts applied)
+     * @returns {Float} the price
+     */
+    async addressDistanceAndShippingPrice() {
+      const address = this.shippingFieldsMapping.address_1.value;
+      const city = this.shippingFieldsMapping.city.value;
+
+      // Cancel if any of the fields is empty
+      if (address.length < 1 || city.length < 1) return;
+
+      const userAddress = `${address}, ${city}, Romania`;
+      const distance = await this.addressDistance(userAddress).then(
+        (distance) => distance
+      );
+      // Error
+      if (typeof distance === "string") {
+        return {
+          error: distance,
+        };
+      }
+
+      const shippingFee = this.addressShippingFee(distance);
+
+      return {
+        distance: distance,
+        fee: shippingFee,
+      };
     },
 
     /**
@@ -1277,57 +1298,6 @@ export const useOlivStore = defineStore({
         this.userData.customerData = data.data;
         this.storeLiveUpdate = false;
       });
-    },
-
-    /**
-     * Get the shipping price for the shipping address
-     * It's used in cart and it's considering the final cart price(eg. with discounts applied)
-     * @returns {Float} the price
-     */
-    async addressShippingPrice() {
-      const shippingAddress = this.cartData.addresses.shipping;
-      if (shippingAddress) {
-        // Update address to get the distance
-        if (!shippingAddress.distance) {
-          await this.checkUserAddress(
-            `${shippingAddress.address_1}, ${shippingAddress.city}`
-          ).then((distance) => {
-            // Update address in Woo
-            shippingAddress.distance = distance;
-            this.addressForm.formData = shippingAddress;
-            this.addressForm.addressIndex =
-              this.getAddressIndex(shippingAddress);
-
-            this.addressForm.action = "update";
-            this.handleUserAddress();
-          });
-        }
-
-        const distanceFees = this.getDistanceFees(shippingAddress.distance);
-
-        const cartSubTotal =
-          this.cartData.subTotal - this.cartData.totalDiscount;
-
-        if (cartSubTotal < distanceFees.free) {
-          return distanceFees.fee;
-        }
-      }
-      return 0;
-    },
-
-    /**
-     * Reset the address form v-model data(addressForm.formData)
-     */
-    resetAddressForm() {
-      this.addressForm.formData = {};
-      for (const [fieldName, fieldData] of Object.entries(
-        this.addressForm.addressFieldsMapping
-      )) {
-        // Ignore shipping and billing values because those are set when calling showUserAddressForm()
-        if (["shipping", "billing"].indexOf(fieldName) === -1) {
-          this.addressForm.formData[fieldName] = fieldData.value;
-        }
-      }
     },
 
     /**
@@ -1414,11 +1384,7 @@ export const useOlivStore = defineStore({
             paymentMethod: false,
             orderExtras: {
               cutlery: {
-                title: "Da, doresc tacamuri",
-                active: false,
-              },
-              makepaw: {
-                title: "Make PAW not war!",
+                title: "Doresc tacamuri",
                 active: false,
               },
             },
@@ -1430,7 +1396,6 @@ export const useOlivStore = defineStore({
           };
 
           cookies.set("oliv_cart", JSON.stringify(this.cartData), "7D");
-          console.log(data.data);
           return data.data;
         } else {
           return false;
@@ -1444,6 +1409,20 @@ export const useOlivStore = defineStore({
      */
     async fetchImageData(id) {
       return await getImageData(id).then((data) => data.data);
+    },
+
+    /**
+     * Get the fields by priority, to split them in .form-group(s) as per design
+     * @param {String} priority "core" or "regular"
+     * @param {Object} fields store.shippingFieldsMapping or store.billingFieldsMapping
+     */
+    getMappingFieldsByPriority(priority, fields) {
+      const sortedFields = [];
+      Object.entries(fields).forEach((fieldData) => {
+        if (fieldData[1].priority === priority) sortedFields.push(fieldData[0]);
+      });
+
+      return sortedFields;
     },
   },
 });

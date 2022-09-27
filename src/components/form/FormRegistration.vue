@@ -10,25 +10,32 @@ const store = useOlivStore();
     <div class="error-message" v-if="store.userData.error">
       {{ store.userData.error }}
     </div>
-    <label for="user-email">Introdu adresa de email:</label>
-    <input
-      type="email"
-      id="user-email"
-      required
-      autocomplete="username"
-      v-model.lazy="store.userData.credentials.user"
-    /><br />
+    <div class="mb-2">
+      <input
+        placeholder="Introdu adresa de email"
+        class="form-control"
+        type="email"
+        id="user-email"
+        required
+        autocomplete="username"
+        v-model.lazy="store.userData.credentials.user"
+      />
+    </div>
+    <div class="mb-2">
+      <input
+        placeholder="Introdu parola dorita"
+        class="form-control"
+        type="password"
+        id="user-password"
+        required
+        autocomplete="new-password"
+        v-model.lazy="store.userData.credentials.pass"
+      />
+    </div>
 
-    <label for="user-password">Introdu parola dorita:</label>
-    <input
-      type="password"
-      id="user-password"
-      required
-      autocomplete="new-password"
-      v-model.lazy="store.userData.credentials.pass"
-    /><br />
-
-    <button type="submit">Creaza cont</button>
+    <button class="btn btn-outline-dark reverse" type="submit">
+      Creaza cont
+    </button>
   </form>
 </template>
 

@@ -4,6 +4,7 @@ import BtnClose from "@/components/button/BtnClose.vue";
 
 defineProps({
   isOffCanvas: Boolean,
+  isCheckout: Boolean,
 });
 </script>
 
@@ -23,7 +24,9 @@ defineProps({
     </div>
   </div>
   <div v-else class="cart-page-header">
-    <h2 class="cart-page-header-title">Cosul meu <CartQty /></h2>
+    <h2 v-if="!isCheckout" class="cart-page-header-title">
+      Cosul meu <CartQty />
+    </h2>
     <div class="cart-header-legend d-flex">
       <div>Produs</div>
       <div class="d-none d-sm-block">Cantitate</div>

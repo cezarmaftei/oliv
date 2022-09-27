@@ -1,17 +1,11 @@
 <script setup>
 defineProps({
-  product: Object,
+  weight: String,
 });
 </script>
 <template>
-  <div class="product-weight" v-if="product.weight">
-    {{ product.weight
-    }}<span
-      v-if="
-        product.categories.filter((cat) => cat.slug === 'bauturi').length > 0
-      "
-      >ml</span
-    ><span v-else>g</span>
+  <div class="product-weight">
+    {{ weight }}
   </div>
 </template>
 

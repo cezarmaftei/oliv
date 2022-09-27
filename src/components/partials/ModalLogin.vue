@@ -24,9 +24,9 @@ const loginAction = () => {
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="login-modal-label">
+          <h3 class="modal-title" id="login-modal-label">
             Intra in contul tau
-          </h5>
+          </h3>
           <button
             type="button"
             class="btn-close"
@@ -37,7 +37,6 @@ const loginAction = () => {
         </div>
         <div class="modal-body">
           <div class="login-form">
-            <p>Introdu numele de utilizator si parola:</p>
             <FormLogin
               :isModal="true"
               @login-emit="loginAction"

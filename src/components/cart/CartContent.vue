@@ -1,7 +1,6 @@
 <script setup>
 import { useOlivStore } from "@/stores/oliv.js";
 import { useRoute } from "vue-router";
-import { provide, ref } from "vue";
 import { MutationType } from "pinia";
 import UpdateLoading from "@/components/partials/UpdateLoading.vue";
 import FormCoupon from "@/components/form/FormCoupon.vue";
@@ -13,21 +12,16 @@ import ItemPrice from "@/components/partials/ItemPrice.vue";
 const store = useOlivStore();
 const route = useRoute();
 
-const cartItemsInputs = ref([]);
-provide("cartItemsInputs", cartItemsInputs);
-
-const cartDrawerItems = ref([]);
-provide("cartDrawerItems", cartDrawerItems);
-
 defineProps({
   isCheckout: Boolean,
   isOffCanvas: Boolean,
 });
 
 store.$subscribe((mutation, state) => {
+  // This only happens for addresses
   if (mutation.type === "patch function") {
-    // This also calls updateCartTotals()
-    store.mergeCartProducts();
+    store.updateCartData();
+    store.updateCartTotals();
   }
 });
 </script>
@@ -36,21 +30,18 @@ store.$subscribe((mutation, state) => {
   <div class="cart-content">
     <UpdateLoading />
 
-    <CartHeader v-if="!isOffCanvas" :isOffCanvas="false" />
+    <CartHeader
+      v-if="!isOffCanvas"
+      :isCheckout="isCheckout"
+      :isOffCanvas="false"
+    />
 
-    <div class="cart-items" v-if="store.cartData.items.length">
+    <div class="cart-items" v-if="store.getCartItems.items.length">
       <div :class="{ 'px-4': isOffCanvas }">
         <div
           class="cart-item"
-          v-for="(cartItem, cartItemIndex) in store.cartData.items"
+          v-for="(cartItem, cartItemIndex) in store.getCartItems.items"
           :key="cartItem"
-          :ref="
-            () => {
-              cartDrawerItems[cartItemIndex] = store.getProductById(
-                cartItem.id
-              );
-            }
-          "
         >
           <ProductCart
             :isCheckout="isCheckout"
@@ -67,7 +58,7 @@ store.$subscribe((mutation, state) => {
   </div>
 
   <div
-    v-if="store.cartData.items.length"
+    v-if="store.getCartItems.items.length"
     class="cart-totals"
     :class="{ 'd-flex flex-column flex-grow-1': isOffCanvas }"
   >
@@ -78,6 +69,7 @@ store.$subscribe((mutation, state) => {
           <strong><ItemPrice :price="store.cartData.subTotal" /></strong>
         </div>
       </div>
+
       <div v-if="store.cartData.coupon.codes">
         <div
           v-for="couponData in store.cartData.coupon.codes"
@@ -85,8 +77,8 @@ store.$subscribe((mutation, state) => {
           class="d-flex align-items-center cart-bordered-element"
         >
           <button
+            type="button"
             class="btn btn-delete"
-            v-if="!isCheckout"
             @click="store.removeOrderCoupon"
           ></button>
           <div class="px-1">Discount cupon "{{ couponData.code }}":</div>
@@ -98,15 +90,36 @@ store.$subscribe((mutation, state) => {
       <div v-if="!store.cartData.coupon.codes.length">
         <FormCoupon />
       </div>
-      <div class="d-flex cart-bordered-element">
-        <div
-          class="d-flex"
-          v-if="isCheckout || store.cartData.addresses.shipping"
-        >
-          <div>Cost livrare</div>
-          <ItemPrice class="ms-auto" :price="store.cartData.totalShipping" />
+
+      <div class="cart-bordered-element">
+        <div class="d-flex">
+          <div class="text-nowrap me-1">Cost livrare:</div>
+          <div class="ms-auto">
+            <span v-if="!isCheckout && store.cartData.totalShipping === false">
+              Se calculeaza la pasul urmator.
+            </span>
+            <span
+              v-if="
+                isCheckout &&
+                store.cartData.totalShipping === false &&
+                store.cartData.deliveryMethod !== 'pickup'
+              "
+            >
+              Va fi calculat dupa ce introduci adresa si localitatea.
+            </span>
+            <span v-if="store.cartData.deliveryMethod === 'pickup'">
+              Ridicare personala de la sediu
+            </span>
+            <ItemPrice
+              v-if="
+                store.cartData.totalShipping > 0 &&
+                store.cartData.deliveryMethod !== 'pickup'
+              "
+              :price="store.cartData.totalShipping"
+            />
+            <span v-if="store.cartData.totalShipping === 0">Gratuit</span>
+          </div>
         </div>
-        <div v-else>Costul livrarii se calculeaza la pasul urmator.</div>
       </div>
     </div>
 

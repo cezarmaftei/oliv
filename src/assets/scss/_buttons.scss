@@ -43,16 +43,16 @@
 
   &:hover:not(.active) {
     color: $dark;
-    background-size: 200px;
+    background-size: 100% 100%;
   }
 
   &.active {
     color: $white;
-    background: $bg-btn-red no-repeat center center / 200px;
+    background: $bg-btn-red no-repeat center center / 200px 200px;
   }
 
   &.reverse {
-    background-size: 200px;
+    background-size: 200px 200px;
 
     &:hover:not(.active) {
       color: $dark;
@@ -63,7 +63,7 @@
   @include media-breakpoint-up(lg) {
     &.active,
     &:hover:not(.active) {
-      background-size: 300px;
+      background-size: 300px 300px;
     }
   }
 }

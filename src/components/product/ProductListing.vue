@@ -40,6 +40,12 @@ onMounted(() => {
       : desc.textContent.substring(0, maxLength);
 });
 
+const productWeight = (product) => {
+  if (product.categories.filter((cat) => cat.slug === "bauturi").length > 0)
+    return `${product.weight}ml`;
+  else return `${product.weight}g`;
+};
+
 /**
  * Add product to cart
  * @param {Int} quantity
@@ -51,6 +57,9 @@ const addToCart = (quantity, button) => {
   // Cart product object:
   //
   // id -> product ID === Is added here
+  // name -> product name === Is added here
+  // thumbId -> product thumbnail ID === Is added here
+  // productWeight -> product weight === Is added here
   // productQty -> quantity === Is added here
   // productPrice -> product price === Is added here
   // productExtras -> array with extra options: === Is added here
@@ -78,6 +87,9 @@ const addToCart = (quantity, button) => {
   store.$patch((state) => {
     state.cartData.items.push({
       id: props.product.id,
+      name: props.product.name,
+      thumbId: props.product.images[0].id,
+      productWeight: productWeight(props.product),
       productQty: quantity,
       productPrice: props.product.price,
       productExtras: cartProductExtras,
@@ -179,9 +191,9 @@ const currentItemPrice = computed(() => {
     <div class="product-description">
       <p class="mb-1" v-if="!isSingle">{{ productDescriptionTrimmed }}</p>
       <div v-else v-html="product.description"></div>
-      <ProductWeight :product="product" v-if="isSingle" />
+      <ProductWeight :weight="productWeight(product)" v-if="isSingle" />
       <ProductWeight
-        :product="product"
+        :weight="productWeight(product)"
         v-if="!isSingle"
         class="d-none d-sm-block"
       />
@@ -643,7 +655,6 @@ const currentItemPrice = computed(() => {
     background: $body-bg;
     position: relative;
     padding-left: calc(50% - 2px);
-    border: 2px solid $border-color;
 
     figure {
       margin: 0;
