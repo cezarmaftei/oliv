@@ -11,6 +11,7 @@ const emits = defineEmits(["addressAddedSuccess"]);
 
 const props = defineProps({
   formData: Object,
+  isEmpty: Boolean,
   addressIndex: Number,
 });
 
@@ -24,6 +25,14 @@ if (props.formData) {
 
     if (store.shippingFieldsMapping[mappingName])
       store.shippingFieldsMapping[mappingName]["value"] = fieldValue;
+  }
+}
+
+if (props.isEmpty) {
+  for (const [fieldName, fieldValue] of Object.entries(
+    store.shippingFieldsMapping
+  )) {
+    fieldValue["value"] = "";
   }
 }
 

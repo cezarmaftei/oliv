@@ -84,18 +84,16 @@ const addToCart = (quantity, button) => {
     }
   }
 
-  store.$patch((state) => {
-    state.cartData.items.push({
-      id: props.product.id,
-      name: props.product.name,
-      thumbId: props.product.images[0].id,
-      productWeight: productWeight(props.product),
-      productQty: quantity,
-      productPrice: props.product.price,
-      productExtras: cartProductExtras,
-      productWithExtrasPrice: 0, // Will be updated with this.updateCartTotals()
-      itemTotal: 0, // Will be updated with this.updateCartTotals()
-    });
+  store.cartData.items.push({
+    id: props.product.id,
+    name: props.product.name,
+    thumbId: props.product.images[0].id,
+    productWeight: productWeight(props.product),
+    productQty: quantity,
+    productPrice: props.product.price,
+    productExtras: cartProductExtras,
+    productWithExtrasPrice: 0, // Will be updated with this.updateCartTotals()
+    itemTotal: 0, // Will be updated with this.updateCartTotals()
   });
 
   button.classList.add("done");

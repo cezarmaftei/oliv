@@ -35,9 +35,10 @@ const addNewBilling = ref(false);
       />
     </transition>
 
-    <div v-if="store.cartData.addresses.shipping.length">
+    <div v-if="store.userData.customerAddresses.shipping.length">
       <div
-        v-for="(address, addressIndex) in store.cartData.addresses.shipping"
+        v-for="(address, addressIndex) in store.userData.customerAddresses
+          .shipping"
         :key="address"
       >
         <UserAddress
@@ -68,9 +69,10 @@ const addNewBilling = ref(false);
       />
     </transition>
 
-    <div v-if="store.cartData.addresses.billing.length">
+    <div v-if="store.userData.customerAddresses.billing.length">
       <div
-        v-for="(address, addressIndex) in store.cartData.addresses.billing"
+        v-for="(address, addressIndex) in store.userData.customerAddresses
+          .billing"
         :key="address"
       >
         <UserAddress

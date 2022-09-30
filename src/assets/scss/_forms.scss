@@ -80,3 +80,17 @@ label.form-control {
     @include margin-bottom(2rem);
   }
 }
+
+form {
+  .btn {
+    padding: 1rem 2rem;
+  }
+
+  a {
+    color: $body-color;
+
+    &:hover {
+      color: $olive;
+    }
+  }
+}

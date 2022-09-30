@@ -11,15 +11,6 @@ const router = useRouter();
 const store = useOlivStore();
 
 const showBilling = ref(false);
-
-const updatePickupShippingPrice = () => {
-  store.$patch((state) => {
-    if (store.cartData.deliveryMethod === "pickup") {
-      state.cartData.totalShipping = false;
-    }
-  });
-};
-
 /**
  * Send the order to Woo and redirect if success
  */
@@ -60,7 +51,7 @@ const sendOrder = async () => {
                     true-value="pickup"
                     false-value="delivery"
                     v-model="store.cartData.deliveryMethod"
-                    @change="updatePickupShippingPrice()"
+                    @change="store.updateCartTotals()"
                   />
                   Voi ridica eu comanda
                 </label>
@@ -92,7 +83,7 @@ const sendOrder = async () => {
           <!-- Billing details -->
           <transition name="height-element">
             <div v-if="showBilling">
-              <FieldsFormBilling />
+              <FieldsFormBilling :isCheckout="true" />
             </div>
           </transition>
 

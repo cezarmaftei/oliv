@@ -8,6 +8,7 @@ import NoProductsInCart from "@/components/partials/NoProductsInCart.vue";
 import ProductCart from "@/components/product/ProductCart.vue";
 import CartHeader from "@/components/cart/CartHeader.vue";
 import ItemPrice from "@/components/partials/ItemPrice.vue";
+// import { onMounted } from "vue";
 
 const store = useOlivStore();
 const route = useRoute();
@@ -20,7 +21,8 @@ defineProps({
 store.$subscribe((mutation, state) => {
   // This only happens for addresses
   if (mutation.type === "patch function") {
-    store.updateCartData();
+    console.log("cart patched!");
+    // store.updateCartAddressesData();
     store.updateCartTotals();
   }
 });

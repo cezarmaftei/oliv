@@ -1,8 +1,9 @@
 <script setup>
 import { useOlivStore } from "@/stores/oliv.js";
 import AddressFees from "@/components/partials/AddressFees.vue";
-import { ref } from "vue";
 import FormShippingAddress from "../form/FormShippingAddress.vue";
+import { ref } from "vue";
+import FormBillingAddress from "../form/FormBillingAddress.vue";
 
 const store = useOlivStore();
 defineProps({
@@ -13,8 +14,6 @@ defineProps({
 });
 
 const showEditForm = ref(false);
-
-// const excludeAddressInModal = inject("excludeAddressInModal");
 </script>
 
 <template>
@@ -23,23 +22,23 @@ const showEditForm = ref(false);
       <transition name="height-element">
         <div v-if="!showEditForm">
           <h4 v-if="addressIndex === 0">Adresa implicta pentru livrare</h4>
-          {{ address.shipping_first_name }}
-          <span v-if="address.shipping_last_name">
-            {{ address.shipping_last_name }}</span
-          >, {{ address.shipping_address_1
-          }}<span v-if="address.shipping_address_2">
-            {{ address.shipping_address_2 }}</span
-          >, {{ address.shipping_city }}, <br />{{ address.shipping_phone }}
-          <br />
+          {{ address.shipping_first_name }}, <br />
+          {{ address.shipping_address_1 }}, {{ address.shipping_city }}, <br />
+          {{ address.shipping_email }}, {{ address.shipping_phone }} <br />
           <AddressFees :address="address" />
         </div>
       </transition>
 
-      <button class="btn" @click="showEditForm = !showEditForm">
+      <button
+        v-if="!isCheckout"
+        class="btn"
+        @click="showEditForm = !showEditForm"
+      >
         Editeaza adresa
       </button>
 
       <button
+        v-if="!isCheckout"
         class="btn"
         @click="store.handleUserAddress('delete', addressType, addressIndex)"
       >
@@ -47,16 +46,20 @@ const showEditForm = ref(false);
       </button>
 
       <button
-        v-if="addressIndex !== 0"
+        v-if="!isCheckout && addressIndex > 0"
         class="btn"
         @click="store.handleUserAddress('setfirst', addressType, addressIndex)"
       >
         Seteaza ca adresa implicita
       </button>
 
+      <button v-if="isCheckout" class="btn btn-outline-dark reverse">
+        Alege adresa
+      </button>
+
       <transition name="height-element">
         <FormShippingAddress
-          v-if="showEditForm"
+          v-if="showEditForm && !isCheckout"
           :formData="address"
           :addressIndex="addressIndex"
           @address-added-success="showEditForm = false"
@@ -75,8 +78,6 @@ const showEditForm = ref(false);
           }}<span v-if="address.billing_address_2">
             {{ address.billing_address_2 }}</span
           >, {{ address.billing_city }}, <br />{{ address.billing_phone }}
-          <br />
-          <AddressFees :address="address" />
         </div>
       </transition>
 
@@ -100,7 +101,7 @@ const showEditForm = ref(false);
       </button>
 
       <transition name="height-element">
-        <FormShippingAddress
+        <FormBillingAddress
           v-if="showEditForm"
           :formData="address"
           :addressIndex="addressIndex"

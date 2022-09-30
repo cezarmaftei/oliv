@@ -11,7 +11,8 @@
   // scss-docs-start modal-css-vars
   --#{$prefix}modal-zindex: #{$zindex-modal};
   --#{$prefix}modal-width: #{$modal-md};
-  --#{$prefix}modal-padding: #{$modal-inner-padding};
+  --#{$prefix}modal-padding-y: #{$modal-inner-padding-y};
+  --#{$prefix}modal-padding-x: #{$modal-inner-padding-x};
   --#{$prefix}modal-margin: #{$modal-dialog-margin};
   --#{$prefix}modal-color: #{$modal-content-color};
   --#{$prefix}modal-bg: #{$modal-content-bg};
@@ -150,7 +151,13 @@
   // Enable `flex-grow: 1` so that the body take up as much space as possible
   // when there should be a fixed height on `.modal-dialog`.
   flex: 1 1 auto;
-  padding: var(--#{$prefix}modal-padding);
+  padding: var(--#{$prefix}modal-padding-y) var(--#{$prefix}modal-padding-x);
+
+  .btn-close {
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+  }
 }
 
 // Footer (for actions)

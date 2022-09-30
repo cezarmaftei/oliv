@@ -15,6 +15,7 @@ import SectionRelatedProducts from "../components/section/SectionRelatedProducts
 import UserOrders from "@/components/user-account/UserOrders.vue";
 import UserAddresses from "@/components/user-account/UserAddresses.vue";
 import UserGeneral from "@/components/user-account/UserGeneral.vue";
+import IconLoading from "../components/icons/IconLoading.vue";
 
 const store = useOlivStore();
 const route = useRoute();
@@ -43,7 +44,10 @@ const accountSections = {
       v-if="store.isLoaded"
     >
       <!-- page layout -->
-      <section v-if="['home', 'page'].includes(route.name)" class="flex-grow-1">
+      <section
+        v-if="['home', 'page'].includes(route.name)"
+        class="d-flex flex-column flex-grow-1"
+      >
         <component
           :is="
             pageTemplates[
@@ -70,6 +74,7 @@ const accountSections = {
       </section>
       <!-- /.account layout -->
     </main>
+    <IconLoading v-if="!store.isLoaded" />
     <FooterInternal />
   </div>
 </template>

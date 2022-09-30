@@ -3,18 +3,18 @@ import { Loader } from "@googlemaps/js-api-loader";
 /**
  * Check user address and get the driving distance to client's location
  *
- * @param {Object} shippingData
+ * @param {Object} shippingLimitsAndFees
  * @param {String} deliveryAddress
  * @param {String} operation geocode or getDistance
  * @returns {Bool/Float/String} TRUE if geocode is successfull/DISTANCE if address is in range/ERRORMSG if any error
  */
 export const gmapsCheckUserAddress = async (
-  shippingData,
+  shippingLimitsAndFees,
   deliveryAddress,
   operation
 ) => {
   return await new Loader({
-    apiKey: shippingData.shipping_options.exwoofood_gg_api,
+    apiKey: shippingLimitsAndFees.shipping_options.exwoofood_gg_api,
   })
     .load()
     .then((google) => {
@@ -36,7 +36,7 @@ export const gmapsCheckUserAddress = async (
                 // Get distance matrix
                 return distanceMatrix
                   .getDistanceMatrix({
-                    origins: [shippingData.store_address],
+                    origins: [shippingLimitsAndFees.store_address],
                     destinations: [deliveryAddress],
                     travelMode: "DRIVING",
                   })
@@ -46,7 +46,8 @@ export const gmapsCheckUserAddress = async (
 
                     if (
                       checkResult >
-                      shippingData.shipping_options.exwoofood_restrict_km
+                      shippingLimitsAndFees.shipping_options
+                        .exwoofood_restrict_km
                     )
                       checkResult =
                         "Aceasta adresa este la o distanta prea mare de punctul nostru de livrare. O puteti folosi doar ca adresa de facturare.";

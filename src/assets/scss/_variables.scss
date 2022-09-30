@@ -770,7 +770,8 @@ $offcanvas-backdrop-opacity:        0.4 !default;
 // Modals
 
 // scss-docs-start modal-variables
-$modal-inner-padding:               4rem !default;
+$modal-inner-padding-y:             2rem !default;
+$modal-inner-padding-x:             3rem !default;
 
 $modal-footer-margin-between:       1rem !default;
 
@@ -781,7 +782,7 @@ $modal-title-line-height:           $line-height-base !default;
 
 $modal-content-color:               null !default;
 $modal-content-bg:                  $white !default;
-$modal-content-border-color:        var(--#{$prefix}border-color-translucent) !default;
+$modal-content-border-color:        transparent !default;
 $modal-content-border-width:        $border-width !default;
 $modal-content-border-radius:       $border-radius-lg !default;
 $modal-content-inner-border-radius: subtract($modal-content-border-radius, $modal-content-border-width) !default;
@@ -791,10 +792,10 @@ $modal-content-box-shadow-sm-up:    $box-shadow !default;
 $modal-backdrop-bg:                 $black !default;
 $modal-backdrop-opacity:            .5 !default;
 
-$modal-header-border-color:         var(--#{$prefix}border-color) !default;
+$modal-header-border-color:         transparent !default;
 $modal-header-border-width:         $modal-content-border-width !default;
-$modal-header-padding-y:            $modal-inner-padding !default;
-$modal-header-padding-x:            $modal-inner-padding !default;
+$modal-header-padding-y:            $modal-inner-padding-y !default;
+$modal-header-padding-x:            $modal-inner-padding-x !default;
 $modal-header-padding:              $modal-header-padding-y $modal-header-padding-x !default; // Keep this for backwards compatibility
 
 $modal-footer-bg:                   null !default;
@@ -802,7 +803,7 @@ $modal-footer-border-color:         $modal-header-border-color !default;
 $modal-footer-border-width:         $modal-header-border-width !default;
 
 $modal-sm:                          300px !default;
-$modal-md:                          500px !default;
+$modal-md:                          400px !default;
 $modal-lg:                          800px !default;
 $modal-xl:                          1140px !default;
 

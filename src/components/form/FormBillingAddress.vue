@@ -20,10 +20,8 @@ if (props.formData) {
   buttonText = "Editeaza adresa de facturare";
 
   for (const [fieldName, fieldValue] of Object.entries(props.formData)) {
-    const mappingName = fieldName.replace("billing_", "");
-
-    if (store.billingFieldsMapping[mappingName])
-      store.billingFieldsMapping[mappingName]["value"] = fieldValue;
+    if (store.billingFieldsMapping[fieldName])
+      store.billingFieldsMapping[fieldName]["value"] = fieldValue;
   }
 }
 

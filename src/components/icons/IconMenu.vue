@@ -6,11 +6,11 @@
     class="icon-menu"
   >
     <defs>
-      <clipPath id="a" transform="translate(0 0)">
+      <clipPath id="svg-icon-menu" transform="translate(0 0)">
         <rect width="40.28" height="39.5" style="fill: none" />
       </clipPath>
     </defs>
-    <g style="clip-path: url(#a)">
+    <g style="clip-path: url(#svg-icon-menu)">
       <path
         d="M10.72,5.36A5.36,5.36,0,1,1,5.36,0a5.36,5.36,0,0,1,5.36,5.36"
         transform="translate(0 0)"

@@ -17,23 +17,29 @@ const getShippingPrice = () => {
   if (props.isCheckout) {
     clearTimeout(timeout);
 
+    addressError.value = false;
+
     timeout = setTimeout(async () => {
-      const shippingData = await store.addressDistanceAndShippingPrice(
-        (data) => data
-      );
-      if (shippingData && shippingData.error) {
-        store.cartData.totalShipping = false;
-        addressError.value = shippingData.error;
-        store.updateCartTotals();
-        return;
+      const address = store.cartData.addresses.shipping.shipping_address_1;
+      const city = store.cartData.addresses.shipping.shipping_city;
+      let newAddressDistance = false;
+
+      if (address.length > 0 && city.length > 0) {
+        newAddressDistance = await store
+          .addressDistance(
+            `${store.cartData.addresses.shipping.shipping_address_1}, ${store.cartData.addresses.shipping.shipping_city}, Romania`
+          )
+          .then((data) => data);
+
+        if (typeof newAddressDistance === "string") {
+          addressError.value = newAddressDistance;
+        }
       }
 
-      if (shippingData) {
-        store.$patch((state) => {
-          state.cartData.totalShipping = shippingData.fee;
-        });
-        addressError.value = false;
-      }
+      store.$patch((state) => {
+        state.cartData.addresses.shipping.shipping_distance =
+          newAddressDistance;
+      });
     }, 1000);
   }
 };
@@ -41,7 +47,18 @@ const getShippingPrice = () => {
 <template>
   <!-- Contact details -->
   <div class="form-group">
-    <h3>Informatii de contact</h3>
+    <h3>
+      Informatii de contact
+      <button
+        data-bs-toggle="modal"
+        data-bs-target="#shipping-addresses-modal"
+        v-if="isCheckout && store.cartData.addresses.shipping.length"
+        type="button"
+        class="btn btn-outline-dark reverse"
+      >
+        Alege alta adresa delivrare
+      </button>
+    </h3>
     <div class="row g-2">
       <div
         class="col-12"
@@ -52,7 +69,11 @@ const getShippingPrice = () => {
         :key="fieldName"
         :class="fieldCount === 0 ? '' : 'col-sm-6'"
       >
-        <FormControl fieldFor="shippingFieldsMapping" :fieldName="fieldName" />
+        <FormControl
+          fieldFor="shipping"
+          :fieldName="fieldName"
+          :isCheckout="isCheckout"
+        />
       </div>
     </div>
   </div>
@@ -78,9 +99,10 @@ const getShippingPrice = () => {
             v-show="store.shippingFieldsMapping[fieldName].type !== 'hidden'"
           >
             <FormControl
-              fieldFor="shippingFieldsMapping"
+              fieldFor="shipping"
               :fieldName="fieldName"
-              @keyup="getShippingPrice()"
+              :isCheckout="isCheckout"
+              @input="getShippingPrice()"
             />
           </div>
 

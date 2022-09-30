@@ -1,15 +1,22 @@
 <script setup>
 import FormLogin from "@/components/form/FormLogin.vue";
 import { useOlivStore } from "@/stores/oliv.js";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
+import { Modal } from "bootstrap";
+import BtnClose from "../button/BtnClose.vue";
 const store = useOlivStore();
 
 const closeBtn = ref(false);
 
+const loginModal = ref(false);
+onMounted(() => {
+  loginModal.value = new Modal("#login-modal");
+});
+
 const loginAction = () => {
   // Close modal if user is successfully logged in
   if (store.userData.loggedIn) {
-    closeBtn.value.click();
+    loginModal.value.hide();
   }
 };
 </script>
@@ -21,26 +28,23 @@ const loginAction = () => {
     aria-labelledby="login-modal-label"
     aria-hidden="true"
   >
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-md">
       <div class="modal-content">
-        <div class="modal-header">
+        <div class="modal-body">
           <h3 class="modal-title" id="login-modal-label">
             Intra in contul tau
           </h3>
-          <button
+          <BtnClose
             type="button"
-            class="btn-close"
             data-bs-dismiss="modal"
             aria-label="Close"
             ref="closeBtn"
-          ></button>
-        </div>
-        <div class="modal-body">
+          />
           <div class="login-form">
             <FormLogin
               :isModal="true"
               @login-emit="loginAction"
-              @cancelled-emit="closeBtn.click()"
+              @cancelled-emit="loginModal.hide()"
             />
           </div>
         </div>
@@ -48,3 +52,10 @@ const loginAction = () => {
     </div>
   </div>
 </template>
+
+<style scoped lang="scss">
+.login-form {
+  max-width: 40rem;
+  margin: auto;
+}
+</style>

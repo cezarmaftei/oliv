@@ -6,6 +6,9 @@ import FormRegistration from "@/components/form/FormRegistration.vue";
 import FormResetPass from "@/components/form/FormResetPass.vue";
 import FormPassRecovery from "@/components/form/FormPassRecovery.vue";
 import UpdateLoading from "@/components/partials/UpdateLoading.vue";
+import IconTaco from "../icons/IconTaco.vue";
+import IconMapMarkers from "../icons/IconMapMarkers.vue";
+import IconNachos from "../icons/IconNachos.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -22,13 +25,13 @@ if (route.query.action === "aa") {
     )
     .then(() => {
       if (store.userData.loggedIn) {
-        router.push({ path: "/meniu" });
+        router.push({ name: "home" });
       }
     });
 }
 </script>
 <template>
-  <div class="overflow-hidden container mb-8">
+  <div class="overflow-hidden flex-grow-1 container mb-8">
     <UpdateLoading />
     <div
       class="activation-container"
@@ -42,15 +45,46 @@ if (route.query.action === "aa") {
       </div>
     </div>
 
-    <div v-if="store.userData.loggedIn">
-      <router-link to="/contul-meu/comenzile-mele/"
-        >Istoric comenzi</router-link
-      >
-      <router-link to="/contul-meu/adresele-mele/">Adresele mele</router-link>
-      <router-link to="/contul-meu/detalii-cont/">Detalii cont</router-link>
+    <div class="account-menu text-center" v-if="store.userData.loggedIn">
+      <div class="row justify-content-center g-2">
+        <div class="col-12 col-xs-6 col-lg-4">
+          <router-link
+            class="account-menu-card d-flex flex-column align-items-center justify-content-center pt-3"
+            to="/contul-meu/comenzile-mele/"
+            ><h3 class="mb-2 mt-auto">Istoric comenzi</h3>
+            <IconTaco class="mb-3" />
+            <span class="btn btn-outline-dark reverse mt-auto"
+              >vezi istoric comenzi</span
+            ></router-link
+          >
+        </div>
+        <div class="col-12 col-xs-6 col-lg-4">
+          <router-link
+            class="account-menu-card d-flex flex-column align-items-center justify-content-center pt-3"
+            to="/contul-meu/adresele-mele/"
+            ><h3 class="mb-2 mt-auto">Adresele mele</h3>
+            <IconMapMarkers class="mb-3" />
+            <span class="btn btn-outline-dark reverse mt-auto"
+              >vezi adresele</span
+            ></router-link
+          >
+        </div>
+        <div class="col-12 col-xs-6 col-lg-4">
+          <router-link
+            class="account-menu-card d-flex flex-column align-items-center justify-content-center pt-3"
+            to="/contul-meu/detalii-cont/"
+            ><h3 class="mb-2 mt-auto">Detalii cont</h3>
+            <IconNachos class="mb-3" />
+            <span class="btn btn-outline-dark reverse mt-auto"
+              >vezi detalii cont</span
+            ></router-link
+          >
+        </div>
+      </div>
+      <div class="d-flex flex-wrap justify-content-center"></div>
       <button
         type="button"
-        class="btn btn-outline-dark"
+        class="btn btn-outline-dark mt-4"
         @click="store.userActions('logout')"
       >
         Logout
@@ -106,20 +140,6 @@ h3 {
   padding: 0;
 }
 
-:deep {
-  .btn {
-    padding: 1rem 2rem;
-  }
-
-  a {
-    color: $body-color;
-
-    &:hover {
-      color: $olive;
-    }
-  }
-}
-
 .form-outer-wrapper {
   background: $white;
   border: 2px solid $border-color;
@@ -127,6 +147,40 @@ h3 {
   padding: 2rem;
   margin-left: auto;
   margin-right: auto;
+}
+
+.account-menu-card {
+  border: 2px solid $border-color;
+  color: $body-color;
+  height: 100%;
+
+  &:hover {
+    svg {
+      transform: scale(1.1);
+    }
+
+    .btn {
+      background-size: 0 0;
+    }
+  }
+
+  .btn {
+    margin: -2px;
+    width: calc(100% + 4px);
+
+    &:hover {
+      background-size: 500px 500px;
+    }
+  }
+
+  svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-width: 12rem;
+    max-height: 6rem;
+    @include transition($transition-base);
+  }
 }
 
 @include media-breakpoint-up(md) {

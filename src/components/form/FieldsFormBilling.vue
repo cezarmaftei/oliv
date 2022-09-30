@@ -55,7 +55,11 @@ const copyShippingDetails = () => {
         :key="fieldName"
         v-show="fieldData.type !== 'hidden'"
       >
-        <FormControl fieldFor="billingFieldsMapping" :fieldName="fieldName" />
+        <FormControl
+          fieldFor="billing"
+          :isCheckout="isCheckout"
+          :fieldName="fieldName"
+        />
       </div>
     </div>
   </div>

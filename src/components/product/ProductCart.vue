@@ -35,9 +35,10 @@ const updateCartItemQty = (value, isNewValue) => {
   }
 
   if (isNaN(newValue)) newValue = 1;
-  store.$patch(
-    (state) => (state.cartData.items[props.cartItemIndex].productQty = newValue)
-  );
+  store.cartData.items[props.cartItemIndex].productQty = newValue;
+  // store.$patch(
+  //   (state) => (state.cartData.items[props.cartItemIndex].productQty = newValue)
+  // );
 };
 
 /**
@@ -66,12 +67,14 @@ const updateCartItemExtraQty = (extraIndex, value, isNewValue, isFocusOut) => {
   }
 
   // Update with new value
-  store.$patch(
-    (state) =>
-      (state.cartData.items[props.cartItemIndex].productExtras[
-        extraIndex
-      ].extraQty = newValue)
-  );
+  store.cartData.items[props.cartItemIndex].productExtras[extraIndex].extraQty =
+    newValue;
+  // store.$patch(
+  //   (state) =>
+  //     (state.cartData.items[props.cartItemIndex].productExtras[
+  //       extraIndex
+  //     ].extraQty = newValue)
+  // );
 };
 
 /**
@@ -79,9 +82,10 @@ const updateCartItemExtraQty = (extraIndex, value, isNewValue, isFocusOut) => {
  */
 const removeFromCart = () => {
   // Remove
-  store.$patch((state) => {
-    state.cartData.items.splice(props.cartItemIndex, 1);
-  });
+  store.cartData.items.splice(props.cartItemIndex, 1);
+  // store.$patch((state) => {
+  //   state.cartData.items.splice(props.cartItemIndex, 1);
+  // });
 };
 
 /**

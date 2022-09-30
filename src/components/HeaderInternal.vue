@@ -13,6 +13,6 @@ const route = useRoute();
   >
     <MainNav :isSingle="route.name === 'product'" />
     <MainNav :isClone="true" v-if="route.name !== 'product'" />
-    <CartDrawer />
+    <CartDrawer v-if="route.params.slug !== 'finalizare'" />
   </header>
 </template>

@@ -52,9 +52,9 @@ const cancelledEmitAction = () => {
     <button class="btn btn-outline-dark reverse" type="submit">
       Intra in cont
     </button>
-    <div class="success-message" v-if="store.userData.loggedIn">
+    <!-- <div class="success-message" v-if="store.userData.loggedIn">
       {{ store.userData.loggedIn }}
-    </div>
+    </div> -->
     <div class="error-message" v-if="store.userData.error">
       {{ store.userData.error }}
     </div>
