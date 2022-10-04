@@ -16,14 +16,17 @@ const addNewShipping = ref(false);
 const addNewBilling = ref(false);
 </script>
 <template>
-  <h2 v-if="!isCheckout">Adresele Mele</h2>
-
   <!-- USER LOGGED IN -->
-  <div v-if="store.userData.loggedIn">
+  <div v-if="store.userData.loggedIn" class="py-8 px-7">
+    <h2 class="mb-3" v-if="!isCheckout">Adresele Mele</h2>
+
     <!-- Shipping Addresses -->
-    <h3>
+    <h3 class="d-flex">
       Adresele de livrare
-      <button class="btn btn-primary" @click="addNewShipping = !addNewShipping">
+      <button
+        class="btn btn-outline-dark reverse ms-auto"
+        @click="addNewShipping = !addNewShipping"
+      >
         Adauga adresa de livrare
       </button>
     </h3>
@@ -31,7 +34,9 @@ const addNewBilling = ref(false);
     <transition name="height-element">
       <FormShippingAddress
         v-if="addNewShipping"
+        :isEmpty="true"
         @address-added-success="addNewShipping = false"
+        @cancel-action="addNewShipping = false"
       />
     </transition>
 
@@ -55,9 +60,12 @@ const addNewBilling = ref(false);
     <!-- /.Shipping Addresses -->
 
     <!-- Billing Addresses -->
-    <h3>
+    <h3 class="d-flex mt-5">
       Adresele de facturare
-      <button class="btn btn-primary" @click="addNewBilling = !addNewBilling">
+      <button
+        class="btn btn-outline-dark reverse ms-auto"
+        @click="addNewBilling = !addNewBilling"
+      >
         Adauga adresa de facturare
       </button>
     </h3>
@@ -65,7 +73,9 @@ const addNewBilling = ref(false);
     <transition name="height-element">
       <FormBillingAddress
         v-if="addNewBilling"
+        :isEmpty="true"
         @address-added-success="addNewBilling = false"
+        @cancel-action="showEditForm = false"
       />
     </transition>
 

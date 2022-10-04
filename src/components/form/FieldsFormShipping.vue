@@ -47,16 +47,16 @@ const getShippingPrice = () => {
 <template>
   <!-- Contact details -->
   <div class="form-group">
-    <h3>
+    <h3 class="d-flex flex-column flex-xl-row align-items-xl-center">
       Informatii de contact
       <button
         data-bs-toggle="modal"
         data-bs-target="#shipping-addresses-modal"
-        v-if="isCheckout && store.cartData.addresses.shipping.length"
+        v-if="isCheckout && store.userData.customerAddresses.shipping.length"
         type="button"
-        class="btn btn-outline-dark reverse"
+        class="btn btn-outline-dark reverse mt-2 ms-xl-auto"
       >
-        Alege alta adresa delivrare
+        Alege alta adresa de livrare
       </button>
     </h3>
     <div class="row g-2">
@@ -67,7 +67,7 @@ const getShippingPrice = () => {
           store.shippingFieldsMapping
         )"
         :key="fieldName"
-        :class="fieldCount === 0 ? '' : 'col-sm-6'"
+        :class="fieldCount === 0 ? '' : 'col-sm-6 col-md-12 col-lg-6'"
       >
         <FormControl
           fieldFor="shipping"
@@ -85,12 +85,13 @@ const getShippingPrice = () => {
         (store.cartData.deliveryMethod !== 'pickup' && isCheckout) ||
         !isCheckout
       "
+      :class="{ 'mt-2': !isCheckout }"
     >
       <div class="form-group">
         <h3>Detalii Livrare</h3>
         <div class="row g-2">
           <div
-            class="col-12 col-sm-6"
+            class="col-12 col-sm-6 col-md-12 col-lg-6"
             v-for="fieldName in store.getMappingFieldsByPriority(
               'regular',
               store.shippingFieldsMapping
@@ -125,3 +126,11 @@ const getShippingPrice = () => {
     </div>
   </transition>
 </template>
+
+<style scoped lang="scss">
+@include media-breakpoint-up(xl) {
+  .btn {
+    margin-top: 0 !important;
+  }
+}
+</style>

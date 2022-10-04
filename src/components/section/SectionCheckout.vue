@@ -36,7 +36,7 @@ const sendOrder = async () => {
 </script>
 
 <template>
-  <div class="checkout-inner p-7">
+  <div class="checkout-inner p-7 mb-8">
     <form @submit.prevent="submitOrder" v-if="store.cartData.items.length">
       <div class="row">
         <div class="col-12 col-md-6 col-lg-7">
@@ -44,7 +44,7 @@ const sendOrder = async () => {
           <div class="form-group">
             <h3>Optiuni de livrare</h3>
             <div class="row g-2">
-              <div class="col-12 col-sm-6">
+              <div class="col-12 col-sm-6 col-md-12 col-lg-6">
                 <label class="form-control">
                   <input
                     type="checkbox"
@@ -56,7 +56,7 @@ const sendOrder = async () => {
                   Voi ridica eu comanda
                 </label>
               </div>
-              <div class="col-12 col-sm-6">
+              <div class="col-12 col-sm-6 col-md-12 col-lg-6">
                 <label class="form-control">
                   <input
                     type="checkbox"
@@ -91,7 +91,7 @@ const sendOrder = async () => {
           <div class="form-group">
             <h3>Metoda de plata</h3>
             <div class="row g-2">
-              <div class="col-12 col-sm-6">
+              <div class="col-12 col-sm-6 col-md-12 col-lg-6">
                 <label class="form-control">
                   <input
                     type="radio"
@@ -103,7 +103,7 @@ const sendOrder = async () => {
                   Cash la livrare
                 </label>
               </div>
-              <div class="col-12 col-sm-6">
+              <div class="col-12 col-sm-6 col-md-12 col-lg-6">
                 <label class="form-control">
                   <input
                     type="radio"
@@ -118,7 +118,7 @@ const sendOrder = async () => {
             </div>
           </div>
 
-          <button type="submit" class="btn btn-outline-dark">
+          <button type="submit" class="btn btn-outline-dark d-none d-md-block">
             Trimite comanda
           </button>
         </div>
@@ -126,6 +126,12 @@ const sendOrder = async () => {
           <div class="sticky-top">
             <CartContent :isCheckout="true" />
           </div>
+        </div>
+
+        <div class="col-12 d-md-none">
+          <button type="submit" class="btn btn-outline-dark">
+            Trimite comanda
+          </button>
         </div>
       </div>
     </form>

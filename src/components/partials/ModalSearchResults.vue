@@ -3,31 +3,15 @@ import SearchResults from "@/components/partials/SearchResults.vue";
 import BtnClose from "@/components/button/BtnClose.vue";
 import { onMounted, ref } from "vue";
 
-const toggleSearchModal = ref(false);
 const searchModal = ref(false);
 
 onMounted(() => {
-  document.onkeydown = (e) => {
-    if (e.ctrlKey && e.code === "KeyK") {
-      e.preventDefault();
-      toggleSearchModal.value.click();
-    }
-  };
-
   searchModal.value.addEventListener("shown.bs.modal", () => {
     document.getElementById("search-input").focus();
   });
 });
 </script>
 <template>
-  <button
-    ref="toggleSearchModal"
-    class="d-none"
-    data-bs-toggle="modal"
-    data-bs-target="#search-modal"
-  >
-    Cauta
-  </button>
   <div
     class="modal fade"
     id="search-modal"

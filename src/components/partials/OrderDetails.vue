@@ -1,6 +1,6 @@
 <script setup>
-import ProductOrder from "@/components/product/ProductOrder.vue";
 import ItemPrice from "@/components/partials/ItemPrice.vue";
+import ProductOrder from "../product/ProductOrder.vue";
 
 defineProps({
   order: Object,
@@ -16,13 +16,11 @@ const dateToLocale = (dateString) => {
   <div class="card card-order">
     <div class="order-header">
       <h3>
-        <button>
-          Comanda #{{ order.id }} -
-          <span v-if="order.date_completed">{{
-            dateToLocale(order.date_completed)
-          }}</span
-          ><span v-else>{{ dateToLocale(order.date_created) }}</span>
-        </button>
+        Comanda #{{ order.id }} -
+        <span v-if="order.date_completed">{{
+          dateToLocale(order.date_completed)
+        }}</span
+        ><span v-else>{{ dateToLocale(order.date_created) }}</span>
       </h3>
     </div>
 

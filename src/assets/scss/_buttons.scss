@@ -59,6 +59,16 @@
       background-size: 0 0;
     }
   }
+
+  &.red {
+    color: $white;
+    background: $bg-btn-red no-repeat center center / 500px 500px;
+
+    &:hover:not(.active) {
+      color: $dark;
+      background-size: 0 0;
+    }
+  }
 }
 
 .btn-filter {

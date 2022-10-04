@@ -25,6 +25,10 @@
   height: 4.2rem;
   padding: 1.5rem;
 
+  &:disabled {
+    color: $gray-300;
+  }
+
   @include media-breakpoint-up(md) {
     height: 5.2rem;
     font-size: 2.6rem;
@@ -37,6 +41,11 @@ textarea.form-control {
 }
 
 label.form-control {
+  display: flex;
+  align-items: center;
+  padding-top: 0;
+  padding-bottom: 0;
+
   input {
     display: inline-block;
     margin-right: 0.5rem;
@@ -65,7 +74,8 @@ label.form-control {
 
   &.form-link {
     border: 0;
-    padding: 0;
+    @include padding(0 0 3rem 0);
+    height: auto;
   }
 }
 
@@ -93,4 +103,19 @@ form {
       color: $olive;
     }
   }
+}
+
+.error-message,
+.success-message {
+  font-family: $font-family-lanekcut;
+  line-height: 0.8;
+  font-size: 2rem;
+  background: $red-400;
+  color: $white;
+  padding: 0.7rem 1rem;
+  margin: 0 0 2rem 0;
+}
+
+.success-message {
+  background: $olive;
 }

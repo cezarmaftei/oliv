@@ -17,7 +17,6 @@ watch(
 );
 </script>
 <template>
-  <h3 class="mb-2 text-center d-md-none">Categorii:</h3>
   <div
     v-if="store.isLoaded"
     class="row row-categories justify-content-center g-50"
@@ -106,7 +105,7 @@ watch(
   }
 }
 
-@include media-breakpoint-up(md) {
+@include media-breakpoint-up(lg) {
   .row-categories {
     margin: -2px 0;
     width: 100%;
@@ -135,18 +134,8 @@ watch(
     .navbar-bot {
       padding: 0;
       .btn-outline-dark {
-        padding: 0.5rem 1rem;
-      }
-    }
-  }
-}
-
-@include media-breakpoint-up(lg) {
-  .scrolling {
-    .navbar-bot {
-      padding: 0;
-      .btn-outline-dark {
-        padding: 1.2rem 1rem;
+        padding: 1rem 1.5rem;
+        @include font-size(2.4rem);
       }
     }
   }

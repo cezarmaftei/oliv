@@ -12,7 +12,6 @@ const props = defineProps({
 const store = useOlivStore();
 
 onBeforeMount(() => {
-  console.log();
   if (!store.imageData[props.id]) {
     store.fetchImageData(props.id).then((data) => {
       store.imageData[props.id] = data;

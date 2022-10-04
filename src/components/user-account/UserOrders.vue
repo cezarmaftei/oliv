@@ -1,9 +1,11 @@
 <script setup>
-import OrderDetails from "@/components/partials/OrderDetails.vue";
 import { useOlivStore } from "@/stores/oliv.js";
+import { ref } from "vue";
 import ItemPrice from "../partials/ItemPrice.vue";
+import ModalOrderDetails from "../partials/ModalOrderDetails.vue";
 
 const store = useOlivStore();
+const currentOrder = ref(false);
 
 const dateToLocale = (dateString) => {
   let date = new Date(dateString);
@@ -20,6 +22,10 @@ const orderTotalItems = (items) => {
 };
 </script>
 <template>
+  <ModalOrderDetails
+    v-if="store.getUserOrders.length"
+    :order="currentOrder ? currentOrder : store.getUserOrders[0]"
+  />
   <div class="p-7">
     <h3>Istoric Comenzi</h3>
     <div v-if="store.getUserOrders.length > 0">
@@ -67,14 +73,19 @@ const orderTotalItems = (items) => {
               >
             </td>
             <td class="d-block d-lg-table-cell">
-              <button type="button" class="btn btn-outline-dark">
+              <button
+                type="button"
+                class="btn btn-outline-dark"
+                @click="currentOrder = order"
+                data-bs-toggle="modal"
+                data-bs-target="#order-details-modal"
+              >
                 detalii comanda
               </button>
               <button type="button" class="btn btn-outline-dark">
                 comanda din nou
               </button>
             </td>
-            <!-- <OrderDetails :order="order" /> -->
           </tr>
         </tbody>
       </table>

@@ -1,31 +1,31 @@
 <script setup>
 import { useOlivStore } from "@/stores/oliv.js";
-import UserAddress from "../user-account/UserAddress.vue";
-import { Modal } from "bootstrap";
 import { onMounted, ref } from "vue";
-
+import { Modal } from "bootstrap";
+import UserAddress from "../user-account/UserAddress.vue";
 const store = useOlivStore();
-const shippingModal = ref(false);
+
+const billingModal = ref(false);
 onMounted(() => {
-  shippingModal.value = new Modal("#shipping-addresses-modal");
+  billingModal.value = new Modal("#billing-addresses-modal");
 });
 const closeModal = () => {
-  shippingModal.value.hide();
+  billingModal.value.hide();
 };
 </script>
 <template>
   <div
     class="modal fade"
-    id="shipping-addresses-modal"
+    id="billing-addresses-modal"
     tabindex="-1"
-    aria-labelledby="shipping-addresses-modal-label"
+    aria-labelledby="billing-addresses-modal-label"
     aria-hidden="true"
   >
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
-          <h3 class="modal-title" id="shipping-addresses-modal-label">
-            Alege alta dresa de livrare
+          <h3 class="modal-title" id="billing-addresses-modal-label">
+            Alege alta dresa de facturare
           </h3>
           <button
             type="button"
@@ -37,12 +37,12 @@ const closeModal = () => {
         <div class="modal-body">
           <div
             v-for="(address, addressIndex) in store.userData.customerAddresses
-              .shipping"
+              .billing"
             :key="address"
           >
             <UserAddress
               @address-changed="closeModal()"
-              addressType="shipping"
+              addressType="billing"
               :address="address"
               :addressIndex="addressIndex"
               :isCheckout="true"

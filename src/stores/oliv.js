@@ -194,7 +194,7 @@ export const useOlivStore = defineStore({
         value: "",
       },
       billing_company_bank_account_number: {
-        name: "Numar Cont Bancar",
+        name: "Cont Bancar",
         type: "text",
         required: false,
         value: "",
@@ -231,6 +231,11 @@ export const useOlivStore = defineStore({
             case "product":
               result = state.storeData.products.filter(
                 (product) => product.slug === route.params.slug
+              )[0];
+              break;
+            case "account":
+              result = state.pageData.filter(
+                (page) => page.slug === "contul-meu"
               )[0];
               break;
           }
@@ -396,7 +401,9 @@ export const useOlivStore = defineStore({
       )) {
         shippingAddress[fieldName] = "";
       }
-      this.cartData.addresses["shipping"] = shippingAddress;
+      this.$patch((state) => {
+        state.cartData.addresses["shipping"] = shippingAddress;
+      });
 
       // Billing
       const billingAddress = {};
@@ -538,12 +545,11 @@ export const useOlivStore = defineStore({
           this.userData.credentials.pass = "";
 
           // Reset addresses
-          this.$patch((state) => {
-            state.cartData.addresses = {
-              shipping: false,
-              billing: false,
-            };
-          });
+          this.initCartAddresses();
+          this.userData.customerAddresses = {
+            shipping: [],
+            billing: [],
+          };
 
           // Remove logged in cookie
           cookies.remove("oliv_logged_in");
@@ -641,7 +647,6 @@ export const useOlivStore = defineStore({
       // Update state
       this.userData["avatarUrl"] = cData.avatar_url;
       this.userData["firstName"] = cData.first_name;
-      this.userData["lastName"] = cData.last_name;
       this.userData["email"] = cData.email;
 
       // Get addresses
@@ -1121,8 +1126,6 @@ export const useOlivStore = defineStore({
         // Update store state
         if (addressType === "shipping") {
           this.$patch((state) => {
-            console.log("patch woo update");
-
             state.userData.customerAddresses.shipping = userShippingAddresses;
             state.cartData.addresses.shipping = userShippingAddresses[0];
           });
@@ -1210,6 +1213,8 @@ export const useOlivStore = defineStore({
       updateData.id = this.userData.ID;
       updateUser(updateData).then((data) => {
         this.userData.customerData = data.data;
+        console.log(updateData);
+        console.log(data.data);
         this.storeLiveUpdate = false;
       });
     },

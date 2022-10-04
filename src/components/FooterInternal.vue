@@ -3,7 +3,7 @@ import { useOlivStore } from "@/stores/oliv.js";
 import VRuntimeTemplate from "vue3-runtime-template";
 import LogoFacebook from "@icons/LogoFacebook.vue";
 import LogoInstagram from "@icons/LogoInstagram.vue";
-import NavbarBrand from "@/components/partials/NavbarBrand.vue";
+import NavbarBrand from "./menu/NavbarBrand.vue";
 
 const store = useOlivStore();
 </script>

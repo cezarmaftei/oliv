@@ -26,3 +26,12 @@
     </path>
   </svg>
 </template>
+
+<style scoped lang="scss">
+.main-nav {
+  svg {
+    height: 2rem;
+    width: auto;
+  }
+}
+</style>

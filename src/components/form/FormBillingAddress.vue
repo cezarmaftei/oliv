@@ -7,7 +7,7 @@ const store = useOlivStore();
 const formErrorMessage = ref(false);
 const formSuccess = ref(false);
 
-const emits = defineEmits(["addressAddedSuccess"]);
+const emits = defineEmits(["addressAddedSuccess", "cancelAction"]);
 
 const props = defineProps({
   formData: Object,
@@ -46,6 +46,10 @@ const submitUserAddress = async () => {
     }, 1000);
   }
 };
+
+const cancelAction = () => {
+  emits("cancelAction");
+};
 </script>
 
 <template>
@@ -62,8 +66,21 @@ const submitUserAddress = async () => {
 
     <FieldsFormBilling />
 
-    <button type="submit" class="btn btn-outlin-secondary">
-      {{ buttonText }}
-    </button>
+    <div class="row mt-3">
+      <div class="col-auto">
+        <button type="submit" class="btn btn-outline-dark reverse">
+          {{ buttonText }}
+        </button>
+      </div>
+      <div class="col-auto">
+        <button
+          type="button"
+          class="btn btn-outline-dark red"
+          @click="cancelAction"
+        >
+          Renunta
+        </button>
+      </div>
+    </div>
   </form>
 </template>

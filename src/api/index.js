@@ -111,7 +111,7 @@ export const createUser = (userData) => {
 };
 
 export const updateUser = (userData) => {
-  return ajax.post(
+  return ajax.put(
     `/wp-json/wc/v3/customers/${userData.id}?consumer_key=${WcApiKey}&consumer_secret=${WcApiSecret}`,
     userData
   );

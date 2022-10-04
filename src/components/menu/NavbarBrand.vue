@@ -97,13 +97,13 @@
 
   @include media-breakpoint-up(lg) {
     &:before {
-      width: 13rem;
-      height: 11.2rem;
+      width: 12rem;
+      height: 10.7rem;
     }
 
     &:after {
-      width: 13rem;
-      height: 7rem;
+      width: 12rem;
+      height: 6.5rem;
       margin-left: -6rem;
       margin-bottom: 1rem;
     }
@@ -118,6 +118,18 @@
         margin-left: -1.5rem;
         margin-bottom: 1rem;
       }
+    }
+  }
+
+  @include media-breakpoint-up(xl) {
+    &:before {
+      width: 13rem;
+      height: 11.2rem;
+    }
+
+    &:after {
+      width: 13rem;
+      height: 7rem;
     }
   }
 }

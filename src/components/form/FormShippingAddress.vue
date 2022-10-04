@@ -7,7 +7,7 @@ const store = useOlivStore();
 const formErrorMessage = ref(false);
 const formSuccess = ref(false);
 
-const emits = defineEmits(["addressAddedSuccess"]);
+const emits = defineEmits(["addressAddedSuccess", "cancelAction"]);
 
 const props = defineProps({
   formData: Object,
@@ -16,15 +16,14 @@ const props = defineProps({
 });
 
 let buttonText = "Adauga adresa de livrare";
+
 // Populate form data
 if (props.formData) {
   buttonText = "Editeaza adresa de livrare";
 
   for (const [fieldName, fieldValue] of Object.entries(props.formData)) {
-    const mappingName = fieldName.replace("shipping_", "");
-
-    if (store.shippingFieldsMapping[mappingName])
-      store.shippingFieldsMapping[mappingName]["value"] = fieldValue;
+    if (store.shippingFieldsMapping[fieldName])
+      store.shippingFieldsMapping[fieldName]["value"] = fieldValue;
   }
 }
 
@@ -35,6 +34,10 @@ if (props.isEmpty) {
     fieldValue["value"] = "";
   }
 }
+
+const cancelAction = () => {
+  emits("cancelAction");
+};
 
 const submitUserAddress = async () => {
   const action = props.formData ? "edit" : "add";
@@ -73,8 +76,21 @@ const submitUserAddress = async () => {
 
     <FieldsFormShipping />
 
-    <button type="submit" class="btn btn-outlin-secondary">
-      {{ buttonText }}
-    </button>
+    <div class="row mt-3">
+      <div class="col-auto">
+        <button type="submit" class="btn btn-outline-dark reverse">
+          {{ buttonText }}
+        </button>
+      </div>
+      <div class="col-auto">
+        <button
+          type="button"
+          class="btn btn-outline-dark red"
+          @click="cancelAction"
+        >
+          Renunta
+        </button>
+      </div>
+    </div>
   </form>
 </template>

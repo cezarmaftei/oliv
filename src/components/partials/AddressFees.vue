@@ -8,7 +8,7 @@ defineProps({
 });
 </script>
 <template>
-  <div v-if="address.shipping_distance">
+  <div class="address-fees mt-2" v-if="address.shipping_distance">
     <div
       v-for="addressDistanceFees in [
         store.addressDistanceFees(address.shipping_distance),
@@ -23,3 +23,10 @@ defineProps({
     </div>
   </div>
 </template>
+
+<style scoped lang="scss">
+.address-fees {
+  @include font-size(1.6rem);
+  line-height: 1.2;
+}
+</style>
