@@ -61,10 +61,8 @@ const orderTotalItems = (items) => {
               <span class="d-lg-none">Pret: </span>
               <ItemPrice
                 :price="
-                  (
-                    store.toFloat(order.total) +
-                    store.toFloat(order.discount_total)
-                  ).toFixed(2)
+                  store.toFloat(order.total) +
+                  store.toFloat(order.discount_total)
                 "
               />
               pentru {{ orderTotalItems(order.line_items) }} produs<span

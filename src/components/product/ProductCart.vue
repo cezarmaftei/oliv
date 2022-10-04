@@ -104,111 +104,118 @@ const itemExtrasCount = computed(() => {
 </script>
 
 <template>
-  <div
-    class="card card-product-cart d-flex"
-    :class="{ 'bg-white': isOffCanvas }"
-  >
-    <ErrorProduct v-if="cartItem.errorMsg" :productIndex="cartItemIndex" />
-    <figure>
-      <LoadImage :id="cartItem.thumbId" size="medium" />
-    </figure>
-    <div class="card-content">
-      <button
-        type="button"
-        class="btn btn-delete"
-        @click="removeFromCart()"
-      ></button>
-      <h3 class="mb-0">{{ cartItem.name }}</h3>
+  <div class="card card-product-cart" :class="{ 'bg-white': isOffCanvas }">
+    <transition name="height-element-sm">
+      <ErrorProduct v-if="cartItem.errorMsg" :productIndex="cartItemIndex" />
+    </transition>
+    <div class="d-flex position-relative">
+      <figure>
+        <LoadImage :id="cartItem.thumbId" size="medium" />
+      </figure>
+      <div class="card-content">
+        <button
+          type="button"
+          class="btn btn-delete"
+          @click="removeFromCart()"
+        ></button>
+        <h3 class="mb-0">{{ cartItem.name }}</h3>
 
-      <div class="product-small-details d-flex">
-        <ProductWeight :weight="cartItem.productWeight" />
-        <ItemPrice class="ms-auto" :price="cartItem.itemTotal" />
-      </div>
-
-      <div class="cart-item-actions d-flex align-items-center">
-        <div class="quantity-wrap">
-          <button type="button" @click="updateCartItemQty(-1)">-</button>
-          <input
-            type="text"
-            @keyup="updateCartItemQty($event.target.value, true)"
-            :value="store.cartData.items[cartItemIndex].productQty"
-            readonly
-          />
-          <button type="button" @click="updateCartItemQty(1)">+</button>
+        <div class="product-small-details d-flex">
+          <ProductWeight :weight="cartItem.productWeight" />
+          <ItemPrice class="ms-auto" :price="cartItem.itemTotal" />
         </div>
-        <ItemPrice
-          class="ms-auto"
-          :showX="true"
-          :price="cartItem.productPrice"
-        />
-      </div>
 
-      <p
-        class="show-extras mb-0"
-        :class="{ 'is-open': showExtras }"
-        @click="showExtras = !showExtras"
-      >
-        <span v-if="itemExtrasCount > 0">
-          Editeaza extra
-          <strong>({{ itemExtrasCount }})</strong>
-        </span>
-        <span v-else-if="cartItem.productExtras.length > 0">
-          Adauga extra
-        </span>
-      </p>
-
-      <transition name="height-element-sm">
-        <div
-          v-show="showExtras"
-          v-if="cartItem.productExtras.length > 0"
-          class="cart-item-extras-actions"
-        >
-          <div
-            class="extra-wrap d-flex"
-            v-for="(extra, extraIndex) in cartItem.productExtras"
-            :key="extra"
-          >
-            <div class="quantity-wrap">
-              <button
-                type="button"
-                @click="updateCartItemExtraQty(extraIndex, -1)"
-              >
-                -
-              </button>
-              <input
-                type="text"
-                readonly
-                :value="
-                  store.cartData.items[cartItemIndex].productExtras[extraIndex]
-                    .extraQty
-                "
-                @keyup="
-                  updateCartItemExtraQty(extraIndex, $event.target.value, true)
-                "
-                @focusout="
-                  updateCartItemExtraQty(
-                    extraIndex,
-                    $event.target.value,
-                    true,
-                    true
-                  )
-                "
-              />
-              <button
-                type="button"
-                @click="updateCartItemExtraQty(extraIndex, 1)"
-              >
-                +
-              </button>
-            </div>
-
-            <ItemPrice :showX="true" :price="extra.extraPrice" />
-            <p class="extra-name m-0">
-              {{ extra.extraName }}
-            </p>
+        <div class="cart-item-actions d-flex align-items-center">
+          <div class="quantity-wrap">
+            <button type="button" @click="updateCartItemQty(-1)">-</button>
+            <input
+              type="text"
+              @keyup="updateCartItemQty($event.target.value, true)"
+              :value="store.cartData.items[cartItemIndex].productQty"
+              readonly
+            />
+            <button type="button" @click="updateCartItemQty(1)">+</button>
           </div>
+          <ItemPrice
+            class="ms-auto"
+            :showX="true"
+            :price="cartItem.productPrice"
+          />
         </div>
-      </transition>
+
+        <button
+          type="button"
+          class="show-extras mt-1 p-0 border-0 bg-transparent"
+          :class="{ 'is-open': showExtras }"
+          @click="showExtras = !showExtras"
+        >
+          <span v-if="itemExtrasCount > 0">
+            Editeaza extra
+            <strong>({{ itemExtrasCount }})</strong>
+          </span>
+          <span v-else-if="cartItem.productExtras.length > 0">
+            Adauga extra
+          </span>
+        </button>
+
+        <transition name="height-element-sm">
+          <div
+            v-show="showExtras"
+            v-if="cartItem.productExtras.length > 0"
+            class="cart-item-extras-actions"
+          >
+            <div
+              class="extra-wrap d-flex"
+              v-for="(extra, extraIndex) in cartItem.productExtras"
+              :key="extra"
+            >
+              <div class="quantity-wrap">
+                <button
+                  type="button"
+                  @click="updateCartItemExtraQty(extraIndex, -1)"
+                >
+                  -
+                </button>
+                <input
+                  type="text"
+                  readonly
+                  :value="
+                    store.cartData.items[cartItemIndex].productExtras[
+                      extraIndex
+                    ].extraQty
+                  "
+                  @keyup="
+                    updateCartItemExtraQty(
+                      extraIndex,
+                      $event.target.value,
+                      true
+                    )
+                  "
+                  @focusout="
+                    updateCartItemExtraQty(
+                      extraIndex,
+                      $event.target.value,
+                      true,
+                      true
+                    )
+                  "
+                />
+                <button
+                  type="button"
+                  @click="updateCartItemExtraQty(extraIndex, 1)"
+                >
+                  +
+                </button>
+              </div>
+
+              <ItemPrice :showX="true" :price="extra.extraPrice" />
+              <p class="extra-name m-0">
+                {{ extra.extraName }}
+              </p>
+            </div>
+          </div>
+        </transition>
+      </div>
     </div>
   </div>
 </template>
@@ -243,7 +250,6 @@ figure {
 }
 
 .show-extras {
-  margin-top: 1rem;
   font-weight: $font-weight-bold;
 
   span {

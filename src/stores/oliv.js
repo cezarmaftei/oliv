@@ -62,6 +62,7 @@ export const useOlivStore = defineStore({
         errorMsg: false,
       },
       addresses: {},
+      showBilling: false,
       deliveryMethod: false,
       paymentMethod: false,
       orderExtras: {
@@ -114,14 +115,17 @@ export const useOlivStore = defineStore({
         priority: "regular",
       },
       shipping_country: {
+        name: "Tara",
         type: "hidden",
         value: "Romania",
       },
       shipping_state: {
+        name: "Judet/Sector",
         type: "hidden",
         value: "Iasi",
       },
       shipping_distance: {
+        name: "Distanta de la sediu pana la client",
         type: "hidden",
         value: "",
       },
@@ -617,21 +621,13 @@ export const useOlivStore = defineStore({
     },
 
     /**
-     * Converts number like 5,99 to float
-     * I'm using this because parseFloat causes multiple decimals when adding results
-     * @param {String} number a number in string format with comma separator. Eg: 5,99
+     * Remove "floating point error" extra decimals
+     * https://floating-point-gui.de/basic/
+     * @param {String} number a number in string format
      * @returns {Float}
      */
     toFloat(number) {
-      let numberSplit = number.toString();
-      if (numberSplit.indexOf(",") !== -1) {
-        numberSplit = numberSplit.split(",");
-      } else if (numberSplit.indexOf(".") !== -1) {
-        numberSplit = numberSplit.split(".");
-      } else {
-        return parseInt(number);
-      }
-      return parseInt(numberSplit[0]) + parseInt(numberSplit[1]) / 100;
+      return Number.parseFloat(number).toFixed(2);
     },
 
     /**
@@ -663,7 +659,7 @@ export const useOlivStore = defineStore({
         if (meta.key === "user_billing_addresses" && meta.value.length) {
           this.userData.customerAddresses["billing"] = meta.value;
           // No patch because we don't need cart update
-          this.cartData.addresses.billing = meta.value[0];
+          // this.cartData.addresses.billing = meta.value[0];
         }
       });
 
@@ -699,7 +695,7 @@ export const useOlivStore = defineStore({
         this.cartData.totalQty = 0;
         this.cartData.subTotal = 0;
         this.cartData.totalDiscount = 0;
-        this.cartData.totalShipping = 0;
+        this.cartData.totalShipping = false;
         this.cartData.totalPrice = 0;
       } else {
         //
@@ -715,7 +711,7 @@ export const useOlivStore = defineStore({
           });
 
           product.productWithExtrasPrice =
-            parseFloat(product.productPrice) + extrasPrice;
+            this.toFloat(product.productPrice) + extrasPrice;
           product.itemTotal =
             product.productWithExtrasPrice * product.productQty;
 
@@ -734,7 +730,7 @@ export const useOlivStore = defineStore({
           this.cartData.coupon.codes.forEach((coupon) => {
             if (coupon.discount_type === "percent") {
               coupon["discount"] =
-                (parseInt(coupon.amount) * this.cartData.subTotal) / 100;
+                (this.toFloat(coupon.amount) * this.cartData.subTotal) / 100;
               cartDiscount += coupon.discount;
             }
           });
@@ -745,6 +741,8 @@ export const useOlivStore = defineStore({
         // Set shipping cost
         //
         if (
+          this.cartData.deliveryMethod !== "pickup" &&
+          this.cartData.addresses.shipping &&
           typeof this.cartData.addresses.shipping.shipping_distance ===
             "number" &&
           this.cartData.addresses.shipping.shipping_distance > 0
@@ -752,6 +750,8 @@ export const useOlivStore = defineStore({
           this.cartData.totalShipping = this.addressShippingFee(
             this.cartData.addresses.shipping.shipping_distance
           );
+        } else if (this.cartData.deliveryMethod === "pickup") {
+          this.cartData.totalShipping = 0;
         } else {
           this.cartData.totalShipping = false;
         }
@@ -762,7 +762,7 @@ export const useOlivStore = defineStore({
         if (typeof this.cartData.totalShipping === "number")
           totalPrice += this.cartData.totalShipping;
 
-        this.cartData.totalPrice = totalPrice.toFixed(2);
+        this.cartData.totalPrice = totalPrice;
 
         // Save cart in cookie for 1 week
         cookies.set("oliv_cart", JSON.stringify(this.cartData), "7D");
@@ -785,9 +785,7 @@ export const useOlivStore = defineStore({
       let orderParams = {};
 
       if (this.userData) {
-        orderParams.customer_id = this.userData.loggedIn
-          ? this.userData.loggedIn.ID
-          : 0;
+        orderParams.customer_id = this.userData.loggedIn ? this.userData.ID : 0;
       }
 
       // line_items
@@ -826,7 +824,7 @@ export const useOlivStore = defineStore({
               key: displayValue,
               value: productExtra.extraQty,
               display_key: displayValue,
-              display_value: productExtra.extraQty,
+              display_value: String(productExtra.extraQty),
             });
 
             priceValues.push({
@@ -846,8 +844,7 @@ export const useOlivStore = defineStore({
 
       // Add payment method
       orderParams.payment_method = this.cartData.paymentMethod;
-      orderParams.payment_method_title =
-        this.paymentData.methods[this.cartData.paymentMethod];
+      orderParams.payment_method_title = `${this.cartData.paymentMethod} la livrare`;
 
       // Add coupon(s)
       orderParams.coupon_lines = [];
@@ -856,12 +853,6 @@ export const useOlivStore = defineStore({
           orderParams.coupon_lines.push({ code: couponData.code })
         );
       }
-
-      // Delivery address
-      orderParams.shipping = this.cartData.addresses.shipping;
-
-      // Billing address
-      orderParams.billing = this.cartData.addresses.billing;
 
       // Set status
       orderParams.status = "processing";
@@ -878,6 +869,50 @@ export const useOlivStore = defineStore({
           });
         }
       }
+
+      // Delivery address
+      const orderShipping = {};
+      for (const [fieldName, fieldData] of Object.entries(
+        this.shippingFieldsMapping
+      )) {
+        orderShipping[fieldName] = {
+          name: fieldData.name,
+          value:
+            this.cartData.addresses.shipping[fieldName].length ||
+            fieldName === "shipping_distance"
+              ? this.cartData.addresses.shipping[fieldName]
+              : this.shippingFieldsMapping[fieldName].value,
+        };
+      }
+      orderParams.meta_data.push({
+        key: "shipping",
+        value: orderShipping,
+      });
+
+      // Billing address
+      if (this.showBilling) {
+        const orderBilling = {};
+        for (const [fieldName, fieldData] of Object.entries(
+          this.billingFieldsMapping
+        )) {
+          orderBilling[fieldName] = {
+            name: fieldData.name,
+            value: this.cartData.addresses.billing[fieldName].length
+              ? this.cartData.addresses.billing[fieldName]
+              : this.billingFieldsMapping[fieldName].value,
+          };
+        }
+        orderParams.meta_data.push({
+          key: "billing",
+          value: orderBilling,
+        });
+      }
+
+      // Save cartData.items to use on re-order
+      orderParams.meta_data.push({
+        key: "reorder_items",
+        value: this.cartData.items,
+      });
 
       return orderParams;
     },
@@ -1213,8 +1248,6 @@ export const useOlivStore = defineStore({
       updateData.id = this.userData.ID;
       updateUser(updateData).then((data) => {
         this.userData.customerData = data.data;
-        console.log(updateData);
-        console.log(data.data);
         this.storeLiveUpdate = false;
       });
     },
@@ -1226,57 +1259,58 @@ export const useOlivStore = defineStore({
     async submitOrder() {
       this.storeLiveUpdate = true;
 
+      // Check if is available for shipping
+      if (this.cartData.totalShipping === false)
+        return {
+          checkoutError:
+            "Trebuie sa completezi detaliile despre livrarea comenzii!",
+        };
+
+      if (this.cartData.paymentMethod === false)
+        return {
+          checkoutError: "Trebuie sa selectezi o metoda de plata!",
+        };
+
       const cartProductsIds = this.cartData.items.map((product) => product.id);
-      const productsAvailable = await productsData(cartProductsIds).then(
-        (data) => {
-          this.storeLiveUpdate = false;
-          // Loop through products to check if they are in stock
-          data.data.forEach((product, productIndex) => {
-            if (product.stock_status !== "instock") {
-              // Out of stock
+      let productsAvailable = true;
+      await productsData(cartProductsIds).then((data) => {
+        this.storeLiveUpdate = false;
+        // Loop through products to check if they are in stock
+        data.data.forEach((product, productIndex) => {
+          if (product.stock_status !== "instock") {
+            // Out of stock
+            this.cartData.items[
+              productIndex
+            ].errorMsg = `Ne pare rau, dar acest produs nu mai este in stoc!`;
+
+            setTimeout(() => {
+              // Remove from cart
+              this.cartData.items.splice(productIndex, 1);
+            }, 5000);
+
+            productsAvailable = false;
+          }
+
+          if (
+            product.stock_status === "instock" &&
+            typeof product.stock_quantity === "number"
+          ) {
+            // Limited stock
+            const cartProductQty = this.cartData.items[productIndex].productQty;
+            if (parseInt(product.stock_quantity) < cartProductQty) {
               this.cartData.items[
                 productIndex
-              ].errorMsg = `Ne pare rau, dar acest produs nu mai este in stoc!`;
+              ].errorMsg = `Ne pare rau, dar mai avem doar ${product.stock_quantity} produse in stoc! Am schimbat noi cantitatea pentru tine.`;
 
-              setTimeout(() => {
-                this.updateCartItems(
-                  "update",
-                  this.cartData.items[productIndex],
-                  productIndex,
-                  parseInt(product.stock_quantity)
-                );
-              }, 5000);
+              this.cartData.items[productIndex].productQty = parseInt(
+                product.stock_quantity
+              );
 
-              return false;
+              productsAvailable = false;
             }
-
-            if (
-              product.stock_status === "instock" &&
-              typeof product.stock_quantity === "number"
-            ) {
-              // Limited stock
-              const cartProductQty =
-                this.cartData.items[productIndex].productQty;
-              if (parseInt(product.stock_quantity) < cartProductQty) {
-                this.cartData.items[
-                  productIndex
-                ].errorMsg = `Ne pare rau, dar mai avem doar ${product.stock_quantity} produse in stoc! Am schimbat noi cantitatea pentru tine.`;
-
-                this.updateCartItems(
-                  "update",
-                  this.cartData.items[productIndex],
-                  productIndex,
-                  parseInt(product.stock_quantity)
-                );
-
-                return false;
-              }
-            }
-          });
-
-          return true;
-        }
-      );
+          }
+        });
+      });
 
       if (!productsAvailable) return "productError";
 
@@ -1288,31 +1322,22 @@ export const useOlivStore = defineStore({
           // The order has been created
           //
 
-          // Reset cart data, but keep addresses(for guests)
-          this.cartData = {
-            items: [],
-            coupon: {
-              codes: false,
-              error: false,
-            },
-            addresses: {
-              billing: this.cartData.addresses.billing,
-              shipping: this.cartData.addresses.shipping,
-              pool: this.cartData.addresses.pool,
-            },
-            paymentMethod: false,
-            orderExtras: {
-              cutlery: {
-                title: "Doresc tacamuri",
-                active: false,
-              },
-            },
-            totalQty: 0,
-            subTotal: 0,
-            totalDiscount: 0,
-            totalShipping: 0,
-            totalPrice: 0,
+          // Reset cart data, but keep addresses(for guests)?
+          this.cartData.coupon = {
+            codes: false,
+            errorMsg: false,
           };
+          this.cartData.showBilling = false;
+          this.cartData.deliveryMethod = false;
+          this.cartData.paymentMethod = false;
+          this.cartData.orderExtras = {
+            cutlery: {
+              title: "Doresc tacamuri",
+              active: false,
+            },
+          };
+          // This last beacuse it also calculates cart totals
+          this.cartData.items = [];
 
           cookies.set("oliv_cart", JSON.stringify(this.cartData), "7D");
           return data.data;

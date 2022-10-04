@@ -10,13 +10,44 @@ import FieldsFormBilling from "../form/FieldsFormBilling.vue";
 const router = useRouter();
 const store = useOlivStore();
 
-const showBilling = ref(false);
+const checkoutError = ref(false);
+let billingAutofill = false;
+
+const requestBilling = () => {
+  if (
+    !billingAutofill &&
+    store.showBilling &&
+    store.userData.customerAddresses.billing.length
+  ) {
+    store.cartData.addresses.billing = Object.assign(
+      {},
+      store.userData.customerAddresses.billing[0]
+    );
+
+    billingAutofill = true;
+  }
+};
+
 /**
  * Send the order to Woo and redirect if success
  */
 const sendOrder = async () => {
   await store.submitOrder().then((result) => {
-    if (result === "productError") return;
+    if (result === "productError") {
+      document.getElementById("cart-summary").scrollIntoView();
+      return;
+    }
+
+    if (result && result.checkoutError) {
+      window.scrollTo(0, 0);
+      checkoutError.value = result.checkoutError;
+
+      setTimeout(() => {
+        checkoutError.value = false;
+      }, 2000);
+
+      return;
+    }
 
     if (result) {
       router.push({
@@ -37,9 +68,17 @@ const sendOrder = async () => {
 
 <template>
   <div class="checkout-inner p-7 mb-8">
-    <form @submit.prevent="submitOrder" v-if="store.cartData.items.length">
+    <form @submit.prevent="sendOrder" v-if="store.cartData.items.length">
       <div class="row">
         <div class="col-12 col-md-6 col-lg-7">
+          <transition name="height-element-sm">
+            <div v-if="checkoutError" class="bg-danger">
+              <p class="p-2 text-light">
+                {{ checkoutError }}
+              </p>
+            </div>
+          </transition>
+
           <!-- Delivery method -->
           <div class="form-group">
             <h3>Optiuni de livrare</h3>
@@ -73,7 +112,8 @@ const sendOrder = async () => {
           <label class="form-control form-link">
             <input
               type="checkbox"
-              v-model="showBilling"
+              v-model="store.showBilling"
+              @change="requestBilling()"
               :true-value="true"
               :false-value="false"
             />
@@ -82,7 +122,7 @@ const sendOrder = async () => {
 
           <!-- Billing details -->
           <transition name="height-element">
-            <div v-if="showBilling">
+            <div v-if="store.showBilling">
               <FieldsFormBilling :isCheckout="true" />
             </div>
           </transition>
@@ -122,7 +162,7 @@ const sendOrder = async () => {
             Trimite comanda
           </button>
         </div>
-        <div class="col-12 col-md-6 col-lg-4 ms-auto">
+        <div class="col-12 col-md-6 col-lg-4 ms-auto" id="cart-summary">
           <div class="sticky-top">
             <CartContent :isCheckout="true" />
           </div>

@@ -101,7 +101,7 @@ store.$subscribe((mutation, state) => {
               Se calculeaza la pasul urmator.
             </span>
             <span
-              v-if="
+              v-else-if="
                 isCheckout &&
                 store.cartData.totalShipping === false &&
                 store.cartData.deliveryMethod !== 'pickup'
@@ -109,17 +109,14 @@ store.$subscribe((mutation, state) => {
             >
               Va fi calculat dupa ce introduci adresa si localitatea.
             </span>
-            <span v-if="store.cartData.deliveryMethod === 'pickup'">
-              Ridicare personala de la sediu
-            </span>
             <ItemPrice
-              v-if="
+              v-else-if="
                 store.cartData.totalShipping > 0 &&
                 store.cartData.deliveryMethod !== 'pickup'
               "
               :price="store.cartData.totalShipping"
             />
-            <span v-if="store.cartData.totalShipping === 0">Gratuit</span>
+            <span v-else-if="store.cartData.totalShipping === 0">Gratuit</span>
           </div>
         </div>
       </div>
