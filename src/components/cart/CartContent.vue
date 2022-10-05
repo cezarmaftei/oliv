@@ -38,11 +38,11 @@ store.$subscribe((mutation, state) => {
       :isOffCanvas="false"
     />
 
-    <div class="cart-items" v-if="store.getCartItems.items.length">
+    <div class="cart-items" v-if="store.getCartItems.length">
       <div :class="{ 'px-4': isOffCanvas }">
         <div
           class="cart-item"
-          v-for="(cartItem, cartItemIndex) in store.getCartItems.items"
+          v-for="(cartItem, cartItemIndex) in store.getCartItems"
           :key="cartItem"
         >
           <ProductCart
@@ -54,13 +54,13 @@ store.$subscribe((mutation, state) => {
         </div>
       </div>
     </div>
-    <div v-else>
+    <div class="px-4" v-else>
       <NoProductsInCart />
     </div>
   </div>
 
   <div
-    v-if="store.getCartItems.items.length"
+    v-if="store.getCartItems.length"
     class="cart-totals"
     :class="{ 'd-flex flex-column flex-grow-1': isOffCanvas }"
   >

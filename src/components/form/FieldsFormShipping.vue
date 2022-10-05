@@ -79,52 +79,53 @@ const getShippingPrice = () => {
   </div>
 
   <!-- Delivery address -->
-  <transition name="height-element">
-    <div
-      v-if="
-        (store.cartData.deliveryMethod !== 'pickup' && isCheckout) ||
-        !isCheckout
-      "
-      :class="{ 'mt-2': !isCheckout }"
-    >
-      <div class="form-group">
-        <h3>Detalii Livrare</h3>
-        <div class="row g-2">
-          <div
-            class="col-12 col-sm-6 col-md-12 col-lg-6"
-            v-for="fieldName in store.getMappingFieldsByPriority(
-              'regular',
-              store.shippingFieldsMapping
-            )"
-            :key="fieldName"
-            v-show="store.shippingFieldsMapping[fieldName].type !== 'hidden'"
-          >
-            <FormControl
-              fieldFor="shipping"
-              :fieldName="fieldName"
-              :isCheckout="isCheckout"
-              @input="getShippingPrice()"
-            />
-          </div>
-
-          <transition name="height-element-sm">
-            <div class="col-12" v-if="addressError">
-              <div class="bg-danger">
-                {{ addressError }}
-              </div>
+  <div :class="{ 'mt-2': !isCheckout }">
+    <div class="form-group">
+      <transition name="height-element-sm">
+        <div
+          v-if="
+            (store.cartData.deliveryMethod !== 'pickup' && isCheckout) ||
+            !isCheckout
+          "
+        >
+          <h3>Detalii Livrare</h3>
+          <div class="row g-2">
+            <div
+              class="col-12 col-sm-6 col-md-12 col-lg-6"
+              v-for="fieldName in store.getMappingFieldsByPriority(
+                'regular',
+                store.shippingFieldsMapping
+              )"
+              :key="fieldName"
+              v-show="store.shippingFieldsMapping[fieldName].type !== 'hidden'"
+            >
+              <FormControl
+                fieldFor="shipping"
+                :fieldName="fieldName"
+                :isCheckout="isCheckout"
+                @input="getShippingPrice()"
+              />
             </div>
-          </transition>
 
-          <div class="col-12" v-if="isCheckout">
-            <textarea
-              class="form-control"
-              placeholder="Alte detalii"
-            ></textarea>
+            <transition name="height-element-sm">
+              <div class="col-12" v-if="addressError">
+                <div class="bg-danger">
+                  {{ addressError }}
+                </div>
+              </div>
+            </transition>
           </div>
         </div>
+      </transition>
+      <div class="col-12 mt-2" v-if="isCheckout">
+        <textarea
+          class="form-control"
+          placeholder="Alte detalii"
+          v-model="store.cartData.orderComments"
+        ></textarea>
       </div>
     </div>
-  </transition>
+  </div>
 </template>
 
 <style scoped lang="scss">

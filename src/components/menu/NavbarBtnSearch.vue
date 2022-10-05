@@ -81,7 +81,7 @@ import IconSearch from "../icons/IconSearch.vue";
     margin-bottom: 1rem;
   }
 
-  .scrolling {
+  .cloned {
     .btn-search {
       margin-right: 3rem;
       margin-bottom: 0;
@@ -103,7 +103,7 @@ import IconSearch from "../icons/IconSearch.vue";
     }
   }
 
-  .scrolling {
+  .cloned {
     .btn-search {
       min-width: 23rem;
     }

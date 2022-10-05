@@ -130,7 +130,6 @@ const showMenuCart = computed(() => {
 }
 
 .navbar-cart-wrapper {
-  margin-right: 0.5rem;
   white-space: nowrap;
 }
 
@@ -185,10 +184,11 @@ const showMenuCart = computed(() => {
 
   .navbar-buttons {
     align-items: center;
+    width: 100%;
   }
 
   .navbar-cart-wrapper {
-    margin-right: auto;
+    margin-left: auto;
   }
 
   .navbar-content-wrapper {
@@ -206,7 +206,7 @@ const showMenuCart = computed(() => {
     }
   }
 
-  .scrolling {
+  .cloned {
     .navbar-top {
       padding-left: 0;
     }
@@ -253,7 +253,7 @@ const showMenuCart = computed(() => {
     }
   }
 
-  .scrolling {
+  .cloned {
     .navbar-buttons {
       margin-top: 0;
       width: auto;

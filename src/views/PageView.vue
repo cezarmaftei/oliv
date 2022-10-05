@@ -12,6 +12,7 @@ import SectionCheckout from "@/components/section/SectionCheckout.vue";
 import SectionAccount from "@/components/section/SectionAccount.vue";
 import SectionSingleProduct from "../components/section/SectionSingleProduct.vue";
 import SectionRelatedProducts from "../components/section/SectionRelatedProducts.vue";
+import SectionOrderCompleted from "../components/section/SectionOrderCompleted.vue";
 import UserOrders from "@/components/user-account/UserOrders.vue";
 import UserAddresses from "@/components/user-account/UserAddresses.vue";
 import UserGeneral from "@/components/user-account/UserGeneral.vue";
@@ -26,6 +27,7 @@ const pageTemplates = {
   SectionCart,
   SectionCheckout,
   SectionAccount,
+  SectionOrderCompleted,
 };
 
 const accountSections = {

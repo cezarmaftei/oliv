@@ -1,9 +1,12 @@
 <script setup>
 import { useOlivStore } from "@/stores/oliv.js";
 import { ref } from "vue";
+import { Offcanvas } from "bootstrap";
+import { useCookies } from "vue3-cookies";
 import ItemPrice from "../partials/ItemPrice.vue";
 import ModalOrderDetails from "../partials/ModalOrderDetails.vue";
 
+const { cookies } = useCookies();
 const store = useOlivStore();
 const currentOrder = ref(false);
 
@@ -19,6 +22,40 @@ const orderTotalItems = (items) => {
   });
 
   return total;
+};
+
+const offCanvas = new Offcanvas("#cart-drawer");
+const reorderItems = (order) => {
+  const newCartItems = store.getReorder(order.meta_data);
+
+  newCartItems.forEach((product) => {
+    const storeProduct = store.storeData.products.filter(
+      (p) => p.id === product.id
+    )[0];
+
+    // Set new price
+    product.productPrice = storeProduct.price;
+
+    if (product.productExtras.length > 0) {
+      const storeProductExtras = store.getProductExtras(storeProduct);
+      storeProductExtras.forEach((storeProductExtra) => {
+        const productExtra = Object.values(product.productExtras).find(
+          (value) => storeProductExtra._id === value._id
+        );
+
+        // console.log(
+        //   `productExtra.extraPrice: ${productExtra.extraPrice} updated to storeProductExtra._price: ${storeProductExtra._price}`
+        // );
+
+        // Set new price
+        productExtra.extraPrice = storeProductExtra._price;
+      });
+    }
+  });
+
+  store.cartData.items = newCartItems;
+
+  offCanvas.show();
 };
 </script>
 <template>
@@ -61,8 +98,9 @@ const orderTotalItems = (items) => {
               <span class="d-lg-none">Pret: </span>
               <ItemPrice
                 :price="
-                  store.toFloat(order.total) +
-                  store.toFloat(order.discount_total)
+                  (
+                    parseFloat(order.total) + parseFloat(order.discount_total)
+                  ).toFixed(2)
                 "
               />
               pentru {{ orderTotalItems(order.line_items) }} produs<span
@@ -80,7 +118,11 @@ const orderTotalItems = (items) => {
               >
                 detalii comanda
               </button>
-              <button type="button" class="btn btn-outline-dark">
+              <button
+                type="button"
+                class="btn btn-outline-dark"
+                @click="reorderItems(order)"
+              >
                 comanda din nou
               </button>
             </td>

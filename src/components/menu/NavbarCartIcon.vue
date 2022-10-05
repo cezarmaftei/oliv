@@ -57,6 +57,24 @@ const store = useOlivStore();
   font-size: 1.6rem;
 }
 
+.navbar-cart {
+  justify-content: center;
+
+  .cart-icon {
+    margin-right: 0;
+  }
+}
+
+@include media-breakpoint-up(xs) {
+  .navbar-cart {
+    justify-content: flex-start;
+
+    .cart-icon {
+      margin-right: 0.5rem;
+    }
+  }
+}
+
 @include media-breakpoint-up(sm) {
   .navbar-cart {
     flex-direction: row;

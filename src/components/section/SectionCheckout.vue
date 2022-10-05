@@ -128,35 +128,39 @@ const sendOrder = async () => {
           </transition>
 
           <!-- Payment Methods -->
-          <div class="form-group">
-            <h3>Metoda de plata</h3>
-            <div class="row g-2">
-              <div class="col-12 col-sm-6 col-md-12 col-lg-6">
-                <label class="form-control">
-                  <input
-                    type="radio"
-                    name="paymentMethod"
-                    v-model="store.cartData.paymentMethod"
-                    value="cash"
-                    required
-                  />
-                  Cash la livrare
-                </label>
-              </div>
-              <div class="col-12 col-sm-6 col-md-12 col-lg-6">
-                <label class="form-control">
-                  <input
-                    type="radio"
-                    name="paymentMethod"
-                    v-model="store.cartData.paymentMethod"
-                    value="card"
-                    required
-                  />
-                  Card la livrare
-                </label>
+          <transition name="height-element">
+            <div v-if="store.cartData.deliveryMethod !== 'pickup'">
+              <div class="form-group">
+                <h3>Metoda de plata</h3>
+                <div class="row g-2">
+                  <div class="col-12 col-sm-6 col-md-12 col-lg-6">
+                    <label class="form-control">
+                      <input
+                        type="radio"
+                        name="paymentMethod"
+                        v-model="store.cartData.paymentMethod"
+                        value="cash"
+                        required
+                      />
+                      Cash la livrare
+                    </label>
+                  </div>
+                  <div class="col-12 col-sm-6 col-md-12 col-lg-6">
+                    <label class="form-control">
+                      <input
+                        type="radio"
+                        name="paymentMethod"
+                        v-model="store.cartData.paymentMethod"
+                        value="card"
+                        required
+                      />
+                      Card la livrare
+                    </label>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
+          </transition>
 
           <button type="submit" class="btn btn-outline-dark d-none d-md-block">
             Trimite comanda

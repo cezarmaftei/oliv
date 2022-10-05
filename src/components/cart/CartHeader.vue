@@ -1,7 +1,9 @@
 <script setup>
 import CartQty from "@/components/cart/CartQty.vue";
 import BtnClose from "@/components/button/BtnClose.vue";
+import { useOlivStore } from "@/stores/oliv.js";
 
+const store = useOlivStore();
 defineProps({
   isOffCanvas: Boolean,
   isCheckout: Boolean,
@@ -18,7 +20,7 @@ defineProps({
     </h2>
     <BtnClose type="button" data-bs-dismiss="offcanvas" aria-label="Close" />
 
-    <div class="d-flex cart-header-legend">
+    <div v-if="store.getCartItems.length" class="d-flex cart-header-legend">
       <div>Produs</div>
       <div class="ms-auto text-end">Pret</div>
     </div>

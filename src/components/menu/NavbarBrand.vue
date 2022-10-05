@@ -134,7 +134,7 @@
   }
 }
 
-.scrolling {
+.cloned {
   .navbar-brand {
     @include media-breakpoint-up(md) {
       margin-top: -5rem;

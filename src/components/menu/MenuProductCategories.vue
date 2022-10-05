@@ -65,7 +65,7 @@ watch(
   }
 }
 
-.scrolling {
+.cloned {
   .navbar-bot {
     h3 {
       max-height: 0;
@@ -80,7 +80,7 @@ watch(
 }
 
 @include media-breakpoint-up(xs) {
-  .scrolling {
+  .cloned {
     .navbar-bot {
       .btn-outline-dark {
         padding: 0.3rem 0.7rem;
@@ -96,7 +96,7 @@ watch(
     }
   }
 
-  .scrolling {
+  .cloned {
     .navbar-bot {
       .btn-outline-dark {
         padding: 0.7rem 1.2rem;
@@ -130,7 +130,7 @@ watch(
     }
   }
 
-  .scrolling {
+  .cloned {
     .navbar-bot {
       padding: 0;
       .btn-outline-dark {

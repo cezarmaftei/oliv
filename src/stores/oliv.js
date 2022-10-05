@@ -71,6 +71,7 @@ export const useOlivStore = defineStore({
           active: false,
         },
       },
+      orderComments: "",
       totalQty: 0,
       subTotal: 0,
       totalDiscount: 0,
@@ -298,7 +299,7 @@ export const useOlivStore = defineStore({
       // Merge items
       //
       state.cartData.items.forEach((compareItem, compareItemIndex) => {
-        state.cartData.items.filter((compareToItem, compareToItemIndex) => {
+        state.cartData.items.forEach((compareToItem, compareToItemIndex) => {
           if (
             compareItemIndex !== compareToItemIndex &&
             compareItem.id === compareToItem.id &&
@@ -316,9 +317,7 @@ export const useOlivStore = defineStore({
 
       if (state.isLoaded) this.updateCartTotals();
 
-      return {
-        items: state.cartData.items,
-      };
+      return state.cartData.items;
     },
 
     getUserOrders: (state) => {
@@ -621,16 +620,6 @@ export const useOlivStore = defineStore({
     },
 
     /**
-     * Remove "floating point error" extra decimals
-     * https://floating-point-gui.de/basic/
-     * @param {String} number a number in string format
-     * @returns {Float}
-     */
-    toFloat(number) {
-      return Number.parseFloat(number).toFixed(2);
-    },
-
-    /**
      * If user is logged in get his general info, addresses and order history
      * @param {Object} state the store's state
      * @returns nothing. It just updates the store's state.
@@ -706,12 +695,14 @@ export const useOlivStore = defineStore({
         this.cartData.items.forEach((product) => {
           let extrasPrice = 0;
           product.productExtras.forEach((extra) => {
-            if (extra.extraQty > 0)
-              extrasPrice += extra.extraQty * extra.extraPrice;
+            const extraQty = parseInt(extra.extraQty);
+            if (extraQty > 0)
+              extrasPrice += extraQty * parseFloat(extra.extraPrice);
           });
 
           product.productWithExtrasPrice =
-            this.toFloat(product.productPrice) + extrasPrice;
+            parseFloat(product.productPrice) + extrasPrice;
+
           product.itemTotal =
             product.productWithExtrasPrice * product.productQty;
 
@@ -730,7 +721,7 @@ export const useOlivStore = defineStore({
           this.cartData.coupon.codes.forEach((coupon) => {
             if (coupon.discount_type === "percent") {
               coupon["discount"] =
-                (this.toFloat(coupon.amount) * this.cartData.subTotal) / 100;
+                (parseFloat(coupon.amount) * this.cartData.subTotal) / 100;
               cartDiscount += coupon.discount;
             }
           });
@@ -843,8 +834,10 @@ export const useOlivStore = defineStore({
       });
 
       // Add payment method
-      orderParams.payment_method = this.cartData.paymentMethod;
-      orderParams.payment_method_title = `${this.cartData.paymentMethod} la livrare`;
+      if (this.cartData.paymentMethod) {
+        orderParams.payment_method = this.cartData.paymentMethod;
+        orderParams.payment_method_title = `${this.cartData.paymentMethod} la livrare`;
+      }
 
       // Add coupon(s)
       orderParams.coupon_lines = [];
@@ -868,6 +861,14 @@ export const useOlivStore = defineStore({
             value: extraValue.title,
           });
         }
+      }
+
+      // Pickup
+      if (this.cartData.deliveryMethod === "pickup") {
+        orderParams.meta_data.push({
+          key: "pickup",
+          value: "Comanda va fi ridicata de client de la sediu!",
+        });
       }
 
       // Delivery address
@@ -913,6 +914,11 @@ export const useOlivStore = defineStore({
         key: "reorder_items",
         value: this.cartData.items,
       });
+
+      // Order comments
+      if (this.cartData.orderComments.length > 0) {
+        orderParams["customer_note"] = this.cartData.orderComments;
+      }
 
       return orderParams;
     },
@@ -1216,7 +1222,7 @@ export const useOlivStore = defineStore({
     addressDistanceFees(distance) {
       const fees =
         this.shippingLimitsAndFees.shipping_options.exwfood_adv_feekm;
-      const results = fees.filter((fee) => this.toFloat(fee.km) <= distance);
+      const results = fees.filter((fee) => parseFloat(fee.km) <= distance);
       return results.length ? results[results.length - 1] : false;
     },
 
@@ -1232,8 +1238,8 @@ export const useOlivStore = defineStore({
       const cartSubTotal = this.cartData.subTotal - this.cartData.totalDiscount;
 
       let shippingFee = 0;
-      if (cartSubTotal < this.toFloat(distanceFees.free)) {
-        shippingFee = this.toFloat(distanceFees.fee);
+      if (cartSubTotal < parseFloat(distanceFees.free)) {
+        shippingFee = parseFloat(distanceFees.fee);
       }
 
       return shippingFee;
@@ -1260,16 +1266,25 @@ export const useOlivStore = defineStore({
       this.storeLiveUpdate = true;
 
       // Check if is available for shipping
-      if (this.cartData.totalShipping === false)
+      if (this.cartData.totalShipping === false) {
+        this.storeLiveUpdate = false;
+
         return {
           checkoutError:
             "Trebuie sa completezi detaliile despre livrarea comenzii!",
         };
+      }
 
-      if (this.cartData.paymentMethod === false)
+      if (
+        this.cartData.paymentMethod === false &&
+        this.cartData.deliveryMethod !== "pickup"
+      ) {
+        this.storeLiveUpdate = false;
+
         return {
           checkoutError: "Trebuie sa selectezi o metoda de plata!",
         };
+      }
 
       const cartProductsIds = this.cartData.items.map((product) => product.id);
       let productsAvailable = true;
@@ -1330,6 +1345,7 @@ export const useOlivStore = defineStore({
           this.cartData.showBilling = false;
           this.cartData.deliveryMethod = false;
           this.cartData.paymentMethod = false;
+          this.cartData.orderComments = "";
           this.cartData.orderExtras = {
             cutlery: {
               title: "Doresc tacamuri",
@@ -1367,6 +1383,13 @@ export const useOlivStore = defineStore({
       });
 
       return sortedFields;
+    },
+
+    getReorder(orderMeta) {
+      const reorderData = orderMeta.filter(
+        (data) => data.key === "reorder_items"
+      );
+      return reorderData[0].value;
     },
   },
 });
