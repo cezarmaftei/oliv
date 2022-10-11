@@ -63,12 +63,12 @@ const reorderItems = (order) => {
     v-if="store.getUserOrders.length"
     :order="currentOrder ? currentOrder : store.getUserOrders[0]"
   />
-  <div class="p-7">
-    <h3>Istoric Comenzi</h3>
+  <div class="py-7 px-5">
+    <h3 class="mb-3">Istoric Comenzi</h3>
     <div v-if="store.getUserOrders.length > 0">
       <table>
         <thead class="d-none d-lg-table-row">
-          <th>Numarul Comenzii</th>
+          <th>Nr</th>
           <th>Data</th>
           <th>Status</th>
           <th>Total</th>
@@ -81,7 +81,8 @@ const reorderItems = (order) => {
             :key="order"
           >
             <td class="d-block d-lg-table-cell">
-              <span class="d-lg-none">Numarul Comenzii: </span>#{{ order.id }}
+              <span class="d-lg-none">Numarul Comenzii: </span>
+              <span class="order-no">#{{ order.id }}</span>
             </td>
             <td class="d-block d-lg-table-cell">
               <span class="d-lg-none">Data: </span>
@@ -139,6 +140,116 @@ const reorderItems = (order) => {
 
 <style scoped lang="scss">
 .user-order {
-  border: 1px solid $black;
+  border: 1px solid $gray-300;
+}
+
+.order-no {
+  color: $gray-500;
+}
+
+table {
+  font-family: $font-family-lanekcut;
+  font-size: 2.2rem;
+  line-height: 0.8;
+}
+
+td {
+  border-bottom: 1px solid $gray-300;
+  padding: 0.5rem 0;
+
+  &:first-child {
+    padding-top: 0;
+    border-top: 0;
+  }
+
+  &:last-child {
+    padding-bottom: 0;
+    border-bottom: 0;
+  }
+}
+
+.btn {
+  width: 100%;
+  margin-top: 1.5rem;
+}
+
+@include media-breakpoint-up(sm) {
+  table {
+    font-size: 2.6rem;
+  }
+
+  td {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+
+  .btn {
+    width: auto;
+
+    &:not(:first-child) {
+      margin-left: 1.5rem;
+    }
+  }
+}
+
+@include media-breakpoint-up(lg) {
+  table {
+    width: 100%;
+  }
+  .user-order {
+    border: 0;
+  }
+
+  th {
+    font-weight: normal;
+    white-space: nowrap;
+  }
+
+  th,
+  td,
+  td:first-child,
+  td:last-child {
+    @include padding(1.5rem 2rem);
+    vertical-align: middle;
+    border-bottom: 1px solid $gray-300;
+  }
+
+  td:not(:first-child) {
+    position: relative;
+
+    &:before {
+      content: "";
+      display: block;
+      height: calc(100% - 3.6rem);
+      width: 1px;
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      background: $gray-300;
+    }
+  }
+
+  .btn {
+    width: 100%;
+    margin-bottom: 0.5rem;
+    margin-top: 0;
+
+    &:not(:first-child) {
+      margin-left: 0;
+      margin-bottom: 0;
+    }
+  }
+}
+
+@include media-breakpoint-up(xl) {
+  .btn {
+    width: auto;
+    margin: 0 1rem 0 0;
+
+    &:last-child {
+      margin-right: 0;
+    }
+  }
 }
 </style>

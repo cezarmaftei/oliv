@@ -88,6 +88,5 @@ const accountSections = {
 
 .section-my-account {
   border: 2px solid $border-color;
-  border-top: 0;
 }
 </style>
