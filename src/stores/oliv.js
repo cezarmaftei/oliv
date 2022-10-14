@@ -243,6 +243,12 @@ export const useOlivStore = defineStore({
                 (page) => page.slug === "contul-meu"
               )[0];
               break;
+
+            case "article":
+              result = state.articleData.filter(
+                (article) => article.slug === route.params.slug
+              )[0];
+              break;
           }
 
           return result;
@@ -621,8 +627,7 @@ export const useOlivStore = defineStore({
 
     /**
      * If user is logged in get his general info, addresses and order history
-     * @param {Object} state the store's state
-     * @returns nothing. It just updates the store's state.
+     * @returns nothing. It updates the store's state.
      */
     async loadCustomerData() {
       const cData = await customerData(this.userData.ID).then(
@@ -648,7 +653,7 @@ export const useOlivStore = defineStore({
         if (meta.key === "user_billing_addresses" && meta.value.length) {
           this.userData.customerAddresses["billing"] = meta.value;
           // No patch because we don't need cart update
-          // this.cartData.addresses.billing = meta.value[0];
+          this.cartData.addresses.billing = meta.value[0];
         }
       });
 
@@ -754,10 +759,11 @@ export const useOlivStore = defineStore({
           totalPrice += this.cartData.totalShipping;
 
         this.cartData.totalPrice = totalPrice;
-
-        // Save cart in cookie for 1 week
-        cookies.set("oliv_cart", JSON.stringify(this.cartData), "7D");
       }
+
+      // Save cart in cookie for 1 week
+      if (this.isLoaded)
+        cookies.set("oliv_cart", JSON.stringify(this.cartData), "7D");
     },
 
     /**
@@ -1288,27 +1294,28 @@ export const useOlivStore = defineStore({
 
       const cartProductsIds = this.cartData.items.map((product) => product.id);
       let productsAvailable = true;
+      let productsToRemove = [];
       await productsData(cartProductsIds).then((data) => {
         this.storeLiveUpdate = false;
+        const productsData = data.data;
         // Loop through products to check if they are in stock
-        data.data.forEach((product, productIndex) => {
-          if (product.stock_status !== "instock") {
+        this.cartData.items.forEach((product, productIndex) => {
+          const currentProductData = productsData.filter(
+            (productData) => productData.id === product.id
+          )[0];
+          if (currentProductData.stock_status !== "instock") {
             // Out of stock
             this.cartData.items[
               productIndex
             ].errorMsg = `Ne pare rau, dar acest produs nu mai este in stoc!`;
 
-            setTimeout(() => {
-              // Remove from cart
-              this.cartData.items.splice(productIndex, 1);
-            }, 5000);
-
+            productsToRemove.push(productIndex);
             productsAvailable = false;
           }
 
           if (
-            product.stock_status === "instock" &&
-            typeof product.stock_quantity === "number"
+            currentProductData.stock_status === "instock" &&
+            typeof currentProductData.stock_quantity === "number"
           ) {
             // Limited stock
             const cartProductQty = this.cartData.items[productIndex].productQty;
@@ -1327,7 +1334,18 @@ export const useOlivStore = defineStore({
         });
       });
 
-      if (!productsAvailable) return "productError";
+      if (!productsAvailable) {
+        if (productsToRemove.length) {
+          setTimeout(() => {
+            productsToRemove.reverse().forEach((index) => {
+              // Remove from cart
+              this.cartData.items.splice(index, 1);
+            });
+          }, 5000);
+        }
+
+        return "productError";
+      }
 
       return await createOrder(this.createOrderParams()).then((data) => {
         this.storeLiveUpdate = false;
@@ -1390,6 +1408,32 @@ export const useOlivStore = defineStore({
         (data) => data.key === "reorder_items"
       );
       return reorderData[0].value;
+    },
+
+    articleDate(article) {
+      const monthNames = [
+        "Ianuarie",
+        "Februarie",
+        "Martie",
+        "Aprilie",
+        "Mai",
+        "Iunie",
+        "Iulie",
+        "August",
+        "Septembrie",
+        "Octombrie",
+        "Noiembrie",
+        "Decembrie",
+      ];
+
+      const date = new Date(article.date);
+      return `${date.getDate()} ${
+        monthNames[date.getMonth()]
+      } ${date.getFullYear()}`;
+    },
+
+    articleURL(article) {
+      return `/blog/${article.slug}`;
     },
   },
 });

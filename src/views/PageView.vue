@@ -13,10 +13,13 @@ import SectionAccount from "@/components/section/SectionAccount.vue";
 import SectionSingleProduct from "../components/section/SectionSingleProduct.vue";
 import SectionRelatedProducts from "../components/section/SectionRelatedProducts.vue";
 import SectionOrderCompleted from "../components/section/SectionOrderCompleted.vue";
+import SectionBlog from "../components/section/SectionBlog.vue";
+import SectionContact from "../components/section/SectionContact.vue";
 import UserOrders from "@/components/user-account/UserOrders.vue";
 import UserAddresses from "@/components/user-account/UserAddresses.vue";
 import UserGeneral from "@/components/user-account/UserGeneral.vue";
 import IconLoading from "../components/icons/IconLoading.vue";
+import SectionBlogSingle from "../components/section/SectionBlogSingle.vue";
 
 const store = useOlivStore();
 const route = useRoute();
@@ -28,6 +31,8 @@ const pageTemplates = {
   SectionCheckout,
   SectionAccount,
   SectionOrderCompleted,
+  SectionBlog,
+  SectionContact,
 };
 
 const accountSections = {
@@ -67,7 +72,7 @@ const accountSections = {
 
       <!-- account layout -->
       <section
-        class="section-my-account overflow-hidden flex-grow-1 mb-8"
+        class="section-my-account position-relative overflow-hidden flex-grow-1 mb-8"
         v-if="route.name === 'account'"
       >
         <div class="container">
@@ -75,6 +80,13 @@ const accountSections = {
         </div>
       </section>
       <!-- /.account layout -->
+
+      <!-- single article layout -->
+      <SectionBlogSingle
+        v-if="route.name === 'article'"
+        :slug="route.params.slug"
+      />
+      <!-- /.single article layout -->
     </main>
     <IconLoading v-if="!store.isLoaded" />
     <FooterInternal />

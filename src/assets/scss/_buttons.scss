@@ -119,6 +119,10 @@
   height: 2.4rem;
 }
 
+form .btn-delete {
+  padding: 0;
+}
+
 .quantity-wrap {
   display: flex;
   border: 2px solid $gray-500;
@@ -156,12 +160,36 @@
 .card-product-cart {
   @include media-breakpoint-between(xxs, xs) {
     .quantity-wrap {
-      width: 9.4rem;
+      width: 7.4rem;
 
       input {
-        flex: 0 0 3rem;
-        max-width: 3rem;
+        flex: 0 0 2rem;
+        max-width: 2rem;
         height: 3rem;
+      }
+
+      button {
+        flex: 0 0 2.5rem;
+        max-width: 2.5rem;
+      }
+    }
+  }
+}
+
+.checkout-inner {
+  @include media-breakpoint-between(xxs, sm) {
+    .quantity-wrap {
+      width: 7.4rem;
+
+      input {
+        flex: 0 0 2rem;
+        max-width: 2rem;
+        height: 3rem;
+      }
+
+      button {
+        flex: 0 0 2.5rem;
+        max-width: 2.5rem;
       }
     }
   }

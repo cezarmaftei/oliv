@@ -10,6 +10,7 @@
   "dependencies": {
     "@googlemaps/js-api-loader": "^1.14.3",
     "@popperjs/core": "^2.11.5",
+    "@vueuse/head": "^0.9.8",
     "axios": "^0.27.2",
     "bootstrap": "^5.2.0",
     "fuse.js": "^6.6.2",

@@ -2,7 +2,6 @@
 import { useOlivStore } from "@/stores/oliv.js";
 import { computed } from "vue";
 import { ref } from "vue";
-import VLazyImage from "v-lazy-image";
 
 const store = useOlivStore();
 
@@ -44,61 +43,67 @@ const checkPass = () => {
 </script>
 <template>
   <div class="p-7">
-    <v-lazy-image
-      v-if="store.userData.avatarUrl"
-      :src="store.userData.avatarUrl"
-      :alt="store.userData.firstName"
-    />
-    <button @click="editForm = !editForm" class="btn btn-outline-dark reverse">
-      Editeaza
-    </button>
-    <form
-      @submit.prevent="
-        if (checkPass()) {
-          editForm = false;
-          checkPassInput = '';
-          checkPassClass = '';
-          store.updateUserGeneral(editFormData);
-        }
-      "
-    >
-      <input
-        placeholder="Nume"
-        class="form-control mb-2"
-        :disabled="!editForm"
-        :required="editForm"
-        v-model="editFormData.first_name"
-      />
+    <div class="form-outer-wrapper">
+      <h3 class="mb-2">Detalii Generale</h3>
+      <form
+        @submit.prevent="
+          if (checkPass()) {
+            editForm = false;
+            checkPassInput = '';
+            checkPassClass = '';
+            store.updateUserGeneral(editFormData);
+          }
+        "
+      >
+        <input
+          placeholder="Nume"
+          class="form-control mb-2"
+          :required="editForm"
+          v-model="editFormData.first_name"
+        />
 
-      <input
-        class="form-control mb-2"
-        placeholder="Email"
-        :disabled="!editForm"
-        :required="editForm"
-        v-model="editFormData.email"
-      />
+        <input
+          class="form-control mb-2"
+          placeholder="Email"
+          :required="editForm"
+          v-model="editFormData.email"
+        />
 
-      <input
-        class="form-control mb-2"
-        placeholder="Introdu parola noua"
-        :disabled="!editForm"
-        type="password"
-        v-model="editFormData.password"
-        autocomplete="off"
-      />
+        <input
+          class="form-control mb-2"
+          placeholder="Introdu parola noua"
+          type="password"
+          v-model="editFormData.password"
+          @keyup="checkPass()"
+          autocomplete="off"
+        />
 
-      <input
-        class="form-control mb-2"
-        placeholder="Confirma parola noua"
-        :disabled="!editForm"
-        :class="checkPassClass"
-        type="password"
-        v-model="checkPassInput"
-        @keyup="checkPass()"
-        autocomplete="off"
-      />
+        <input
+          class="form-control mb-2"
+          placeholder="Confirma parola noua"
+          :class="checkPassClass"
+          type="password"
+          v-model="checkPassInput"
+          @keyup="checkPass()"
+          autocomplete="off"
+        />
 
-      <button v-show="editForm" class="btn btn-outline-dark">Salveaza</button>
-    </form>
+        <button class="btn btn-outline-dark">Salveaza</button>
+      </form>
+    </div>
   </div>
 </template>
+
+<style scoped lang="scss">
+.form-outer-wrapper {
+  @include media-breakpoint-up(sm) {
+    background: $white;
+    border: 2px solid $border-color;
+    max-width: 40rem;
+    padding: 2rem;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+  }
+}
+</style>

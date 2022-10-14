@@ -28,4 +28,12 @@
   @include rfs(4rem, top);
   @include rfs(4rem, right);
 }
+
+.modal-header .btn-close {
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  @include rfs(2rem, top);
+  @include rfs(2rem, right);
+}
 </style>

@@ -1,9 +1,15 @@
 <script setup>
 import OrderDetails from "./OrderDetails.vue";
 import BtnClose from "../button/BtnClose.vue";
+
 defineProps({
   order: Object,
 });
+
+const emits = defineEmits(["reOrder"]);
+const reOrderItems = () => {
+  emits("reOrder");
+};
 </script>
 
 <template>
@@ -26,9 +32,13 @@ defineProps({
         </div>
         <div class="modal-body">
           <OrderDetails :order="order" />
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-outline-dark">
+
+          <button
+            type="button"
+            class="btn btn-outline-dark d-block mx-auto mt-4"
+            data-bs-dismiss="modal"
+            @click="reOrderItems()"
+          >
             Comanda din nou
           </button>
         </div>

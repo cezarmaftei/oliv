@@ -15,18 +15,21 @@ defineProps({
       ]"
       :key="addressDistanceFees"
     >
-      Pentru aceasta adresa comanda minima este de
-      <ItemPrice :price="addressDistanceFees.min_amount" /><br />
-      Transportul costa <ItemPrice :price="addressDistanceFees.fee" /><br />
-      Pentru a beneficia de transport gratuit, comanda minima este de
-      <ItemPrice :price="addressDistanceFees.free" />
+      <p class="mb-0">
+        <small>
+          Pentru aceasta adresa comanda minima este de
+          <ItemPrice :price="addressDistanceFees.min_amount" /><br />
+          Transportul costa <ItemPrice :price="addressDistanceFees.fee" /><br />
+          Pentru a beneficia de transport gratuit, comanda minima este de
+          <ItemPrice :price="addressDistanceFees.free" />
+        </small>
+      </p>
     </div>
   </div>
 </template>
 
 <style scoped lang="scss">
 .address-fees {
-  @include font-size(1.6rem);
   line-height: 1.2;
 }
 </style>

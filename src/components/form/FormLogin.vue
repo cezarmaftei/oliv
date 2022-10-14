@@ -1,6 +1,5 @@
 <script setup>
 import { useOlivStore } from "@/stores/oliv.js";
-import UpdateLoading from "../partials/UpdateLoading.vue";
 const store = useOlivStore();
 
 defineProps({
@@ -77,7 +76,5 @@ const cancelledEmitAction = () => {
         >Creeaza cont nou</router-link
       >
     </div>
-
-    <UpdateLoading />
   </form>
 </template>

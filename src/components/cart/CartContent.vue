@@ -2,7 +2,6 @@
 import { useOlivStore } from "@/stores/oliv.js";
 import { useRoute } from "vue-router";
 import { MutationType } from "pinia";
-import UpdateLoading from "@/components/partials/UpdateLoading.vue";
 import FormCoupon from "@/components/form/FormCoupon.vue";
 import NoProductsInCart from "@/components/partials/NoProductsInCart.vue";
 import ProductCart from "@/components/product/ProductCart.vue";
@@ -21,8 +20,7 @@ defineProps({
 store.$subscribe((mutation, state) => {
   // This only happens for addresses
   if (mutation.type === "patch function") {
-    console.log("cart patched!");
-    // store.updateCartAddressesData();
+    // console.log("cart patched!");
     store.updateCartTotals();
   }
 });
@@ -30,8 +28,6 @@ store.$subscribe((mutation, state) => {
 
 <template>
   <div class="cart-content">
-    <UpdateLoading />
-
     <CartHeader
       v-if="!isOffCanvas"
       :isCheckout="isCheckout"
@@ -57,88 +53,94 @@ store.$subscribe((mutation, state) => {
     <div class="px-4" v-else>
       <NoProductsInCart />
     </div>
-  </div>
 
-  <div
-    v-if="store.getCartItems.length"
-    class="cart-totals"
-    :class="{ 'd-flex flex-column flex-grow-1': isOffCanvas }"
-  >
-    <div class="cart-subtotal" :class="{ 'px-4': isOffCanvas }">
-      <div class="d-flex cart-bordered-element mt-0">
-        <div>Total produse</div>
-        <div class="ms-auto">
-          <strong><ItemPrice :price="store.cartData.subTotal" /></strong>
-        </div>
-      </div>
-
-      <div v-if="store.cartData.coupon.codes">
-        <div
-          v-for="couponData in store.cartData.coupon.codes"
-          :key="couponData"
-          class="d-flex align-items-center cart-bordered-element"
-        >
-          <button
-            type="button"
-            class="btn btn-delete"
-            @click="store.removeOrderCoupon"
-          ></button>
-          <div class="px-1">Discount cupon "{{ couponData.code }}":</div>
-          <div class="ms-auto text-nowrap">
-            <strong><ItemPrice :price="couponData.discount" /></strong>
-          </div>
-        </div>
-      </div>
-      <div v-if="!store.cartData.coupon.codes.length">
-        <FormCoupon />
-      </div>
-
-      <div class="cart-bordered-element">
-        <div class="d-flex">
-          <div class="text-nowrap me-1">Cost livrare:</div>
+    <div
+      v-if="store.getCartItems.length"
+      class="cart-totals"
+      :class="{ 'd-flex flex-column flex-grow-1': isOffCanvas }"
+    >
+      <div class="cart-subtotal" :class="{ 'px-4': isOffCanvas }">
+        <div class="d-flex cart-bordered-element mt-0">
+          <div>Total produse</div>
           <div class="ms-auto">
-            <span v-if="!isCheckout && store.cartData.totalShipping === false">
-              Se calculeaza la pasul urmator.
-            </span>
-            <span
-              v-else-if="
-                isCheckout &&
-                store.cartData.totalShipping === false &&
-                store.cartData.deliveryMethod !== 'pickup'
-              "
-            >
-              Va fi calculat dupa ce introduci adresa si localitatea.
-            </span>
-            <ItemPrice
-              v-else-if="
-                store.cartData.totalShipping > 0 &&
-                store.cartData.deliveryMethod !== 'pickup'
-              "
-              :price="store.cartData.totalShipping"
-            />
-            <span v-else-if="store.cartData.totalShipping === 0">Gratuit</span>
+            <strong><ItemPrice :price="store.cartData.subTotal" /></strong>
+          </div>
+        </div>
+
+        <div v-if="store.cartData.coupon.codes">
+          <div
+            v-for="couponData in store.cartData.coupon.codes"
+            :key="couponData"
+            class="d-flex align-items-center cart-bordered-element"
+          >
+            <button
+              type="button"
+              class="btn btn-delete"
+              @click="store.removeOrderCoupon"
+            ></button>
+            <div class="px-1">Discount cupon "{{ couponData.code }}":</div>
+            <div class="ms-auto text-nowrap">
+              <strong><ItemPrice :price="couponData.discount" /></strong>
+            </div>
+          </div>
+        </div>
+        <div v-if="!store.cartData.coupon.codes.length">
+          <FormCoupon />
+        </div>
+
+        <div class="cart-bordered-element">
+          <div class="d-flex">
+            <div class="text-nowrap me-1">Cost livrare:</div>
+            <div class="ms-auto">
+              <span
+                v-if="!isCheckout && store.cartData.totalShipping === false"
+              >
+                Se calculeaza la pasul urmator.
+              </span>
+              <span
+                v-else-if="
+                  isCheckout &&
+                  store.cartData.totalShipping === false &&
+                  store.cartData.deliveryMethod !== 'pickup'
+                "
+              >
+                Va fi calculat dupa ce introduci adresa si localitatea.
+              </span>
+              <ItemPrice
+                v-else-if="
+                  store.cartData.totalShipping > 0 &&
+                  store.cartData.deliveryMethod !== 'pickup'
+                "
+                :price="store.cartData.totalShipping"
+              />
+              <span v-else-if="store.cartData.totalShipping === 0"
+                >Gratuit</span
+              >
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <div class="cart-total flex-grow-1 d-flex flex-column justify-content-end">
-      <div class="d-flex py-4" :class="{ 'px-4 mt-auto': isOffCanvas }">
-        <div v-if="isCheckout">Total</div>
-        <div v-else>Subtotal</div>
-        <div class="ms-auto">
-          <ItemPrice :price="store.cartData.totalPrice" />
-        </div>
-      </div>
       <div
-        v-if="route.params.slug !== 'finalizare'"
-        class="d-flex"
-        data-bs-dismiss="offcanvas"
-        aria-label="Close"
+        class="cart-total flex-grow-1 d-flex flex-column justify-content-end"
       >
-        <router-link class="btn btn-outline-dark reverse" to="/finalizare"
-          >Plaseaza comanda</router-link
+        <div class="d-flex py-4" :class="{ 'px-4 mt-auto': isOffCanvas }">
+          <div v-if="isCheckout">Total</div>
+          <div v-else>Subtotal</div>
+          <div class="ms-auto">
+            <ItemPrice :price="store.cartData.totalPrice" />
+          </div>
+        </div>
+        <div
+          v-if="route.params.slug !== 'finalizare'"
+          class="d-flex"
+          data-bs-dismiss="offcanvas"
+          aria-label="Close"
         >
+          <router-link class="btn btn-outline-dark reverse" to="/finalizare"
+            >Plaseaza comanda</router-link
+          >
+        </div>
       </div>
     </div>
   </div>

@@ -4,6 +4,9 @@
 
 <style scoped lang="scss">
 .navbar-brand {
+  display: block;
+  width: 6rem;
+
   &:before,
   &:after {
     content: "";
@@ -25,29 +28,9 @@
     background: $logo-oliv-bg no-repeat center center / 100% 100%;
   }
 
-  &.footer-brand {
-    position: relative;
-    margin-top: 1rem;
-
-    &:before {
-      position: absolute;
-      right: 100%;
-      bottom: 100%;
-      width: 8rem;
-      height: 6rem;
-      transform: translate(1rem, 4rem);
-    }
-
-    &:after {
-      position: relative;
-      width: 7rem;
-      height: 4rem;
-      margin-bottom: 1rem;
-      margin-left: -1rem;
-    }
-  }
-
   @include media-breakpoint-up(sm) {
+    width: 13rem;
+
     &:before {
       width: 8rem;
       height: 7rem;
@@ -60,24 +43,10 @@
     }
 
     &.footer-brand {
-      margin: -1rem 0 0 -3rem;
+      margin: -2rem 0 0 -3rem;
 
       &.invisible {
-        margin: -1rem -3rem 0 0;
-      }
-
-      &:before {
-        position: static;
-        transform: none;
-        width: 8rem;
-        height: 7rem;
-      }
-
-      &:after {
-        width: 8rem;
-        height: 4.4rem;
-        margin-left: -1.5rem;
-        margin-bottom: 0.5rem;
+        margin: -2rem -3rem 0 0;
       }
     }
   }
@@ -96,6 +65,8 @@
   }
 
   @include media-breakpoint-up(lg) {
+    width: 18rem;
+
     &:before {
       width: 12rem;
       height: 10.7rem;
@@ -107,21 +78,11 @@
       margin-left: -6rem;
       margin-bottom: 1rem;
     }
-
-    &.footer-brand {
-      &:before {
-        position: static;
-        transform: none;
-      }
-
-      &:after {
-        margin-left: -1.5rem;
-        margin-bottom: 1rem;
-      }
-    }
   }
 
   @include media-breakpoint-up(xl) {
+    width: 20rem;
+
     &:before {
       width: 13rem;
       height: 11.2rem;
@@ -136,7 +97,8 @@
 
 .cloned {
   .navbar-brand {
-    @include media-breakpoint-up(md) {
+    @include media-breakpoint-up(lg) {
+      width: 20rem;
       margin-top: -5rem;
       margin-left: -6rem;
 

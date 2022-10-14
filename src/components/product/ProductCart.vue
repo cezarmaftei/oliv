@@ -350,6 +350,15 @@ figure {
   }
 }
 
+@include media-breakpoint-between(xxs, sm) {
+  .checkout-inner {
+    figure {
+      flex: 0 0 5rem;
+      height: 52rem;
+    }
+  }
+}
+
 @include media-breakpoint-up(lg) {
   .cart-page-inner {
     h3 {

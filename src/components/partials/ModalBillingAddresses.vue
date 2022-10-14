@@ -3,6 +3,8 @@ import { useOlivStore } from "@/stores/oliv.js";
 import { onMounted, ref } from "vue";
 import { Modal } from "bootstrap";
 import UserAddress from "../user-account/UserAddress.vue";
+import BtnClose from "../button/BtnClose.vue";
+
 const store = useOlivStore();
 
 const billingModal = ref(false);
@@ -23,16 +25,16 @@ const closeModal = () => {
   >
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
-        <div class="modal-header">
-          <h3 class="modal-title" id="billing-addresses-modal-label">
+        <div class="modal-header pb-0 pe-10">
+          <h2 id="shipping-addresses-modal-label">
             Alege alta dresa de facturare
-          </h3>
-          <button
+          </h2>
+          <BtnClose
             type="button"
             class="btn-close"
             data-bs-dismiss="modal"
             aria-label="Close"
-          ></button>
+          />
         </div>
         <div class="modal-body">
           <div

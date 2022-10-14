@@ -2,11 +2,9 @@
 import { useOlivStore } from "@/stores/oliv.js";
 import { ref } from "vue";
 import { Offcanvas } from "bootstrap";
-import { useCookies } from "vue3-cookies";
 import ItemPrice from "../partials/ItemPrice.vue";
 import ModalOrderDetails from "../partials/ModalOrderDetails.vue";
 
-const { cookies } = useCookies();
 const store = useOlivStore();
 const currentOrder = ref(false);
 
@@ -60,6 +58,9 @@ const reorderItems = (order) => {
 </script>
 <template>
   <ModalOrderDetails
+    @re-order="
+      reorderItems(currentOrder ? currentOrder : store.getUserOrders[0])
+    "
     v-if="store.getUserOrders.length"
     :order="currentOrder ? currentOrder : store.getUserOrders[0]"
   />

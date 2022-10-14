@@ -20,13 +20,12 @@ onMounted(() => {
     aria-hidden="true"
     ref="searchModal"
   >
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content bg-light">
         <div class="modal-header">
-          <h5 class="modal-title" id="search-modal-label">Cauta Produse</h5>
           <BtnClose type="button" data-bs-dismiss="modal" aria-label="Close" />
         </div>
-        <div class="modal-body">
+        <div class="modal-body bg-light px-0 pb-5">
           <SearchResults />
         </div>
       </div>

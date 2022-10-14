@@ -46,9 +46,10 @@ const showMenuCart = computed(() => {
     class="main-nav"
     ref="mainNav"
     :class="{
-      scrolling: scrollingClass || props.isSingle,
-      cloned: isClone,
+      scrolling: scrollingClass || isSingle,
+      cloned: isClone || isSingle,
       'fixed-top': isClone,
+      'sticky-top': isSingle,
     }"
   >
     <div class="container">
@@ -207,9 +208,9 @@ const showMenuCart = computed(() => {
   }
 
   .cloned {
-    .navbar-top {
-      padding-left: 0;
-    }
+    // .navbar-top {
+    //   padding-left: 0;
+    // }
 
     .secondary-navbar {
       padding: 0;

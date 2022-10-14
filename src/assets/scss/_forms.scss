@@ -29,6 +29,10 @@
     color: $gray-300;
   }
 
+  &:focus-visible {
+    outline: 0;
+  }
+
   @include media-breakpoint-up(md) {
     height: 5.2rem;
     font-size: 2.6rem;
@@ -94,6 +98,16 @@ label.form-control {
 form {
   .btn {
     padding: 1rem 2rem;
+
+    @include media-breakpoint-between(xxs, xs) {
+      white-space: normal;
+    }
+
+    @include media-breakpoint-between(xxs, lg) {
+      &:not(.btn-delete):not(.btn-close) {
+        width: 100%;
+      }
+    }
   }
 
   a {

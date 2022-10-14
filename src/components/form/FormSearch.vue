@@ -8,15 +8,17 @@ defineProps({
 </script>
 
 <template>
-  <div class="search-wrapper" @submit.prevent>
-    <form autocomplete="off">
+  <div class="search-wrapper mb-3">
+    <form autocomplete="off" class="d-flex flex-wrap" @submit.prevent>
       <input
+        class="px-2"
         id="search-input"
         type="search"
         name="q"
-        placeholder="cauta"
+        placeholder="cauta dupa produs"
         v-model="store.searchData.searchString"
       />
+      <button type="submit" class="btn btn-outline-dark reverse">Cauta</button>
     </form>
   </div>
 </template>
@@ -24,52 +26,57 @@ defineProps({
 <style scoped lang="scss">
 .search-wrapper {
   position: relative;
-  border: 2px solid $border-color;
-  padding: 0 4rem 0 2rem;
-  border-radius: 2rem;
-
-  &:after {
-    content: "";
-    display: block;
-    width: 1.6rem;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    right: 1rem;
-    background-image: escape-svg(
-      url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16.71 16.71'><polygon points='0 1.41 13.29 14.71 5.71 14.71 5.71 16.71 16.71 16.71 16.71 5.71 14.71 5.71 14.71 13.29 1.41 0 0 1.41'/></svg>")
-    );
-    background-position: center center;
-    background-repeat: no-repeat;
-    background-size: 100% auto;
-  }
 
   input {
-    background: none;
-    border: 0;
-    padding: 0;
-    height: 4rem;
+    background: $white;
+    border: 2px solid $border-color;
+    border-bottom: 0;
     font-family: $font-family-lanekcut;
     color: $gray-500;
     font-size: 2.4rem;
-    width: 100%;
 
     &:focus,
     &:focus-visible {
       outline: 0;
     }
   }
+
+  input,
+  .btn {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+
+  @include media-breakpoint-up(sm) {
+    input {
+      border-bottom: 2px solid $border-color;
+      border-right: 0;
+      flex: 0 0 70%;
+      max-width: 70%;
+    }
+
+    .btn {
+      flex: 0 0 30%;
+      max-width: 30%;
+    }
+  }
+
+  @include media-breakpoint-up(lg) {
+    max-width: 500px;
+    margin-right: auto;
+    margin-left: auto;
+  }
 }
 
 @include media-breakpoint-up(xl) {
-  .search-wrapper {
-    max-width: 225px;
-  }
+  // .search-wrapper {
+  //   max-width: 225px;
+  // }
 
-  .scrolling {
-    .search-wrapper {
-      min-width: 225px;
-    }
-  }
+  // .scrolling {
+  //   .search-wrapper {
+  //     min-width: 225px;
+  //   }
+  // }
 }
 </style>

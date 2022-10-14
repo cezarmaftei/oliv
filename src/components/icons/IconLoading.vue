@@ -28,6 +28,11 @@
 </template>
 
 <style scoped lang="scss">
+svg {
+  max-width: 4rem;
+  max-height: 4rem;
+  margin: auto;
+}
 .main-nav {
   svg {
     height: 2rem;

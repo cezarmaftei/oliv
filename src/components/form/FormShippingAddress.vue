@@ -76,16 +76,16 @@ const submitUserAddress = async () => {
 
     <FieldsFormShipping />
 
-    <div class="row mt-3">
-      <div class="col-auto">
-        <button type="submit" class="btn btn-outline-dark reverse">
+    <div class="row g-1 mt-3">
+      <div class="col-12 col-md-6 col-lg-auto">
+        <button type="submit" class="btn btn-outline-dark">
           {{ buttonText }}
         </button>
       </div>
-      <div class="col-auto">
+      <div class="col-12 col-md-6 col-lg-auto ms-auto">
         <button
           type="button"
-          class="btn btn-outline-dark red"
+          class="btn btn-outline-dark"
           @click="cancelAction"
         >
           Renunta

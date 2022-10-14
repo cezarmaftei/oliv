@@ -80,6 +80,7 @@ const store = useOlivStore();
   border-right-color: transparent;
   border-left-color: transparent;
   overflow: hidden;
+  @include padding-top(2.2rem);
   @include padding-bottom(2.2rem);
   flex-direction: column;
   align-items: center;

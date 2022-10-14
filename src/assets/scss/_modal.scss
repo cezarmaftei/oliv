@@ -199,6 +199,13 @@
   }
 }
 
+@include media-breakpoint-up(md) {
+  .modal-lg,
+  .modal-xl {
+    --#{$prefix}modal-width: 700px;
+  }
+}
+
 @include media-breakpoint-up(lg) {
   .modal-lg,
   .modal-xl {

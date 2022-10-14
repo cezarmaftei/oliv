@@ -5,7 +5,6 @@ import FormLogin from "@/components/form/FormLogin.vue";
 import FormRegistration from "@/components/form/FormRegistration.vue";
 import FormResetPass from "@/components/form/FormResetPass.vue";
 import FormPassRecovery from "@/components/form/FormPassRecovery.vue";
-import UpdateLoading from "@/components/partials/UpdateLoading.vue";
 import IconTaco from "../icons/IconTaco.vue";
 import IconMapMarkers from "../icons/IconMapMarkers.vue";
 import IconNachos from "../icons/IconNachos.vue";
@@ -32,7 +31,6 @@ if (route.query.action === "aa") {
 </script>
 <template>
   <div class="overflow-hidden flex-grow-1 container mb-8">
-    <UpdateLoading />
     <div
       class="activation-container"
       v-show="route.query.action === 'aa' && !store.userData.loggedIn"

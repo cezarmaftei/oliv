@@ -8,9 +8,9 @@ const store = useOlivStore();
 
 const searchOptions = {
   minMatchCharLength: 2,
-  includeScore: true,
-  threshold: 0.2,
-  distance: 50,
+  findAllMatches: true,
+  threshold: 0.5,
+  distance: 10,
   keys: ["title.rendered", "content.rendered", "name", "description"],
 };
 
@@ -41,12 +41,61 @@ const searchResults = computed(() => {
 </script>
 
 <template>
-  <div class="search-results p-5">
+  <div class="search-results px-2 px-sm-4 px-md-8">
     <FormSearch />
-    <div v-if="store.storeData.products && searchResults.length">
-      <div v-for="(item, index) in searchResults" :key="item">
-        <ProductListing :product="item.item" :productCount="index" />
-      </div>
+    <div
+      class="row row-products gy-2"
+      v-if="store.storeData.products && searchResults.length"
+    >
+      <TransitionGroup name="scale-element">
+        <div
+          class="col-12 col-md-6 col-xl-4"
+          v-for="(item, index) in searchResults"
+          :key="item"
+        >
+          <ProductListing :product="item.item" :productCount="index" />
+        </div>
+      </TransitionGroup>
     </div>
   </div>
 </template>
+
+<style scoped lang="scss">
+@include media-breakpoint-up(sm) {
+  .row-products {
+    margin: 0 0 -2px;
+
+    [class*="col"] {
+      padding: 0;
+      margin: 0;
+      border: 2px solid $border-color;
+      margin-top: -2px;
+    }
+  }
+}
+
+@include media-breakpoint-up(md) {
+  .row-products {
+    [class*="col"] {
+      &:nth-child(2n) {
+        border-left: 0;
+      }
+    }
+  }
+}
+
+@include media-breakpoint-up(xl) {
+  .row-products {
+    [class*="col"] {
+      &:nth-child(2n) {
+        border-left: 2px solid $border-color;
+      }
+
+      &:nth-child(3n),
+      &:nth-child(3n + 2) {
+        border-left: 0;
+      }
+    }
+  }
+}
+</style>

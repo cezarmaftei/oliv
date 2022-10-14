@@ -30,70 +30,90 @@ const showEditForm = ref(false);
 </script>
 
 <template>
-  <div class="user-address pb-2 mb-2">
+  <div class="user-address pb-3 mb-3">
     <div class="user-address-shipping" v-if="addressType === 'shipping'">
       <transition name="height-element">
         <div v-if="!showEditForm">
-          <h5 v-if="addressIndex === 0">Adresa implicta pentru livrare</h5>
-          <div class="address-details">
-            <p class="h5">
-              <span
-                v-for="(
-                  fieldData, fieldName, fieldIndex
-                ) in store.shippingFieldsMapping"
-                :key="fieldName"
-              >
-                <span
-                  v-if="
-                    fieldData.type !== 'hidden' && address[fieldName].length > 0
-                  "
+          <h4 class="mb-2" v-if="addressIndex === 0">
+            Adresa principala pentru livrare
+          </h4>
+          <h4 class="mb-2" v-else>Adresa secundara pentru livrare</h4>
+          <div class="row">
+            <div class="col-12 col-lg-6 address-details">
+              <table>
+                <tr
+                  class="d-block d-sm-table-row"
+                  v-for="(fieldData, fieldName) in store.shippingFieldsMapping"
+                  :key="fieldName"
                 >
-                  {{ fieldData.name }}:
-                  <span class="color-gray">{{ address[fieldName] }}</span
-                  >,
-                  <br v-if="fieldIndex % 3 === 0" />
-                </span>
-              </span>
-            </p>
-          </div>
+                  <td
+                    class="d-block d-sm-table-cell"
+                    v-if="
+                      fieldData.type !== 'hidden' &&
+                      address[fieldName].length > 0
+                    "
+                  >
+                    {{ fieldData.name }}:
+                  </td>
+                  <td
+                    class="d-block d-sm-table-cell"
+                    v-if="
+                      fieldData.type !== 'hidden' &&
+                      address[fieldName].length > 0
+                    "
+                  >
+                    {{ address[fieldName] }}
+                  </td>
+                </tr>
+              </table>
 
-          <AddressFees :address="address" />
-
-          <div class="row mt-2">
-            <div class="col-auto" v-if="!isCheckout">
-              <button
-                class="btn btn-outline-dark"
-                @click="showEditForm = !showEditForm"
-              >
-                Editeaza adresa
-              </button>
-            </div>
-            <div class="col-auto" v-if="!isCheckout && addressIndex > 0">
-              <button
-                class="btn btn-outline-dark reverse"
-                @click="
-                  store.handleUserAddress('setfirst', addressType, addressIndex)
-                "
-              >
-                Seteaza ca adresa implicita
-              </button>
-            </div>
-            <div class="col-auto" v-if="!isCheckout">
-              <button
-                class="btn btn-outline-dark red"
-                @click="deleteUserAddress()"
-              >
-                Sterge adresa
-              </button>
+              <AddressFees :address="address" />
             </div>
 
-            <div class="col-auto" v-if="isCheckout">
-              <button
-                class="btn btn-outline-dark reverse"
-                @click="emitAddressChanged()"
-              >
-                Alege adresa
-              </button>
+            <div
+              class="col-12 col-lg-6 col-xl-5 ps-lg-3 mt-2 mt-lg-0 ms-xl-auto"
+            >
+              <div class="row g-1">
+                <div class="col-12" v-if="!isCheckout && addressIndex > 0">
+                  <button
+                    class="btn btn-outline-dark"
+                    @click="
+                      store.handleUserAddress(
+                        'setfirst',
+                        addressType,
+                        addressIndex
+                      )
+                    "
+                  >
+                    Seteaza ca adresa principala
+                  </button>
+                </div>
+                <div class="col-12 col-xs-6" v-if="!isCheckout">
+                  <button
+                    class="btn btn-outline-dark"
+                    @click="showEditForm = !showEditForm"
+                  >
+                    Editeaza adresa
+                  </button>
+                </div>
+                <div class="col-12 col-xs-6" v-if="!isCheckout">
+                  <button
+                    class="btn btn-outline-dark"
+                    @click="deleteUserAddress()"
+                  >
+                    Sterge adresa
+                  </button>
+                </div>
+
+                <div class="col-12" v-if="isCheckout">
+                  <button
+                    class="btn btn-outline-dark"
+                    @click="emitAddressChanged()"
+                  >
+                    Alege adresa
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -114,77 +134,101 @@ const showEditForm = ref(false);
     <div class="user-address-billing" v-if="addressType === 'billing'">
       <transition name="height-element">
         <div v-if="!showEditForm">
-          <h5 v-if="addressIndex === 0">Adresa implicta pentru facturare</h5>
-          <div class="address-details">
-            <p class="h5">
-              <span
-                v-for="(
-                  fieldData, fieldName, fieldIndex
-                ) in store.billingFieldsMapping"
-                :key="fieldName"
-              >
-                <span
-                  v-if="
-                    fieldData.type !== 'hidden' && address[fieldName].length > 0
-                  "
+          <h4 class="mb-2" v-if="addressIndex === 0">
+            Adresa principala pentru facturare
+          </h4>
+          <h4 class="mb-2" v-else>Adresa secundara pentru facturare</h4>
+          <div class="row">
+            <div class="col-12 col-lg-6 address-details">
+              <table>
+                <tr
+                  class="d-block d-sm-table-row"
+                  v-for="(
+                    fieldData, fieldName, fieldIndex
+                  ) in store.billingFieldsMapping"
+                  :key="fieldName"
                 >
-                  {{ fieldData.name }}:
-                  <span class="color-gray">{{ address[fieldName] }}</span
-                  >,
-                  <br v-if="fieldIndex % 3 === 0" />
-                </span>
-              </span>
-            </p>
-          </div>
-
-          <div class="row mt-2">
-            <div class="col-auto" v-if="!isCheckout">
-              <button
-                class="btn btn-outline-dark"
-                @click="showEditForm = !showEditForm"
-              >
-                Editeaza adresa
-              </button>
+                  <td
+                    class="d-block d-sm-table-cell"
+                    v-if="
+                      fieldData.type !== 'hidden' &&
+                      address[fieldName].length > 0
+                    "
+                  >
+                    {{ fieldData.name }}:
+                  </td>
+                  <td
+                    class="d-block d-sm-table-cell"
+                    v-if="
+                      fieldData.type !== 'hidden' &&
+                      address[fieldName].length > 0
+                    "
+                  >
+                    {{ address[fieldName] }}
+                  </td>
+                </tr>
+              </table>
             </div>
-            <div class="col-auto" v-if="addressIndex !== 0 && !isCheckout">
-              <button
-                class="btn btn-outline-dark reverse"
-                @click="
-                  store.handleUserAddress('setfirst', addressType, addressIndex)
-                "
-              >
-                Seteaza ca adresa implicita
-              </button>
-            </div>
-            <div class="col-auto" v-if="!isCheckout">
-              <button
-                class="btn btn-outline-dark red"
-                @click="deleteUserAddress()"
-              >
-                Sterge adresa
-              </button>
-            </div>
-            <div class="col-auto" v-if="isCheckout">
-              <button
-                class="btn btn-outline-dark reverse"
-                @click="emitAddressChanged()"
-              >
-                Alege adresa
-              </button>
+            <div
+              class="col-12 col-lg-6 col-xl-5 ps-lg-3 mt-2 mt-lg-0 ms-xl-auto"
+            >
+              <div class="row g-1">
+                <div class="col-12" v-if="addressIndex !== 0 && !isCheckout">
+                  <button
+                    class="btn btn-outline-dark"
+                    @click="
+                      store.handleUserAddress(
+                        'setfirst',
+                        addressType,
+                        addressIndex
+                      )
+                    "
+                  >
+                    Seteaza ca adresa principala
+                  </button>
+                </div>
+                <div class="col-12 col-xs-6" v-if="!isCheckout">
+                  <button
+                    class="btn btn-outline-dark"
+                    @click="showEditForm = !showEditForm"
+                  >
+                    Editeaza adresa
+                  </button>
+                </div>
+                <div class="col-12 col-xs-6" v-if="!isCheckout">
+                  <button
+                    class="btn btn-outline-dark"
+                    @click="deleteUserAddress()"
+                  >
+                    Sterge adresa
+                  </button>
+                </div>
+                <div class="col-12" v-if="isCheckout">
+                  <button
+                    class="btn btn-outline-dark"
+                    @click="emitAddressChanged()"
+                  >
+                    Alege adresa
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </transition>
 
-      <transition name="height-element">
-        <FormBillingAddress
-          v-if="showEditForm"
-          :formData="address"
-          :addressIndex="addressIndex"
-          @address-added-success="showEditForm = false"
-          @cancel-action="showEditForm = false"
-        />
-      </transition>
+      <div v-if="showEditForm">
+        <div class="p-3 mb-5 bg-white form-wrapper">
+          <transition name="height-element">
+            <FormBillingAddress
+              :formData="address"
+              :addressIndex="addressIndex"
+              @address-added-success="showEditForm = false"
+              @cancel-action="showEditForm = false"
+            />
+          </transition>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -198,5 +242,38 @@ h5,
 .color-gray {
   color: $gray-500;
   line-height: 1;
+}
+
+.btn {
+  width: 100%;
+}
+
+td:first-child {
+  font-weight: $font-weight-bold;
+}
+
+tr {
+  margin-bottom: 1rem;
+}
+
+.form-wrapper {
+  border: 2px solid $border-color;
+}
+
+@include media-breakpoint-up(sm) {
+  td {
+    vertical-align: top;
+  }
+
+  td:first-child {
+    font-weight: $font-weight-normal;
+    padding-right: 1rem;
+  }
+}
+
+@include media-breakpoint-up(lg) {
+  .mt-lg-0 {
+    margin-top: 0 !important;
+  }
 }
 </style>

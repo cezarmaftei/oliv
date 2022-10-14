@@ -17,30 +17,33 @@ const addNewBilling = ref(false);
 </script>
 <template>
   <!-- USER LOGGED IN -->
-  <div v-if="store.userData.loggedIn" class="py-8 px-7">
-    <h2 class="mb-3" v-if="!isCheckout">Adresele Mele</h2>
+  <div v-if="store.userData.loggedIn" class="py-8 px-5">
+    <h2 class="pb-3 mb-3" v-if="!isCheckout">Adresele Mele</h2>
 
     <!-- Shipping Addresses -->
-    <h3 class="d-flex">
-      Adresele de livrare
+    <div class="addresses-header d-md-flex align-items-center">
+      <h3 class="mb-0">Adresele de livrare</h3>
       <button
-        class="btn btn-outline-dark reverse ms-auto"
+        class="btn btn-outline-dark ms-auto mt-1 mt-md-0"
         @click="addNewShipping = !addNewShipping"
       >
         Adauga adresa de livrare
       </button>
-    </h3>
+    </div>
 
     <transition name="height-element">
-      <FormShippingAddress
-        v-if="addNewShipping"
-        :isEmpty="true"
-        @address-added-success="addNewShipping = false"
-        @cancel-action="addNewShipping = false"
-      />
+      <div v-if="addNewShipping">
+        <div class="p-3 mb-5 bg-white form-wrapper">
+          <FormShippingAddress
+            :isEmpty="true"
+            @address-added-success="addNewShipping = false"
+            @cancel-action="addNewShipping = false"
+          />
+        </div>
+      </div>
     </transition>
 
-    <div v-if="store.userData.customerAddresses.shipping.length">
+    <div class="mb-3" v-if="store.userData.customerAddresses.shipping.length">
       <div
         v-for="(address, addressIndex) in store.userData.customerAddresses
           .shipping"
@@ -60,23 +63,26 @@ const addNewBilling = ref(false);
     <!-- /.Shipping Addresses -->
 
     <!-- Billing Addresses -->
-    <h3 class="d-flex mt-5">
-      Adresele de facturare
+    <div class="addresses-header d-md-flex align-items-center">
+      <h3 class="mb-0">Adresele de facturare</h3>
       <button
-        class="btn btn-outline-dark reverse ms-auto"
+        class="btn btn-outline-dark ms-auto mt-1 mt-md-0"
         @click="addNewBilling = !addNewBilling"
       >
         Adauga adresa de facturare
       </button>
-    </h3>
+    </div>
 
     <transition name="height-element">
-      <FormBillingAddress
-        v-if="addNewBilling"
-        :isEmpty="true"
-        @address-added-success="addNewBilling = false"
-        @cancel-action="showEditForm = false"
-      />
+      <div v-if="addNewBilling">
+        <div class="p-3 mb-5 bg-white form-wrapper">
+          <FormBillingAddress
+            :isEmpty="true"
+            @address-added-success="addNewBilling = false"
+            @cancel-action="addNewBilling = false"
+          />
+        </div>
+      </div>
     </transition>
 
     <div v-if="store.userData.customerAddresses.billing.length">
@@ -101,19 +107,22 @@ const addNewBilling = ref(false);
 </template>
 
 <style scoped lang="scss">
-.checkout-addresses-modal {
-  display: none;
-  &.show {
-    overflow: auto;
-    display: block;
-    position: fixed;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background: $white;
-    z-index: 1000;
-  }
+h2 {
+  border-bottom: 1px solid $gray-300;
+}
+
+h3 {
+  color: $gray-500;
+}
+
+.addresses-header {
+  border-bottom: 1px solid $gray-300;
+  @include padding(0 0 3rem 0);
+  @include margin-bottom(2rem);
+}
+
+.form-wrapper {
+  border: 2px solid $border-color;
 }
 
 .modal-body {

@@ -255,7 +255,10 @@ const currentItemPrice = computed(() => {
     </div>
     <!-- Product listing -->
     <div v-else class="product-actions d-flex align-items-center">
-      <ProductWeight :product="product" class="d-sm-none" />
+      <ProductWeight
+        :weight="productWeight(product)"
+        class="d-none d-xs-block d-sm-none"
+      />
       <ItemPrice :price="productPrice" />
       <AddToCart @click="addToCart(1, $event.target)">
         <span>+1</span>
@@ -461,6 +464,40 @@ const currentItemPrice = computed(() => {
               url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1489.73 1486" fill="#{$dark}"><path d="M1489.67,1327.53,1438.93,152.62C1438.06,68,1368.59,0,1283.34,0h-1077C121.08,0,51.65,68,50.77,152.63L.06,1327.8c0,1-.06,2-.06,3C0,1416.3,69.8,1486,155.59,1486H1334.15c85.79,0,155.58-69.83,155.58-155.38,0-.95,0-2.14-.06-3.09M1334.15,1354H155.59a23.25,23.25,0,0,1-23.43-22.34L182.84,156.71c0-1,.06-1.51.06-2.46,0-12.69,10.28-22.25,23.41-22.25h1077c13.15,0,23.46,9.48,23.46,22.17,0,1,0,1.67.06,2.62l50.71,1175a23.14,23.14,0,0,1-23.42,22.22"/><path d="M965.5,256.6c-36.49,0-66.5,29.58-66.5,66.07V522.35c0,84.12-68.81,152.56-153.54,152.56S592,606.47,592,522.35V322.67a66,66,0,1,0-132,0V522.35c0,157,128.42,284.7,286,284.7s286-127.72,286-284.7V322.67c0-36.49-30-66.07-66.5-66.07"/></svg>')
             )
             no-repeat center center / 100% auto;
+        }
+      }
+    }
+  }
+}
+
+.modal .card-product-listing {
+  @include media-breakpoint-between(xxs, xs) {
+    padding-left: 6rem;
+
+    figure {
+      width: 6rem;
+      height: 6rem;
+
+      :deep {
+        img {
+          width: 5rem;
+          height: 5rem;
+        }
+      }
+    }
+  }
+
+  @include media-breakpoint-between(xs, sm) {
+    padding-left: 10rem;
+
+    figure {
+      width: 10rem;
+      height: 10rem;
+
+      :deep {
+        img {
+          width: 8rem;
+          height: 8rem;
         }
       }
     }

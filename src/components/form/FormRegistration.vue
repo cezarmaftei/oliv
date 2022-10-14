@@ -1,12 +1,10 @@
 <script setup>
 import { useOlivStore } from "@/stores/oliv.js";
-import UpdateLoading from "@/components/partials/UpdateLoading.vue";
 const store = useOlivStore();
 </script>
 
 <template>
   <form class="registration-form" @submit.prevent="store.registerCustomer()">
-    <UpdateLoading />
     <div class="error-message" v-if="store.userData.error">
       {{ store.userData.error }}
     </div>
