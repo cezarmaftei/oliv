@@ -62,7 +62,11 @@ const showMenuCart = computed(() => {
 
         <transition name="scale-element">
           <div
-            v-if="!isClone && store.getPageBySlug(route).acf"
+            v-if="
+              !isClone &&
+              store.getPageBySlug(route) &&
+              store.getPageBySlug(route).acf
+            "
             class="navbar-content-wrapper text-center d-none d-lg-block"
           >
             <v-runtime-template
@@ -105,7 +109,7 @@ const showMenuCart = computed(() => {
 <style scoped lang="scss">
 .main-nav {
   &.cloned {
-    transform: translateY(-100%);
+    transform: translateY(-105%);
     @include transition(transform 0.2s linear);
 
     &.scrolling {
@@ -170,7 +174,7 @@ const showMenuCart = computed(() => {
 
 @include media-breakpoint-up(lg) {
   .navbar-top {
-    border: 2px solid $border-color;
+    @include global-border;
     @include padding(2rem);
   }
 

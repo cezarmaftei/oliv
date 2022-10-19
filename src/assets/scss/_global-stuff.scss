@@ -1,0 +1,19 @@
+.page {
+  min-height: 100vh;
+}
+
+.section-bordered-content {
+  @include global-border;
+  margin-bottom: -2px;
+  @include padding(7rem);
+}
+
+.sticky-spacing {
+  @include media-breakpoint-up(md) {
+    top: 200px;
+  }
+
+  @include media-breakpoint-up(lg) {
+    top: 150px;
+  }
+}

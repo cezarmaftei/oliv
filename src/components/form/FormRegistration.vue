@@ -1,13 +1,44 @@
 <script setup>
 import { useOlivStore } from "@/stores/oliv.js";
+import { ref } from "vue";
+import UserActionMessage from "../info-message/UserActionMessage.vue";
 const store = useOlivStore();
+
+const emits = defineEmits(["registrationAction"]);
+
+const formFields = ref({
+  username: "",
+  password: "",
+});
+
+const formResult = ref({
+  success: false,
+  error: false,
+});
+
+const registerCustomer = async () => {
+  const customerRegistration = await store
+    .registerCustomer(formFields.value)
+    .then((data) => data);
+
+  if (customerRegistration.error) {
+    formResult.value.error = customerRegistration.error;
+  } else {
+    emits(
+      "registrationAction",
+      "Contul tau a fost creat! Verifica-ti emailul pentru a activa contul."
+    );
+  }
+};
 </script>
 
 <template>
-  <form class="registration-form" @submit.prevent="store.registerCustomer()">
-    <div class="error-message" v-if="store.userData.error">
-      {{ store.userData.error }}
-    </div>
+  <form class="registration-form" @submit.prevent="registerCustomer()">
+    <UserActionMessage
+      :success="formResult.success"
+      :error="formResult.error"
+    />
+
     <div class="mb-2">
       <input
         placeholder="Introdu adresa de email"
@@ -16,9 +47,10 @@ const store = useOlivStore();
         id="user-email"
         required
         autocomplete="username"
-        v-model.lazy="store.userData.credentials.user"
+        v-model.lazy="formFields.username"
       />
     </div>
+
     <div class="mb-2">
       <input
         placeholder="Introdu parola dorita"
@@ -27,11 +59,11 @@ const store = useOlivStore();
         id="user-password"
         required
         autocomplete="new-password"
-        v-model.lazy="store.userData.credentials.pass"
+        v-model.lazy="formFields.password"
       />
     </div>
 
-    <button class="btn btn-outline-dark reverse" type="submit">
+    <button class="btn btn-primary reverse" type="submit">
       Creaza cont
     </button>
   </form>

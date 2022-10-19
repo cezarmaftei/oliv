@@ -59,87 +59,89 @@ store.$subscribe((mutation, state) => {
       class="cart-totals"
       :class="{ 'd-flex flex-column flex-grow-1': isOffCanvas }"
     >
-      <div class="cart-subtotal" :class="{ 'px-4': isOffCanvas }">
-        <div class="d-flex cart-bordered-element mt-0">
-          <div>Total produse</div>
-          <div class="ms-auto">
-            <strong><ItemPrice :price="store.cartData.subTotal" /></strong>
-          </div>
-        </div>
-
-        <div v-if="store.cartData.coupon.codes">
-          <div
-            v-for="couponData in store.cartData.coupon.codes"
-            :key="couponData"
-            class="d-flex align-items-center cart-bordered-element"
-          >
-            <button
-              type="button"
-              class="btn btn-delete"
-              @click="store.removeOrderCoupon"
-            ></button>
-            <div class="px-1">Discount cupon "{{ couponData.code }}":</div>
-            <div class="ms-auto text-nowrap">
-              <strong><ItemPrice :price="couponData.discount" /></strong>
-            </div>
-          </div>
-        </div>
-        <div v-if="!store.cartData.coupon.codes.length">
-          <FormCoupon />
-        </div>
-
-        <div class="cart-bordered-element">
-          <div class="d-flex">
-            <div class="text-nowrap me-1">Cost livrare:</div>
+      <div class="cart-totals-inner sticky-spacing">
+        <div class="cart-subtotal" :class="{ 'px-4': isOffCanvas }">
+          <div class="d-flex cart-bordered-element mt-0">
+            <div>Total produse</div>
             <div class="ms-auto">
-              <span
-                v-if="!isCheckout && store.cartData.totalShipping === false"
-              >
-                Se calculeaza la pasul urmator.
-              </span>
-              <span
-                v-else-if="
-                  isCheckout &&
-                  store.cartData.totalShipping === false &&
-                  store.cartData.deliveryMethod !== 'pickup'
-                "
-              >
-                Va fi calculat dupa ce introduci adresa si localitatea.
-              </span>
-              <ItemPrice
-                v-else-if="
-                  store.cartData.totalShipping > 0 &&
-                  store.cartData.deliveryMethod !== 'pickup'
-                "
-                :price="store.cartData.totalShipping"
-              />
-              <span v-else-if="store.cartData.totalShipping === 0"
-                >Gratuit</span
-              >
+              <strong><ItemPrice :price="store.cartData.subTotal" /></strong>
+            </div>
+          </div>
+
+          <div v-if="store.cartData.coupon.codes">
+            <div
+              v-for="couponData in store.cartData.coupon.codes"
+              :key="couponData"
+              class="d-flex align-items-center cart-bordered-element"
+            >
+              <button
+                type="button"
+                class="btn btn-delete"
+                @click="store.removeOrderCoupon"
+              ></button>
+              <div class="px-1">Discount cupon "{{ couponData.code }}":</div>
+              <div class="ms-auto text-nowrap">
+                <strong><ItemPrice :price="couponData.discount" /></strong>
+              </div>
+            </div>
+          </div>
+          <div v-if="!store.cartData.coupon.codes.length">
+            <FormCoupon />
+          </div>
+
+          <div class="cart-bordered-element">
+            <div class="d-flex">
+              <div class="text-nowrap me-1">Cost livrare:</div>
+              <div class="ms-auto">
+                <span
+                  v-if="!isCheckout && store.cartData.totalShipping === false"
+                >
+                  Se calculeaza la pasul urmator.
+                </span>
+                <span
+                  v-else-if="
+                    isCheckout &&
+                    store.cartData.totalShipping === false &&
+                    store.cartData.deliveryMethod !== 'pickup'
+                  "
+                >
+                  Va fi calculat dupa ce introduci adresa si localitatea.
+                </span>
+                <ItemPrice
+                  v-else-if="
+                    store.cartData.totalShipping > 0 &&
+                    store.cartData.deliveryMethod !== 'pickup'
+                  "
+                  :price="store.cartData.totalShipping"
+                />
+                <span v-else-if="store.cartData.totalShipping === 0"
+                  >Gratuit</span
+                >
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <div
-        class="cart-total flex-grow-1 d-flex flex-column justify-content-end"
-      >
-        <div class="d-flex py-4" :class="{ 'px-4 mt-auto': isOffCanvas }">
-          <div v-if="isCheckout">Total</div>
-          <div v-else>Subtotal</div>
-          <div class="ms-auto">
-            <ItemPrice :price="store.cartData.totalPrice" />
-          </div>
-        </div>
         <div
-          v-if="route.params.slug !== 'finalizare'"
-          class="d-flex"
-          data-bs-dismiss="offcanvas"
-          aria-label="Close"
+          class="cart-total flex-grow-1 d-flex flex-column justify-content-end"
         >
-          <router-link class="btn btn-outline-dark reverse" to="/finalizare"
-            >Plaseaza comanda</router-link
+          <div class="d-flex py-4" :class="{ 'px-4 mt-auto': isOffCanvas }">
+            <div v-if="isCheckout">Total</div>
+            <div v-else>Subtotal</div>
+            <div class="ms-auto">
+              <ItemPrice :price="store.cartData.totalPrice" />
+            </div>
+          </div>
+          <div
+            v-if="route.params.slug !== 'finalizare'"
+            class="d-flex"
+            data-bs-dismiss="offcanvas"
+            aria-label="Close"
           >
+            <router-link class="btn btn-primary reverse" to="/finalizare"
+              >Plaseaza comanda</router-link
+            >
+          </div>
         </div>
       </div>
     </div>
@@ -165,11 +167,7 @@ store.$subscribe((mutation, state) => {
   width: 100%;
 
   .btn {
-    font-size: 3.2rem;
     width: 100%;
-    background-size: 100%;
-    padding-top: 2rem;
-    padding-bottom: 2rem;
   }
 }
 
@@ -179,38 +177,59 @@ store.$subscribe((mutation, state) => {
   }
 }
 
+@include media-breakpoint-up(md) {
+  .cart-content {
+    font-size: 1.6rem;
+  }
+  .cart-page-inner {
+    .cart-content {
+      display: grid;
+      column-gap: 3rem;
+      grid-template-columns: calc(50% - 1.5rem) calc(50% - 1.5rem);
+    }
+
+    .cart-page-header {
+      grid-column: 1 / 1;
+      grid-row: 1;
+    }
+
+    .cart-items {
+      grid-column: 1 / 1;
+      grid-row: 2;
+    }
+
+    .cart-totals {
+      grid-column: 2;
+      grid-row: 1 / 3;
+
+      .cart-totals-inner {
+        position: sticky;
+      }
+    }
+  }
+}
+
 @include media-breakpoint-up(lg) {
   .cart-page-inner {
     .cart-content {
-      flex-grow: 1;
-      max-width: 50%;
+      grid-template-columns: calc(50% - 3.5rem) calc(50% - 3.5rem);
+      column-gap: 7rem;
     }
-    .cart-totals {
-      background: $white;
-      max-width: 40rem;
-      margin-left: auto;
-      position: sticky;
-      top: 110px;
-    }
+  }
 
-    .cart-subtotal,
-    .cart-total > *:first-child {
-      border: 2px solid $border-color;
-      border-bottom: 0;
-      @include padding(4rem 4rem 0);
-    }
-
-    .cart-total > *:first-child {
-      border-top: 0;
-      @include padding(4rem 4rem 0);
+  .cart-total {
+    .btn {
+      font-size: 3.2rem;
+      padding-top: 2rem;
+      padding-bottom: 2rem;
     }
   }
 }
 
 @include media-breakpoint-up(xl) {
   .cart-page-inner {
-    .cart-content {
-      max-width: 55%;
+    .cart-totals {
+      margin-left: auto;
     }
   }
 }

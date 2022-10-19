@@ -1,10 +1,15 @@
 <script setup>
-defineProps(["error"]);
+defineProps(["error", "success"]);
 </script>
 <template>
   <transition name="height-element-sm">
-    <div class="bg-warning">
-      <p>{{ error }}</p>
+    <div v-if="error || success" class="message">
+      <div v-if="error" class="error-message">
+        {{ error }}
+      </div>
+      <div v-if="success" class="success-message">
+        Adresa a fost adaugata cu success
+      </div>
     </div>
   </transition>
 </template>

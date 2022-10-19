@@ -25,7 +25,7 @@ const blogArticles = computed(() => {
     <button
       v-if="blogArticles.length < store.articleData.length"
       @click="currentPage++"
-      class="btn btn-outline-dark d-block ms-auto me-auto mt-5"
+      class="btn btn-primary d-block ms-auto me-auto mt-5"
     >
       Incarca Mai Multe Articole
     </button>

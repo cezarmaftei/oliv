@@ -42,55 +42,53 @@ const checkPass = () => {
 };
 </script>
 <template>
-  <div class="p-7">
-    <div class="form-outer-wrapper">
-      <h3 class="mb-2">Detalii Generale</h3>
-      <form
-        @submit.prevent="
-          if (checkPass()) {
-            editForm = false;
-            checkPassInput = '';
-            checkPassClass = '';
-            store.updateUserGeneral(editFormData);
-          }
-        "
-      >
-        <input
-          placeholder="Nume"
-          class="form-control mb-2"
-          :required="editForm"
-          v-model="editFormData.first_name"
-        />
+  <div class="form-outer-wrapper">
+    <h3 class="mb-2">Detalii Generale</h3>
+    <form
+      @submit.prevent="
+        if (checkPass()) {
+          editForm = false;
+          checkPassInput = '';
+          checkPassClass = '';
+          store.updateUserGeneral(editFormData);
+        }
+      "
+    >
+      <input
+        placeholder="Nume"
+        class="form-control mb-2"
+        :required="editForm"
+        v-model="editFormData.first_name"
+      />
 
-        <input
-          class="form-control mb-2"
-          placeholder="Email"
-          :required="editForm"
-          v-model="editFormData.email"
-        />
+      <input
+        class="form-control mb-2"
+        placeholder="Email"
+        :required="editForm"
+        v-model="editFormData.email"
+      />
 
-        <input
-          class="form-control mb-2"
-          placeholder="Introdu parola noua"
-          type="password"
-          v-model="editFormData.password"
-          @keyup="checkPass()"
-          autocomplete="off"
-        />
+      <input
+        class="form-control mb-2"
+        placeholder="Introdu parola noua"
+        type="password"
+        v-model="editFormData.password"
+        @keyup="checkPass()"
+        autocomplete="off"
+      />
 
-        <input
-          class="form-control mb-2"
-          placeholder="Confirma parola noua"
-          :class="checkPassClass"
-          type="password"
-          v-model="checkPassInput"
-          @keyup="checkPass()"
-          autocomplete="off"
-        />
+      <input
+        class="form-control mb-2"
+        placeholder="Confirma parola noua"
+        :class="checkPassClass"
+        type="password"
+        v-model="checkPassInput"
+        @keyup="checkPass()"
+        autocomplete="off"
+      />
 
-        <button class="btn btn-outline-dark">Salveaza</button>
-      </form>
-    </div>
+      <button class="btn btn-primary">Salveaza</button>
+    </form>
   </div>
 </template>
 
@@ -98,7 +96,7 @@ const checkPass = () => {
 .form-outer-wrapper {
   @include media-breakpoint-up(sm) {
     background: $white;
-    border: 2px solid $border-color;
+    @include global-border;
     max-width: 40rem;
     padding: 2rem;
     margin-left: auto;

@@ -18,12 +18,12 @@ const route = useRoute();
 
 <style scoped lang="scss">
 .order-completed {
-  border: 2px solid $border-color;
+  @include global-border;
 }
 
 @include media-breakpoint-up(sm) {
   .order-completed-inner {
-    border: 2px solid $border-color;
+    @include global-border;
     width: 100%;
     max-width: 680px;
     margin-left: auto;

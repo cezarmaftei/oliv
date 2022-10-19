@@ -15,11 +15,9 @@ import SectionRelatedProducts from "../components/section/SectionRelatedProducts
 import SectionOrderCompleted from "../components/section/SectionOrderCompleted.vue";
 import SectionBlog from "../components/section/SectionBlog.vue";
 import SectionContact from "../components/section/SectionContact.vue";
-import UserOrders from "@/components/user-account/UserOrders.vue";
-import UserAddresses from "@/components/user-account/UserAddresses.vue";
-import UserGeneral from "@/components/user-account/UserGeneral.vue";
-import IconLoading from "../components/icons/IconLoading.vue";
 import SectionBlogSingle from "../components/section/SectionBlogSingle.vue";
+import PageNotFound from "../components/partials/PageNotFound.vue";
+import IconLoading from "../components/icons/IconLoading.vue";
 
 const store = useOlivStore();
 const route = useRoute();
@@ -34,12 +32,6 @@ const pageTemplates = {
   SectionBlog,
   SectionContact,
 };
-
-const accountSections = {
-  "comenzile-mele": UserOrders,
-  "adresele-mele": UserAddresses,
-  "detalii-cont": UserGeneral,
-};
 </script>
 
 <template>
@@ -48,57 +40,54 @@ const accountSections = {
     <main
       id="main-content"
       class="main-content container d-flex flex-column flex-grow-1"
-      v-if="store.isLoaded"
     >
-      <!-- page layout -->
       <section
-        v-if="['home', 'page'].includes(route.name)"
-        class="d-flex flex-column flex-grow-1"
+        v-if="store.isLoaded && store.getPageBySlug(route)"
+        class="flex-grow-1 position-relative"
+        :class="{
+          'section-bordered-content':
+            ['account'].indexOf(route.name) > -1 ||
+            ['finalizare', 'cos'].indexOf(route.params.slug) > -1,
+        }"
       >
+        <!-- page layout -->
         <component
+          v-if="['home', 'page'].includes(route.name)"
           :is="
             pageTemplates[
               store.getPageBySlug(route).acf.page_sections[0].acf_fc_layout
             ]
           "
         ></component>
-      </section>
-      <!-- /.page layout -->
+        <!-- /.page layout -->
 
-      <!-- single product layout -->
-      <SectionSingleProduct v-if="route.name === 'product'" />
-      <SectionRelatedProducts v-if="route.name === 'product'" />
-      <!-- /.single product layout -->
-
-      <!-- account layout -->
-      <section
-        class="section-my-account position-relative overflow-hidden flex-grow-1 mb-8"
-        v-if="route.name === 'account'"
-      >
-        <div class="container">
-          <component :is="accountSections[route.params.slug]"></component>
+        <!-- single product layout -->
+        <div
+          class="single-product-wrapper"
+          v-else-if="route.name === 'product'"
+        >
+          <SectionSingleProduct />
+          <SectionRelatedProducts />
         </div>
-      </section>
-      <!-- /.account layout -->
+        <!-- /.single product layout -->
 
-      <!-- single article layout -->
-      <SectionBlogSingle
-        v-if="route.name === 'article'"
-        :slug="route.params.slug"
-      />
-      <!-- /.single article layout -->
+        <!-- account layout -->
+        <SectionAccount v-else-if="route.name === 'account'" />
+        <!-- /.account layout -->
+
+        <!-- single article layout -->
+        <SectionBlogSingle
+          v-else-if="route.name === 'article'"
+          :slug="route.params.slug"
+        />
+        <!-- /.single article layout -->
+      </section>
+
+      <section v-else class="section-bordered-content flex-grow-1">
+        <PageNotFound v-if="store.isLoaded" />
+        <IconLoading class="d-block mx-auto" v-else />
+      </section>
     </main>
-    <IconLoading v-if="!store.isLoaded" />
     <FooterInternal />
   </div>
 </template>
-
-<style scoped lang="scss">
-.page {
-  min-height: 100vh;
-}
-
-.section-my-account {
-  border: 2px solid $border-color;
-}
-</style>

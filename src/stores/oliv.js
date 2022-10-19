@@ -45,10 +45,6 @@ export const useOlivStore = defineStore({
     imageData: {},
     userData: {
       loggedIn: false,
-      credentials: {
-        user: "",
-        pass: "",
-      },
       customerAddresses: {
         shipping: [],
         billing: [],
@@ -440,46 +436,50 @@ export const useOlivStore = defineStore({
     /**
      * Register a new user
      */
-    async registerCustomer() {
-      if (!this.userData.credentials.user) {
-        this.userData.error = "Te rugam introdu adresa de email!";
-        return;
+    async registerCustomer(formFields) {
+      if (!formFields.username) {
+        return {
+          error: "Te rugam introdu adresa de email!",
+        };
       }
 
-      if (!this.userData.credentials.pass) {
-        this.userData.error = "Te rugam introdu parola!";
-        return;
+      if (!formFields.password) {
+        return {
+          error: "Te rugam introdu parola!",
+        };
       }
 
       // Validate email address
-      if (!this.validateEmail(this.userData.credentials.user)) {
+      if (!this.validateEmail(formFields.username)) {
         return;
       }
+
+      // Start async actions
+      this.storeLiveUpdate = true;
 
       // Check if user exists
       const userExists = await userAccountActions(
         "exists",
-        this.userData.credentials.user
+        formFields.username
       ).then((data) => data.data);
 
       if (userExists) {
-        this.userData.error =
-          "Exista deja un utilizator inregistrat cu aceasta adresa de email!";
-        return;
+        this.storeLiveUpdate = false;
+        return {
+          error:
+            "Exista deja un utilizator inregistrat cu aceasta adresa de email!",
+        };
       }
 
-      // Start creation process
-      this.storeLiveUpdate = true;
-
       const userData = {
-        email: this.userData.credentials.user,
-        username: this.userData.credentials.user,
-        pass: this.userData.credentials.pass,
+        email: formFields.username,
+        username: formFields.username,
+        password: formFields.password,
       };
 
       await createUser(userData);
-
       this.storeLiveUpdate = false;
+      return true;
     },
 
     /**
@@ -499,130 +499,140 @@ export const useOlivStore = defineStore({
     async userActions(action, user, email, pass, key) {
       this.storeLiveUpdate = true;
       const loggedInCookie = cookies.get("oliv_logged_in");
+      const actionResult = {};
 
       switch (action) {
         case "verify":
           // User is logged in
           if (loggedInCookie) {
-            await userAccountActions(
+            const userVerification = await userAccountActions(
               "verify",
               null,
               null,
               null,
               loggedInCookie,
               null
-            ).then(async (data) => {
-              if (data.data.success) {
-                this.userData.loggedIn = true;
-                this.userData["ID"] = data.data.success.userData.ID;
-                await this.loadCustomerData();
-              }
-            });
-          }
+            ).then((data) => data.data);
 
-          this.storeLiveUpdate = false;
+            if (userVerification.success) {
+              await this.loginUser(userVerification);
+              actionResult["success"] = true;
+            }
+          }
           break;
 
         case "login":
-          await userAccountActions(action, user, null, pass, null, null).then(
-            async (data) => {
-              if (data.data.success) {
-                cookies.set(
-                  "oliv_logged_in",
-                  data.data.success.cookie,
-                  data.data.success.expires
-                );
+          {
+            // Attempt log in
+            const userLogin = await userAccountActions(
+              action,
+              user,
+              null,
+              pass,
+              null,
+              null
+            ).then((data) => data.data);
 
-                this.userData.loggedIn = true;
-                this.userData["ID"] = data.data.success.userData.ID;
-                await this.loadCustomerData();
-              }
-
-              if (data.data.error) {
-                this.userData.error = data.data.error;
-              }
-
-              this.storeLiveUpdate = false;
+            if (userLogin.success) {
+              await this.loginUser(userLogin);
+              actionResult["success"] = true;
             }
-          );
+
+            if (userLogin.error) {
+              actionResult["error"] = userLogin.error;
+            }
+          }
           break;
 
         case "logout":
-          this.userData.loggedIn = false;
-          this.userData.customerOrdersData = false;
-          this.userData.credentials.user = "";
-          this.userData.credentials.pass = "";
+          this.userData = {
+            loggedIn: false,
+            credentials: {
+              user: "",
+              pass: "",
+            },
+            customerAddresses: {
+              shipping: [],
+              billing: [],
+            },
+            customerOrdersData: false,
+          };
 
           // Reset addresses
           this.initCartAddresses();
-          this.userData.customerAddresses = {
-            shipping: [],
-            billing: [],
-          };
 
           // Remove logged in cookie
           cookies.remove("oliv_logged_in");
 
           // Refresh cart data cookie without addresses
           cookies.set("oliv_cart", JSON.stringify(this.cartData), "7D");
-
-          this.storeLiveUpdate = false;
           break;
 
         case "activate":
-          await userAccountActions(action, user, null, pass, null, key).then(
-            (data) => {
-              if (data.data.success) {
-                cookies.set(
-                  "oliv_logged_in",
-                  data.data.success.cookie,
-                  data.data.success.expires
-                );
-                this.userData.loggedIn = true;
-              }
+          {
+            const activateUser = await userAccountActions(
+              action,
+              user,
+              null,
+              pass,
+              null,
+              key
+            ).then((data) => data.data);
 
-              if (data.data.error) {
-                this.userData.error = data.data.error;
-              }
-
-              this.storeLiveUpdate = false;
+            if (activateUser.success) {
+              await this.loginUser(activateUser);
+              actionResult["success"] = true;
             }
-          );
+
+            if (activateUser.error) {
+              actionResult["error"] = activateUser.error;
+            }
+          }
           break;
 
         case "reset":
-          userAccountActions(action, null, email, null, null, null).then(
-            (data) => {
-              if (data.data.error) {
-                this.userData.error = data.data.error;
-              }
-
-              this.storeLiveUpdate = false;
-            }
-          );
+          await userAccountActions(action, null, email, null, null, null);
           break;
 
         case "recovery":
-          userAccountActions(action, user, null, pass, null, key).then(
-            (data) => {
-              if (data.data.success) {
-                cookies.set(
-                  "oliv_logged_in",
-                  data.data.success.cookie,
-                  data.data.success.expires
-                );
-                this.userData.loggedIn = true;
-              }
+          {
+            const passRecovery = await userAccountActions(
+              action,
+              user,
+              null,
+              pass,
+              null,
+              key
+            ).then((data) => data.data);
 
-              if (data.data.error) {
-                this.userData.error = data.data.error;
-              }
-
-              this.storeLiveUpdate = false;
+            if (passRecovery.success) {
+              actionResult["success"] = true;
             }
-          );
+
+            if (passRecovery.error) {
+              actionResult["error"] = passRecovery.error;
+            }
+          }
           break;
       }
+
+      this.storeLiveUpdate = false;
+
+      return actionResult;
+    },
+
+    async loginUser(userData) {
+      cookies.set(
+        "oliv_logged_in",
+        userData.success.cookie,
+        userData.success.expires
+      );
+
+      this.userData.loggedIn = true;
+      this.userData["ID"] = userData.success.userData.ID;
+      this.userData["accountActive"] = userData.success.accountActive;
+      this.initCartAddresses();
+      await this.loadCustomerData();
     },
 
     /**
@@ -635,7 +645,6 @@ export const useOlivStore = defineStore({
       );
 
       // Update state
-      this.userData["avatarUrl"] = cData.avatar_url;
       this.userData["firstName"] = cData.first_name;
       this.userData["email"] = cData.email;
 
@@ -1003,7 +1012,11 @@ export const useOlivStore = defineStore({
      */
     compareAddressObjects(obj1, obj2) {
       // Ignore some key which are not important
-      const ignoreKeys = ["address_2", "shipping", "billing", "distance"];
+      const ignoreKeys = [
+        "shipping_state",
+        "shipping_country",
+        "shipping_distance",
+      ];
 
       // Compares 1-level objects
       // only letters and numbers are taken in consideration

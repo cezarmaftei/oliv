@@ -3,12 +3,12 @@ import { RouterView, useRoute } from "vue-router";
 import { useOlivStore } from "@/stores/oliv.js";
 import { Head, useHeadRaw } from "@vueuse/head";
 import { provide, ref } from "vue";
-import ModalSearchResults from "@/components/partials/ModalSearchResults.vue";
-import ModalLogin from "@/components/partials/ModalLogin.vue";
-import ModalShippingAddresses from "./components/partials/ModalShippingAddresses.vue";
-import ModalBillingAddresses from "./components/partials/ModalBillingAddresses.vue";
-import UpdateLoading from "./components/partials/UpdateLoading.vue";
+import ModalSearchResults from "@/components/modal/ModalSearchResults.vue";
+import ModalLogin from "@/components/modal/ModalLogin.vue";
+import ModalShippingAddresses from "./components/modal/ModalShippingAddresses.vue";
+import ModalBillingAddresses from "./components/modal/ModalBillingAddresses.vue";
 import { computed } from "vue";
+import UpdateLoading from "./components/partials/UpdateLoading.vue";
 
 const store = useOlivStore();
 const route = useRoute();
@@ -96,6 +96,20 @@ useHeadRaw({
       :content="store.getPageBySlug(route).yoast_head_json.twitter_card"
     />
   </Head>
+
+  <div
+    v-if="store.userData.loggedIn && !store.userData.accountActive"
+    class="container mx-auto"
+  >
+    <div class="row">
+      <div class="col-12">
+        <div class="info-message info-message-lg text-center mb-0">
+          Inca nu poti efectua comenzi de pe acest cont. Verifica-ti adresa de
+          email si activeaza-ti contul.
+        </div>
+      </div>
+    </div>
+  </div>
 
   <UpdateLoading />
   <ModalLogin />

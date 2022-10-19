@@ -2,6 +2,7 @@
 import { useOlivStore } from "@/stores/oliv.js";
 import { inject, watch } from "vue";
 import { useRoute } from "vue-router";
+import IconLoading from "../icons/IconLoading.vue";
 
 const route = useRoute();
 const store = useOlivStore();
@@ -30,7 +31,7 @@ watch(
             ? 'active'
             : ''
         "
-        class="btn btn-outline-dark"
+        class="btn btn-primary"
         :to="{ path: '/', query: { categorie: 'Toate' } }"
         >Toate</router-link
       >
@@ -43,16 +44,27 @@ watch(
       <router-link
         @click="activeCat = cat.name"
         :class="route.query.categorie === cat.name ? 'active' : ''"
-        class="btn btn-outline-dark"
+        class="btn btn-primary"
         :to="{ path: '/', query: { categorie: cat.name } }"
       >
         {{ cat.name }}
       </router-link>
     </div>
   </div>
+  <div
+    v-else
+    class="menu-loading d-flex align-0items-center justify-content-center"
+  >
+    <IconLoading />
+  </div>
 </template>
 
 <style scoped lang="scss">
+.menu-loading {
+  min-height: 50px;
+  @include global-border;
+  margin: -2px 0;
+}
 .navbar-bot {
   h3 {
     overflow: hidden;
@@ -60,7 +72,7 @@ watch(
     max-height: 100px;
   }
 
-  .btn-outline-dark {
+  .btn-primary {
     width: 100%;
   }
 }
@@ -72,7 +84,7 @@ watch(
       margin: 0 !important;
     }
 
-    .btn-outline-dark {
+    .btn-primary {
       padding: 0.3rem 0.5rem;
       width: 100%;
     }
@@ -82,7 +94,7 @@ watch(
 @include media-breakpoint-up(xs) {
   .cloned {
     .navbar-bot {
-      .btn-outline-dark {
+      .btn-primary {
         padding: 0.3rem 0.7rem;
       }
     }
@@ -96,9 +108,16 @@ watch(
     }
   }
 
+  .navbar-bot {
+    .btn-primary {
+      font-size: 2.4rem;
+      padding: 0.5rem;
+    }
+  }
+
   .cloned {
     .navbar-bot {
-      .btn-outline-dark {
+      .btn-primary {
         padding: 0.7rem 1.2rem;
       }
     }
@@ -133,7 +152,7 @@ watch(
   .cloned {
     .navbar-bot {
       padding: 0;
-      .btn-outline-dark {
+      .btn-primary {
         padding: 1rem 1.5rem;
         @include font-size(2.4rem);
       }

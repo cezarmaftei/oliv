@@ -41,3 +41,8 @@
 @import "mixins/clearfix";
 @import "mixins/container";
 @import "mixins/grid";
+
+// Custom
+@mixin global-border() {
+  border: 2px solid $border-color;
+}

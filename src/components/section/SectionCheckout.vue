@@ -32,6 +32,8 @@ const requestBilling = () => {
  * Send the order to Woo and redirect if success
  */
 const sendOrder = async () => {
+  if (store.userData.loggedIn && !store.userData.accountActive) return;
+
   await store.submitOrder().then((result) => {
     if (result === "productError") {
       document.getElementById("cart-summary").scrollIntoView();
@@ -67,10 +69,10 @@ const sendOrder = async () => {
 </script>
 
 <template>
-  <div class="checkout-inner p-7 mb-8">
+  <div class="checkout-inner">
     <form @submit.prevent="sendOrder" v-if="store.cartData.items.length">
       <div class="row">
-        <div class="col-12 col-md-6 col-lg-7">
+        <div class="col-12 col-md-6 col-lg-7 pe-lg-5 pe-xl-0">
           <transition name="height-element-sm">
             <div v-if="checkoutError" class="bg-danger">
               <p class="p-2 text-light">
@@ -162,18 +164,24 @@ const sendOrder = async () => {
             </div>
           </transition>
 
-          <button type="submit" class="btn btn-outline-dark d-none d-md-block">
+          <button
+            type="submit"
+            class="btn btn-primary reverse d-none d-md-block"
+          >
             Trimite comanda
           </button>
         </div>
-        <div class="col-12 col-md-6 col-lg-4 ms-auto" id="cart-summary">
-          <div class="sticky-top">
+        <div
+          class="col-12 col-md-6 col-lg-5 col-xl-4 ms-auto"
+          id="cart-summary"
+        >
+          <div class="sticky-top sticky-spacing">
             <CartContent :isCheckout="true" />
           </div>
         </div>
 
         <div class="col-12 d-md-none">
-          <button type="submit" class="btn btn-outline-dark">
+          <button type="submit" class="btn btn-primary reverse">
             Trimite comanda
           </button>
         </div>
@@ -182,14 +190,3 @@ const sendOrder = async () => {
     <NoProductsInCart v-else />
   </div>
 </template>
-
-<style scoped lang="scss">
-.checkout-inner {
-  background: $body-bg;
-  border: 2px solid $border-color;
-}
-
-.sticky-top {
-  top: 11rem;
-}
-</style>

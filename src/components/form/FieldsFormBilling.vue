@@ -45,7 +45,7 @@ const copyShippingDetails = () => {
         data-bs-target="#billing-addresses-modal"
         v-if="isCheckout && store.userData.customerAddresses.billing.length"
         type="button"
-        class="btn btn-outline-dark reverse px-1 px-xl-2 mt-2 mt-xl-0 ms-xl-auto w-100"
+        class="btn btn-primary reverse px-1 px-xl-2 mt-2 mt-xl-0 ms-xl-auto w-100"
       >
         Alege alta adresa de facturare
       </button>
@@ -54,7 +54,7 @@ const copyShippingDetails = () => {
     <button
       v-if="showCopyShippingDetails && isCheckout"
       @click="copyShippingDetails()"
-      class="btn btn btn-outline-dark reverse px-1 px-xl-2 mb-2 d-xl-block ms-xl-auto me-xl-auto w-100"
+      class="btn btn btn-primary reverse px-1 px-xl-2 mb-2 d-xl-block ms-xl-auto me-xl-auto w-100"
       type="button"
     >
       foloseste datele din adresa de livrare

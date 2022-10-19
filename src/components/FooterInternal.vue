@@ -76,7 +76,7 @@ const store = useOlivStore();
 }
 
 .footer-top {
-  border: 2px solid $border-color;
+  @include global-border;
   border-right-color: transparent;
   border-left-color: transparent;
   overflow: hidden;
@@ -151,13 +151,13 @@ const store = useOlivStore();
     margin-top: auto;
   }
   .footer-top {
-    border: 2px solid $border-color;
+    @include global-border;
     flex-direction: row;
     padding: 0 0 2rem;
   }
 
   .footer-bot {
-    border: 2px solid $border-color;
+    @include global-border;
     text-align: left;
 
     ul {

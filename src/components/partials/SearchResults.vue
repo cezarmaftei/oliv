@@ -68,7 +68,7 @@ const searchResults = computed(() => {
     [class*="col"] {
       padding: 0;
       margin: 0;
-      border: 2px solid $border-color;
+      @include global-border;
       margin-top: -2px;
     }
   }

@@ -10,14 +10,17 @@ const route = useRoute();
 
 <template>
   <div v-if="store.isLoaded" class="navbar-account d-flex align-items-center">
-    <div v-if="store.userData.loggedIn" class="logged-in">
+    <div
+      v-if="store.userData.loggedIn || route.name === 'account'"
+      class="logged-in"
+    >
       <router-link to="/contul-meu"
         ><span class="d-none d-xl-block">Contul Meu</span>
         <IconUser class="d-xl-none"
       /></router-link>
     </div>
     <a
-      v-if="!store.userData.loggedIn && route.params.slug !== 'contul-meu'"
+      v-if="!store.userData.loggedIn && route.name !== 'account'"
       class="d-block"
       data-bs-toggle="modal"
       href="#login-modal"
@@ -58,8 +61,8 @@ const route = useRoute();
 
 @include media-breakpoint-up(lg) {
   .navbar-account {
-    margin-left: 0;
-    margin-right: auto;
+    margin-left: auto;
+    margin-right: 0;
   }
 
   .cloned {

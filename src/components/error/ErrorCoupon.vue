@@ -10,13 +10,18 @@ onMounted(() => {
 });
 </script>
 <template>
-  <div class="coupon-error">{{ store.cartData.coupon.errorMsg }}</div>
+  <transition name="height-element-sm">
+    <div class="error-message coupon-error">
+      {{ store.cartData.coupon.errorMsg }}
+    </div>
+  </transition>
 </template>
 
 <style lang="scss" scoped>
 .coupon-error {
   flex: 0 0 100%;
-  color: $red;
-  padding-left: 1rem;
+  margin-top: 1rem;
+  margin-bottom: 0;
+  text-align: center;
 }
 </style>

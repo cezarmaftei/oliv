@@ -54,7 +54,7 @@ const getShippingPrice = () => {
         data-bs-target="#shipping-addresses-modal"
         v-if="isCheckout && store.userData.customerAddresses.shipping.length"
         type="button"
-        class="btn btn-outline-dark reverse mt-2 ms-xl-auto"
+        class="btn btn-primary reverse mt-2 ms-xl-auto"
       >
         Alege alta adresa de livrare
       </button>

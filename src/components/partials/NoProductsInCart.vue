@@ -13,7 +13,7 @@ const showMenu = () => {
 <template>
   <p>
     Nu ai nici un produs in cos. <br /><br />
-    <button class="btn btn-outline-dark reverse" @click="showMenu">
+    <button class="btn btn-primary reverse" @click="showMenu">
       Vezi meniul
     </button>
     <button

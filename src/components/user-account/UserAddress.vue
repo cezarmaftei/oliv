@@ -76,7 +76,7 @@ const showEditForm = ref(false);
               <div class="row g-1">
                 <div class="col-12" v-if="!isCheckout && addressIndex > 0">
                   <button
-                    class="btn btn-outline-dark"
+                    class="btn btn-primary"
                     @click="
                       store.handleUserAddress(
                         'setfirst',
@@ -90,7 +90,7 @@ const showEditForm = ref(false);
                 </div>
                 <div class="col-12 col-xs-6" v-if="!isCheckout">
                   <button
-                    class="btn btn-outline-dark"
+                    class="btn btn-primary"
                     @click="showEditForm = !showEditForm"
                   >
                     Editeaza adresa
@@ -98,7 +98,7 @@ const showEditForm = ref(false);
                 </div>
                 <div class="col-12 col-xs-6" v-if="!isCheckout">
                   <button
-                    class="btn btn-outline-dark"
+                    class="btn btn-primary"
                     @click="deleteUserAddress()"
                   >
                     Sterge adresa
@@ -107,7 +107,7 @@ const showEditForm = ref(false);
 
                 <div class="col-12" v-if="isCheckout">
                   <button
-                    class="btn btn-outline-dark"
+                    class="btn btn-primary"
                     @click="emitAddressChanged()"
                   >
                     Alege adresa
@@ -124,7 +124,6 @@ const showEditForm = ref(false);
           <FormShippingAddress
             :formData="address"
             :addressIndex="addressIndex"
-            @address-added-success="showEditForm = false"
             @cancel-action="showEditForm = false"
           />
         </div>
@@ -175,7 +174,7 @@ const showEditForm = ref(false);
               <div class="row g-1">
                 <div class="col-12" v-if="addressIndex !== 0 && !isCheckout">
                   <button
-                    class="btn btn-outline-dark"
+                    class="btn btn-primary"
                     @click="
                       store.handleUserAddress(
                         'setfirst',
@@ -189,7 +188,7 @@ const showEditForm = ref(false);
                 </div>
                 <div class="col-12 col-xs-6" v-if="!isCheckout">
                   <button
-                    class="btn btn-outline-dark"
+                    class="btn btn-primary"
                     @click="showEditForm = !showEditForm"
                   >
                     Editeaza adresa
@@ -197,7 +196,7 @@ const showEditForm = ref(false);
                 </div>
                 <div class="col-12 col-xs-6" v-if="!isCheckout">
                   <button
-                    class="btn btn-outline-dark"
+                    class="btn btn-primary"
                     @click="deleteUserAddress()"
                   >
                     Sterge adresa
@@ -205,7 +204,7 @@ const showEditForm = ref(false);
                 </div>
                 <div class="col-12" v-if="isCheckout">
                   <button
-                    class="btn btn-outline-dark"
+                    class="btn btn-primary"
                     @click="emitAddressChanged()"
                   >
                     Alege adresa
@@ -257,7 +256,7 @@ tr {
 }
 
 .form-wrapper {
-  border: 2px solid $border-color;
+  @include global-border;
 }
 
 @include media-breakpoint-up(sm) {

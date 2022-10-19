@@ -31,12 +31,12 @@
   }
 
   @include media-breakpoint-up(sm) {
-    @include padding(1rem 3rem);
-    @include font-size(3rem);
+    padding: 1.5rem 2.5rem;
+    font-size: 3rem;
   }
 }
 
-.btn-outline-dark {
+.btn-primary {
   border-color: $dark;
   color: $dark;
   background: $bg-btn-yellow no-repeat center center / 0 0;
@@ -68,6 +68,11 @@
       color: $dark;
       background-size: 0 0;
     }
+  }
+
+  &[disabled] {
+    background: $gray-100;
+    color: $gray-300;
   }
 }
 
@@ -176,6 +181,7 @@ form .btn-delete {
   }
 }
 
+.cart-page-inner,
 .checkout-inner {
   @include media-breakpoint-between(xxs, sm) {
     .quantity-wrap {

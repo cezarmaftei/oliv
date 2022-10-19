@@ -31,7 +31,6 @@ defineProps({
     </h2>
     <div class="cart-header-legend d-flex">
       <div>Produs</div>
-      <div class="d-none d-sm-block">Cantitate</div>
       <div class="ms-auto text-end">Pret</div>
     </div>
   </div>

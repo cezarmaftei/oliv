@@ -21,7 +21,7 @@ import IconSearch from "../icons/IconSearch.vue";
 <style scoped lang="scss">
 .btn-search {
   position: relative;
-  border: 2px solid $border-color;
+  @include global-border;
   padding: 0.7rem 3rem 0.7rem 1.5rem;
   margin-right: 2rem;
   border-radius: 2rem;

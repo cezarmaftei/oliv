@@ -18,7 +18,7 @@ defineProps({
         placeholder="cauta dupa produs"
         v-model="store.searchData.searchString"
       />
-      <button type="submit" class="btn btn-outline-dark reverse">Cauta</button>
+      <button type="submit" class="btn btn-primary reverse">Cauta</button>
     </form>
   </div>
 </template>
@@ -29,7 +29,7 @@ defineProps({
 
   input {
     background: $white;
-    border: 2px solid $border-color;
+    @include global-border;
     border-bottom: 0;
     font-family: $font-family-lanekcut;
     color: $gray-500;

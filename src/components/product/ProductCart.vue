@@ -105,9 +105,8 @@ const itemExtrasCount = computed(() => {
 
 <template>
   <div class="card card-product-cart" :class="{ 'bg-white': isOffCanvas }">
-    <transition name="height-element-sm">
-      <ErrorProduct v-if="cartItem.errorMsg" :productIndex="cartItemIndex" />
-    </transition>
+    <ErrorProduct v-if="cartItem.errorMsg" :productIndex="cartItemIndex" />
+
     <div class="d-flex position-relative">
       <figure>
         <LoadImage :id="cartItem.thumbId" size="medium" />
@@ -351,10 +350,11 @@ figure {
 }
 
 @include media-breakpoint-between(xxs, sm) {
-  .checkout-inner {
+  .checkout-inner,
+  .cart-page-inner {
     figure {
       flex: 0 0 5rem;
-      height: 52rem;
+      height: 5rem;
     }
   }
 }

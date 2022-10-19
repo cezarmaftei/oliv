@@ -13,10 +13,12 @@ onMounted(() => {
   loginModal.value = new Modal("#login-modal");
 });
 
-const loginAction = () => {
+const loginSuccess = () => {
   // Close modal if user is successfully logged in
   if (store.userData.loggedIn) {
-    loginModal.value.hide();
+    setTimeout(() => {
+      loginModal.value.hide();
+    }, 1500);
   }
 };
 </script>
@@ -43,8 +45,8 @@ const loginAction = () => {
           <div class="login-form">
             <FormLogin
               :isModal="true"
-              @login-emit="loginAction"
-              @cancelled-emit="loginModal.hide()"
+              @login-success="loginSuccess"
+              @login-cancelled="loginModal.hide()"
             />
           </div>
         </div>

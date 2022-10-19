@@ -54,7 +54,7 @@ const relatedArticles = computed(() => {
 
 <style scoped lang="scss">
 .single-article-wrapper {
-  border: 2px solid $border-color;
+  @include global-border;
   height: 100%;
   flex-grow: 1;
 
@@ -64,7 +64,7 @@ const relatedArticles = computed(() => {
 }
 .related-articles {
   h2 {
-    border: 2px solid $border-color;
+    @include global-border;
     border-bottom: 0;
     border-top: 0;
 
@@ -79,7 +79,7 @@ const relatedArticles = computed(() => {
   max-width: 560px;
   margin-left: auto;
   margin-right: auto;
-  border: 2px solid $border-color;
+  @include global-border;
 
   h5 {
     color: $gray-500;

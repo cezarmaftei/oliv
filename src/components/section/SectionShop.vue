@@ -39,7 +39,7 @@ if (route.query.categorie) activeCat.value = route.query.categorie;
     [class*="col"] {
       padding: 0;
       margin: 0;
-      border: 2px solid $border-color;
+      @include global-border;
       border-top: 0;
 
       &:nth-child(2n) {

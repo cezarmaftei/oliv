@@ -591,7 +591,7 @@ const currentItemPrice = computed(() => {
     font-family: $font-family-lanekcut;
     line-height: 0.8;
     font-size: 2.6rem;
-    border: 2px solid $border-color;
+    @include global-border;
     margin-top: 3rem;
 
     > * {

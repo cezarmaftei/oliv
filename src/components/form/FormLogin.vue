@@ -1,42 +1,59 @@
 <script setup>
 import { useOlivStore } from "@/stores/oliv.js";
+import { ref } from "vue";
+import UserActionMessage from "../info-message/UserActionMessage.vue";
 const store = useOlivStore();
 
 defineProps({
   isModal: Boolean,
 });
 
-const emit = defineEmits(["loginEmit", "cancelledEmit"]);
+const formFields = ref({
+  username: "",
+  password: "",
+});
+
+const formResult = ref({
+  success: false,
+  error: false,
+});
+
+const emit = defineEmits(["loginSuccess", "loginCancelled"]);
 
 const logInUser = async () => {
-  store.storeLiveUpdate = true;
-  await store
+  // Reset errors
+  formResult.value = {
+    success: false,
+    error: false,
+  };
+
+  const loginResult = await store
     .userActions(
       "login",
-      store.userData.credentials.user,
+      formFields.value.username,
       null,
-      store.userData.credentials.pass
+      formFields.value.password
     )
-    .then(() => {
-      store.storeLiveUpdate = false;
-      setTimeout(() => {
-        emit("loginEmit");
-      }, 500);
-    });
+    .then((data) => data);
+
+  if (loginResult.success) {
+    formResult.value.success = "Se incarca datele personale...";
+    emit("loginSuccess");
+  }
+
+  if (loginResult.error) formResult.value.error = loginResult.error;
 };
 
-const cancelledEmitAction = () => {
-  emit("cancelledEmit");
+const loginCancelledAction = () => {
+  emit("loginCancelled");
 };
 </script>
 <template>
-  <form @submit.prevent="logInUser" class="position-relative">
-    <div class="success-message" v-if="store.userData.loggedIn">
-      Succes! Se incarca datele personale...
-    </div>
-    <div class="error-message" v-if="store.userData.error">
-      {{ store.userData.error }}
-    </div>
+  <form @submit.prevent="logInUser()" class="position-relative">
+    <UserActionMessage
+      :success="formResult.success"
+      :error="formResult.error"
+    />
 
     <div class="mb-2">
       <input
@@ -45,7 +62,7 @@ const cancelledEmitAction = () => {
         type="text"
         required
         autocomplete="username"
-        v-model.lazy="store.userData.credentials.user"
+        v-model.lazy="formFields.username"
       />
     </div>
 
@@ -56,23 +73,23 @@ const cancelledEmitAction = () => {
         type="password"
         required
         autocomplete="current-password"
-        v-model.lazy="store.userData.credentials.pass"
-      /><br />
+        v-model.lazy="formFields.password"
+      />
     </div>
 
-    <button class="btn btn-outline-dark reverse" type="submit">
+    <button class="btn btn-primary reverse" type="submit">
       Intra in cont
     </button>
 
-    <div class="d-xs-flex mt-2" v-if="!store.userData.loggedIn">
-      <router-link to="/contul-meu?action=reset" @click="cancelledEmitAction"
+    <div class="d-sm-flex mt-2" v-if="!store.userData.loggedIn">
+      <router-link to="/contul-meu?action=reset" @click="loginCancelledAction"
         >Mi-am uitat parola</router-link
       >
-      <br class="d-xs-none" />
+      <br class="d-sm-none" />
       <router-link
         to="/contul-meu?action=create"
         class="ms-auto"
-        @click="cancelledEmitAction"
+        @click="loginCancelledAction"
         >Creeaza cont nou</router-link
       >
     </div>

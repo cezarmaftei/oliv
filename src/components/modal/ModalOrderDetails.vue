@@ -1,6 +1,6 @@
 <script setup>
-import OrderDetails from "./OrderDetails.vue";
 import BtnClose from "../button/BtnClose.vue";
+import OrderDetails from "../partials/OrderDetails.vue";
 
 defineProps({
   order: Object,
@@ -35,7 +35,7 @@ const reOrderItems = () => {
 
           <button
             type="button"
-            class="btn btn-outline-dark d-block mx-auto mt-4"
+            class="btn btn-primary d-block mx-auto mt-4"
             data-bs-dismiss="modal"
             @click="reOrderItems()"
           >

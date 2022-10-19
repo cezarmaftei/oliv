@@ -33,7 +33,7 @@ defineProps({
         </div>
         <div class="article-content-right mt-2 mt-lg-0 ms-lg-auto ps-lg-5">
           <router-link
-            class="btn btn-outline-dark"
+            class="btn btn-primary"
             :to="store.articleURL(article)"
             >Citeste articolul</router-link
           >
@@ -45,7 +45,7 @@ defineProps({
 
 <style scoped lang="scss">
 .article-listing {
-  border: 2px solid $border-color;
+  @include global-border;
   border-top: 0;
   margin-bottom: -2px;
   @include padding(4rem);

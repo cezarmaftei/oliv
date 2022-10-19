@@ -83,6 +83,7 @@ label.form-control {
   }
 }
 
+.cart-page-inner,
 .checkout-inner {
   .form-group {
     @include padding-bottom(3rem);
@@ -120,6 +121,7 @@ form {
 }
 
 .error-message,
+.info-message,
 .success-message {
   font-family: $font-family-lanekcut;
   line-height: 0.8;
@@ -130,6 +132,17 @@ form {
   margin: 0 0 2rem 0;
 }
 
+.error-message-lg,
+.info-message-lg,
+.success-message-lg {
+  @include padding(1.5rem 2.5rem);
+  font-size: 2.6rem;
+}
+
 .success-message {
   background: $olive;
+}
+
+.info-message {
+  background: $warning;
 }

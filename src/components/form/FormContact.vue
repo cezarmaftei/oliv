@@ -2,6 +2,7 @@
 import { useOlivStore } from "@/stores/oliv.js";
 import { ref } from "vue";
 import { sendFormDataToWP } from "@/api";
+import ErrorContact from "../error/ErrorContact.vue";
 
 defineProps(["contentBottom", "buttonText"]);
 
@@ -16,6 +17,9 @@ const formData = ref({
 
 const form = ref(false);
 const formError = ref(false);
+// For styling
+// formError.value =
+//   "A aparut o problema la trimiterea mesajului. Te rugam sa reincerci in cateva minute.";
 
 const sendFormData = async () => {
   for (const [fieldName, fieldValue] of Object.entries(formData.value)) {
@@ -57,9 +61,8 @@ const sendFormData = async () => {
 </script>
 <template>
   <form ref="form" @submit.prevent="sendFormData()">
-    <div class="error-message" v-if="formError">
-      {{ formError }}
-    </div>
+    <ErrorContact v-if="formError" :error="formError" />
+
     <div class="form-group row g-0">
       <div class="col-12 col-sm-6">
         <input
@@ -101,7 +104,7 @@ const sendFormData = async () => {
 
     <div v-html="contentBottom"></div>
 
-    <button type="submit" class="btn btn-outline-dark reverse">
+    <button type="submit" class="btn btn-primary reverse">
       {{ buttonText }}
     </button>
   </form>

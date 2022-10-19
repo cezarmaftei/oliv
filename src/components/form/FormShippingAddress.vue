@@ -2,6 +2,7 @@
 import { useOlivStore } from "@/stores/oliv.js";
 import { ref } from "vue";
 import FieldsFormShipping from "./FieldsFormShipping.vue";
+import ErrorAddress from "../error/ErrorAddress.vue";
 
 const store = useOlivStore();
 const formErrorMessage = ref(false);
@@ -41,10 +42,9 @@ const cancelAction = () => {
 
 const submitUserAddress = async () => {
   const action = props.formData ? "edit" : "add";
-  const index = props.addressIndex ? props.addressIndex : false;
 
   const result = await store
-    .handleUserAddress(action, "shipping", index)
+    .handleUserAddress(action, "shipping", props.addressIndex)
     .then((result) => result);
 
   if (result.error) {
@@ -64,28 +64,20 @@ const submitUserAddress = async () => {
 
 <template>
   <form @submit.prevent="submitUserAddress()">
-    <transition name="height-element-sm">
-      <div
-        v-if="formErrorMessage || formSuccess"
-        :class="{ 'bg-warning': formErrorMessage, 'bg-success': formSuccess }"
-      >
-        <p v-if="formErrorMessage">{{ formErrorMessage }}</p>
-        <p v-else>Adresa a fost adaugata cu success</p>
-      </div>
-    </transition>
+    <ErrorAddress :error="formErrorMessage" :success="formSuccess" />
 
     <FieldsFormShipping />
 
     <div class="row g-1 mt-3">
       <div class="col-12 col-md-6 col-lg-auto">
-        <button type="submit" class="btn btn-outline-dark">
+        <button type="submit" class="btn btn-primary">
           {{ buttonText }}
         </button>
       </div>
       <div class="col-12 col-md-6 col-lg-auto ms-auto">
         <button
           type="button"
-          class="btn btn-outline-dark"
+          class="btn btn-primary"
           @click="cancelAction"
         >
           Renunta

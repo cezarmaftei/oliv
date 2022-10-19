@@ -17,7 +17,9 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="bg-warning">
-    <p>{{ store.cartData.items[productIndex].errorMsg }}</p>
-  </div>
+  <transition name="height-element-sm">
+    <div class="error-message">
+      {{ store.cartData.items[productIndex].errorMsg }}
+    </div>
+  </transition>
 </template>

@@ -1,6 +1,9 @@
 <script setup>
 import { useRoute, useRouter } from "vue-router";
 import { useOlivStore } from "@/stores/oliv.js";
+import UserOrders from "@/components/user-account/UserOrders.vue";
+import UserAddresses from "@/components/user-account/UserAddresses.vue";
+import UserGeneral from "@/components/user-account/UserGeneral.vue";
 import FormLogin from "@/components/form/FormLogin.vue";
 import FormRegistration from "@/components/form/FormRegistration.vue";
 import FormResetPass from "@/components/form/FormResetPass.vue";
@@ -8,6 +11,8 @@ import FormPassRecovery from "@/components/form/FormPassRecovery.vue";
 import IconTaco from "../icons/IconTaco.vue";
 import IconMapMarkers from "../icons/IconMapMarkers.vue";
 import IconNachos from "../icons/IconNachos.vue";
+import PageNotFound from "../partials/PageNotFound.vue";
+import { ref } from "vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -24,76 +29,63 @@ if (route.query.action === "aa") {
     )
     .then(() => {
       if (store.userData.loggedIn) {
-        router.push({ name: "home" });
+        infoMessage.value = "Contul a fost activat cu succes!";
+        store.userData.accountActive = true;
+
+        setTimeout(() => {
+          router.push({ name: "account" });
+          infoMessage.value = false;
+        }, 3000);
       }
     });
 }
+
+const logOutUser = () => {
+  store.userActions("logout");
+  router.push({ name: "account" });
+};
+
+const accountSections = {
+  "comenzile-mele": UserOrders,
+  "adresele-mele": UserAddresses,
+  "detalii-cont": UserGeneral,
+};
+
+const infoMessage = ref(false);
+const userActionPerformed = (message) => {
+  infoMessage.value = message;
+
+  setTimeout(() => {
+    infoMessage.value = false;
+    router.push({ name: "account" });
+  }, 3000);
+};
 </script>
 <template>
-  <div class="overflow-hidden flex-grow-1 container mb-8">
-    <div
-      class="activation-container"
-      v-show="route.query.action === 'aa' && !store.userData.loggedIn"
-    >
+  <transition name="height-element-sm">
+    <div v-show="infoMessage" class="user-actions-info-message">
+      <div class="info-message info-message-lg">
+        <p class="m-0" v-if="infoMessage">{{ infoMessage }}</p>
+      </div>
+    </div>
+  </transition>
+
+  <div
+    v-if="!store.userData.loggedIn && !infoMessage"
+    class="account-logged-out"
+  >
+    <div class="activation-container" v-show="route.query.action === 'aa'">
       <div v-if="!store.userData.error">
-        <h3 class="mb-2">Se activeaza contul</h3>
+        <h3 class="mb-2">Se activeaza contul...</h3>
       </div>
       <div v-if="store.userData.error">
         <h5>{{ store.userData.error }}</h5>
       </div>
     </div>
 
-    <div class="account-menu text-center" v-if="store.userData.loggedIn">
-      <div class="row justify-content-center g-2">
-        <div class="col-12 col-xs-6 col-lg-4">
-          <router-link
-            class="account-menu-card d-flex flex-column align-items-center justify-content-center pt-3"
-            to="/contul-meu/comenzile-mele/"
-            ><h3 class="mb-2 mt-auto">Istoric comenzi</h3>
-            <IconTaco class="mb-3" />
-            <span class="btn btn-outline-dark reverse mt-auto"
-              >vezi istoric comenzi</span
-            ></router-link
-          >
-        </div>
-        <div class="col-12 col-xs-6 col-lg-4">
-          <router-link
-            class="account-menu-card d-flex flex-column align-items-center justify-content-center pt-3"
-            to="/contul-meu/adresele-mele/"
-            ><h3 class="mb-2 mt-auto">Adresele mele</h3>
-            <IconMapMarkers class="mb-3" />
-            <span class="btn btn-outline-dark reverse mt-auto"
-              >vezi adresele</span
-            ></router-link
-          >
-        </div>
-        <div class="col-12 col-xs-6 col-lg-4">
-          <router-link
-            class="account-menu-card d-flex flex-column align-items-center justify-content-center pt-3"
-            to="/contul-meu/detalii-cont/"
-            ><h3 class="mb-2 mt-auto">Detalii cont</h3>
-            <IconNachos class="mb-3" />
-            <span class="btn btn-outline-dark reverse mt-auto"
-              >vezi detalii cont</span
-            ></router-link
-          >
-        </div>
-      </div>
-      <div class="d-flex flex-wrap justify-content-center"></div>
-      <button
-        type="button"
-        class="btn btn-outline-dark mt-4"
-        @click="store.userActions('logout')"
-      >
-        Logout
-      </button>
-    </div>
-
     <div
-      v-if="
-        !store.userData.loggedIn &&
-        !['create', 'reset', 'rp', 'aa'].includes(route.query.action)
-      "
+      class="login-container"
+      v-if="!['create', 'reset', 'rp', 'aa'].includes(route.query.action)"
     >
       <div class="form-outer-wrapper">
         <h3 class="mb-2">Intra in contul tau</h3>
@@ -101,28 +93,76 @@ if (route.query.action === "aa") {
       </div>
     </div>
 
-    <div v-if="!store.userData.loggedIn && route.query.action === 'create'">
+    <div class="create-container" v-if="route.query.action === 'create'">
       <div class="form-outer-wrapper">
         <h3 class="mb-2">Creeaza-ti cont in cateva secunde!</h3>
-        <FormRegistration />
+        <FormRegistration @registration-action="userActionPerformed" />
       </div>
     </div>
 
-    <div v-if="!store.userData.loggedIn && route.query.action === 'reset'">
+    <div class="reset-container" v-if="route.query.action === 'reset'">
       <div class="form-outer-wrapper">
         <h3 class="mb-2">Resetaza parola</h3>
-        <FormResetPass />
+        <FormResetPass @recovery-email-sent="userActionPerformed" />
       </div>
     </div>
 
-    <div
-      class="recovery-form"
-      v-show="!store.userData.loggedIn && route.query.action === 'rp'"
-    >
-      <p>Introdu parola noua:</p>
-      <FormPassRecovery />
+    <div class="recovery-container" v-show="route.query.action === 'rp'">
+      <div class="form-outer-wrapper">
+        <h3 class="mb-2">Introdu parola noua:</h3>
+        <FormPassRecovery @password-recovered="userActionPerformed" />
+      </div>
     </div>
   </div>
+
+  <component
+    v-else-if="store.userData.loggedIn && route.params.slug in accountSections"
+    :is="accountSections[route.params.slug]"
+  ></component>
+
+  <div v-else-if="store.userData.loggedIn" class="account-menu text-center">
+    <div class="row justify-content-center g-2">
+      <div class="col-12 col-sm-6 col-lg-4">
+        <router-link
+          class="account-menu-card d-flex flex-column align-items-center justify-content-center pt-3"
+          to="/contul-meu/comenzile-mele/"
+          ><h3 class="mb-2 mt-auto">Istoric comenzi</h3>
+          <IconTaco class="mb-3" />
+          <span class="btn btn-primary reverse mt-auto"
+            >vezi istoric comenzi</span
+          ></router-link
+        >
+      </div>
+      <div class="col-12 col-sm-6 col-lg-4">
+        <router-link
+          class="account-menu-card d-flex flex-column align-items-center justify-content-center pt-3"
+          to="/contul-meu/adresele-mele/"
+          ><h3 class="mb-2 mt-auto">Adresele mele</h3>
+          <IconMapMarkers class="mb-3" />
+          <span class="btn btn-primary reverse mt-auto"
+            >vezi adresele</span
+          ></router-link
+        >
+      </div>
+      <div class="col-12 col-sm-6 col-lg-4">
+        <router-link
+          class="account-menu-card d-flex flex-column align-items-center justify-content-center pt-3"
+          to="/contul-meu/detalii-cont/"
+          ><h3 class="mb-2 mt-auto">Detalii cont</h3>
+          <IconNachos class="mb-3" />
+          <span class="btn btn-primary reverse mt-auto"
+            >vezi detalii cont</span
+          ></router-link
+        >
+      </div>
+    </div>
+    <div class="d-flex flex-wrap justify-content-center"></div>
+    <button type="button" class="btn btn-primary mt-4" @click="logOutUser">
+      Logout
+    </button>
+  </div>
+
+  <PageNotFound v-else-if="!infoMessage" />
 </template>
 
 <style scoped lang="scss">
@@ -134,21 +174,20 @@ h3 {
   }
 }
 
-.container {
-  padding: 0;
-}
-
 .form-outer-wrapper {
-  background: $white;
-  border: 2px solid $border-color;
   max-width: 40rem;
-  padding: 2rem;
-  margin-left: auto;
-  margin-right: auto;
+
+  @include media-breakpoint-up(sm) {
+    background: $white;
+    @include global-border;
+    padding: 2rem;
+    margin-left: auto;
+    margin-right: auto;
+  }
 }
 
 .account-menu-card {
-  border: 2px solid $border-color;
+  @include global-border;
   color: $body-color;
   height: 100%;
 
@@ -178,13 +217,6 @@ h3 {
     max-width: 12rem;
     max-height: 6rem;
     @include transition($transition-base);
-  }
-}
-
-@include media-breakpoint-up(md) {
-  .container {
-    border: 2px solid $border-color;
-    @include padding(7rem);
   }
 }
 </style>

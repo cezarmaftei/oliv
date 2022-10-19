@@ -57,7 +57,7 @@ const relatedProducts = (mainProduct) => {
     [class*="col"] {
       padding: 0;
       margin: -2px 0 0 !important;
-      border: 2px solid $border-color;
+      @include global-border;
 
       &:nth-child(2n) {
         border-left: 0;

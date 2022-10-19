@@ -345,7 +345,7 @@ onMounted(() => {
 
 <style scoped lang="scss">
 .contact-wrapper {
-  border: 2px solid $border-color;
+  @include global-border;
 
   .form-wrapper {
     width: 100%;
@@ -375,7 +375,7 @@ onMounted(() => {
 }
 
 .map-wrapper {
-  border: 2px solid $border-color;
+  @include global-border;
   margin-top: -2px;
   margin-bottom: -2px;
 }
@@ -386,7 +386,7 @@ onMounted(() => {
 
   :deep {
     .gm-style-iw-c {
-      border: 2px solid $border-color;
+      @include global-border;
       border-radius: 0;
     }
 

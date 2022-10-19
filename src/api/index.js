@@ -6,6 +6,8 @@ const apiRoot = "https://new-site.olivbistro.ro";
 // const WcApiSecret = "cs_27f46a0ed988d53c9ebbffe7f1880f3b7f57c39b";
 const WcApiKey = "ck_3e7c8da8d2e14dd12f16728e59f2913e21be74aa";
 const WcApiSecret = "cs_61a323188b907910d977f5af4317cf1250f55c6d";
+// const WpApiUser = "cezar.maftei@gmail.com";
+// const WpApiKey = "CWu8 buzP t5sf eit5 7cQx IAZ6";
 
 const ajax = axios.create({
   baseURL: `${apiRoot}`,
@@ -109,6 +111,19 @@ export const createUser = (userData) => {
     userData
   );
 };
+
+// export const createWpUser = (userData) => {
+//   return axios.post(`${apiRoot}/wp-json/wp/v2/users`, userData, {
+//     headers: {
+//       Accept: "application/json",
+//       "Content-Type": "application/json",
+//     },
+//     auth: {
+//       username: WpApiUser,
+//       password: WpApiKey,
+//     },
+//   });
+// };
 
 export const updateUser = (userData) => {
   return ajax.put(

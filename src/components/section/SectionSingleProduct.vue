@@ -24,7 +24,7 @@ const route = useRoute();
 
 @include media-breakpoint-up(md) {
   .section-product-single {
-    border: 2px solid $border-color;
+    @include global-border;
   }
 }
 </style>

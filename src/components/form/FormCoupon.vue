@@ -18,9 +18,8 @@ const couponCode = ref("");
   >
     <input type="text" v-model="couponCode" placeholder="xxxxxx" required />
     <button type="submit" class="btn">Aplica codul</button>
-    <transition name="scale-element">
-      <ErrorCoupon v-if="store.cartData.coupon.errorMsg" />
-    </transition>
+
+    <ErrorCoupon v-if="store.cartData.coupon.errorMsg" />
   </form>
 </template>
 

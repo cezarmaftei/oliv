@@ -1,15 +1,22 @@
 <script setup>
 import { useOlivStore } from "@/stores/oliv.js";
+import { ref } from "vue";
 const store = useOlivStore();
+
+const emits = defineEmits(["recoveryEmailSent"]);
+
+const formFields = ref({
+  username: "",
+});
+
+const sendRecoveryEmail = async () => {
+  await store.userActions("reset", null, formFields.value.username, null);
+  emits("recoveryEmailSent", "Verifica-ti emailul pentru a reseta parola!");
+};
 </script>
 
 <template>
-  <form
-    class="reset-form"
-    @submit.prevent="
-      store.userActions('reset', null, store.userData.credentials.user, null)
-    "
-  >
+  <form class="reset-form" @submit.prevent="sendRecoveryEmail()">
     <div class="mb-2">
       <input
         class="form-control"
@@ -18,14 +25,11 @@ const store = useOlivStore();
         id="user-email"
         required
         autocomplete="username"
-        v-model.lazy="store.userData.credentials.user"
+        v-model.lazy="formFields.username"
       />
     </div>
-    <button class="btn btn-outline-dark reverse" type="submit">
+    <button class="btn btn-primary reverse" type="submit">
       Reseteaza parola
     </button>
-    <div class="error-message" v-if="store.userData.error">
-      {{ store.userData.error }}
-    </div>
   </form>
 </template>

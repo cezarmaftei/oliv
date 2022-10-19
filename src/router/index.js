@@ -22,7 +22,7 @@ const router = createRouter({
       component: () => import("@/views/PageView.vue"),
     },
     {
-      path: "/contul-meu/:slug",
+      path: "/contul-meu/:slug?",
       name: "account",
       component: () => import("@/views/PageView.vue"),
     },
