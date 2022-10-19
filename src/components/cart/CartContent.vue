@@ -135,7 +135,7 @@ store.$subscribe((mutation, state) => {
           <div
             v-if="route.params.slug !== 'finalizare'"
             class="d-flex"
-            data-bs-dismiss="offcanvas"
+            :data-bs-dismiss="isOffCanvas ? 'offcanvas' : ''"
             aria-label="Close"
           >
             <router-link class="btn btn-primary reverse" to="/finalizare"
@@ -178,9 +178,6 @@ store.$subscribe((mutation, state) => {
 }
 
 @include media-breakpoint-up(md) {
-  .cart-content {
-    font-size: 1.6rem;
-  }
   .cart-page-inner {
     .cart-content {
       display: grid;
@@ -228,6 +225,9 @@ store.$subscribe((mutation, state) => {
 
 @include media-breakpoint-up(xl) {
   .cart-page-inner {
+    .cart-content {
+      font-size: 1.6rem;
+    }
     .cart-totals {
       margin-left: auto;
     }
