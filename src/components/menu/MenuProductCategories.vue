@@ -53,7 +53,7 @@ watch(
   </div>
   <div
     v-else
-    class="menu-loading d-flex align-0items-center justify-content-center"
+    class="menu-loading d-flex align-items-center justify-content-center"
   >
     <IconLoading />
   </div>
