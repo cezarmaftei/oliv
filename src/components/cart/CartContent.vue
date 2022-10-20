@@ -36,18 +36,20 @@ store.$subscribe((mutation, state) => {
 
     <div class="cart-items" v-if="store.getCartItems.length">
       <div :class="{ 'px-4': isOffCanvas }">
-        <div
-          class="cart-item"
-          v-for="(cartItem, cartItemIndex) in store.getCartItems"
-          :key="cartItem"
-        >
-          <ProductCart
-            :isCheckout="isCheckout"
-            :isOffCanvas="isOffCanvas"
-            :cartItem="cartItem"
-            :cartItemIndex="cartItemIndex"
-          />
-        </div>
+        <TransitionGroup name="add-remove-element">
+          <div
+            class="cart-item no-delay"
+            v-for="(cartItem, cartItemIndex) in store.getCartItems"
+            :key="cartItem"
+          >
+            <ProductCart
+              :isCheckout="isCheckout"
+              :isOffCanvas="isOffCanvas"
+              :cartItem="cartItem"
+              :cartItemIndex="cartItemIndex"
+            />
+          </div>
+        </TransitionGroup>
       </div>
     </div>
     <div class="px-4" v-else>
@@ -167,6 +169,8 @@ store.$subscribe((mutation, state) => {
   width: 100%;
 
   .btn {
+    padding: 1.5rem 2.5rem;
+    font-size: 3rem;
     width: 100%;
   }
 }

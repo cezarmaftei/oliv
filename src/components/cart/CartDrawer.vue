@@ -11,7 +11,7 @@ import CartContent from "@/components/cart/CartContent.vue";
   >
     <CartHeader :isOffCanvas="true" />
     <div class="offcanvas-body">
-      <div class="offcanvas-content d-flex flex-column">
+      <div class="offcanvas-content d-flex flex-column overflow-hidden">
         <CartContent :isOffCanvas="true" />
       </div>
     </div>

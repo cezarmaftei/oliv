@@ -97,19 +97,13 @@ const showEditForm = ref(false);
                   </button>
                 </div>
                 <div class="col-12 col-xs-6" v-if="!isCheckout">
-                  <button
-                    class="btn btn-primary"
-                    @click="deleteUserAddress()"
-                  >
+                  <button class="btn btn-primary" @click="deleteUserAddress()">
                     Sterge adresa
                   </button>
                 </div>
 
                 <div class="col-12" v-if="isCheckout">
-                  <button
-                    class="btn btn-primary"
-                    @click="emitAddressChanged()"
-                  >
+                  <button class="btn btn-primary" @click="emitAddressChanged()">
                     Alege adresa
                   </button>
                 </div>
@@ -195,18 +189,12 @@ const showEditForm = ref(false);
                   </button>
                 </div>
                 <div class="col-12 col-xs-6" v-if="!isCheckout">
-                  <button
-                    class="btn btn-primary"
-                    @click="deleteUserAddress()"
-                  >
+                  <button class="btn btn-primary" @click="deleteUserAddress()">
                     Sterge adresa
                   </button>
                 </div>
                 <div class="col-12" v-if="isCheckout">
-                  <button
-                    class="btn btn-primary"
-                    @click="emitAddressChanged()"
-                  >
+                  <button class="btn btn-primary" @click="emitAddressChanged()">
                     Alege adresa
                   </button>
                 </div>

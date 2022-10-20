@@ -118,3 +118,84 @@ useHeadRaw({
   <ModalBillingAddresses />
   <RouterView />
 </template>
+
+<style lang="scss">
+.scale-element-leave-active {
+  transition: all 0.1s cubic-bezier(0.75, 0.25, 0.13, 0.92);
+}
+
+.scale-element-enter-active {
+  transition: all 0.15s 0.1s cubic-bezier(0.75, 0.25, 0.13, 0.92);
+}
+
+.scale-element-enter-from,
+.scale-element-leave-to {
+  transform: scale(0);
+}
+
+.scale-element-enter-to,
+.scale-element-leave-from {
+  transform: scale(1);
+}
+
+.height-element-enter-active,
+.height-element-leave-active {
+  transition: all 0.25s ease;
+  overflow: hidden;
+}
+
+.height-element-enter-from,
+.height-element-leave-to {
+  max-height: 0;
+}
+
+.height-element-enter-to,
+.height-element-leave-from {
+  max-height: 100rem;
+}
+
+.height-element-sm-enter-active,
+.height-element-sm-leave-active {
+  transition: all 0.25s ease;
+  overflow: hidden;
+}
+
+.height-element-sm-enter-from,
+.height-element-sm-leave-to {
+  max-height: 0;
+}
+
+.height-element-sm-enter-to,
+.height-element-sm-leave-from {
+  max-height: 30rem;
+}
+
+.add-remove-element-enter-from {
+  opacity: 0;
+  transform: translateX(-30rem);
+  max-height: 0;
+}
+
+.add-remove-element-enter-active,
+.add-remove-element-leave-active {
+  transition: all 0.25s 0.5s ease;
+}
+
+.add-remove-element-enter-active.no-delay,
+.add-remove-element-leave-active.no-delay {
+  transition: all 0.25s ease;
+}
+
+.add-remove-element-leave-from,
+.add-remove-element-enter-to {
+  opacity: 1;
+  transform: translateX(0);
+  max-height: 1000px;
+}
+
+.add-remove-element-leave-to {
+  opacity: 0;
+  transform: translateX(30rem);
+  max-height: 0;
+}
+</style>
