@@ -47,7 +47,9 @@ const pageTemplates = {
         :class="{
           'section-bordered-content':
             ['account'].indexOf(route.name) > -1 ||
-            ['finalizare', 'cos'].indexOf(route.params.slug) > -1,
+            ['finalizare', 'cos', 'comanda-plasata'].indexOf(
+              route.params.slug
+            ) > -1,
         }"
       >
         <!-- page layout -->

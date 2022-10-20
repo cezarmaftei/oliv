@@ -5,15 +5,11 @@ const route = useRoute();
 </script>
 
 <template>
-  <div class="order-completed p-8 mb-7">
-    <div class="order-completed-inner">
-      <!-- <OrderDetails
-      v-if="route.params.orderData"
-      :order="route.params.orderData"
-    /> -->
-      <OrderDetails />
-    </div>
+  <div v-if="route.params.orderData" class="order-completed-inner">
+    <OrderDetails :order="route.params.orderData" />
   </div>
+
+  <h2 v-else>Nu ai plasat nici o comanda!</h2>
 </template>
 
 <style scoped lang="scss">

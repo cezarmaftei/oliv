@@ -61,7 +61,7 @@ const route = useRoute();
 
 @include media-breakpoint-up(lg) {
   .navbar-account {
-    margin-left: auto;
+    margin-left: 0;
     margin-right: 0;
   }
 

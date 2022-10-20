@@ -498,25 +498,27 @@ export const useOlivStore = defineStore({
      */
     async userActions(action, user, email, pass, key) {
       this.storeLiveUpdate = true;
-      const loggedInCookie = cookies.get("oliv_logged_in");
       const actionResult = {};
 
       switch (action) {
         case "verify":
-          // User is logged in
-          if (loggedInCookie) {
-            const userVerification = await userAccountActions(
-              "verify",
-              null,
-              null,
-              null,
-              loggedInCookie,
-              null
-            ).then((data) => data.data);
+          {
+            // User is logged in
+            const loggedInCookie = cookies.get("oliv_logged_in");
+            if (loggedInCookie) {
+              const userVerification = await userAccountActions(
+                "verify",
+                null,
+                null,
+                null,
+                loggedInCookie,
+                null
+              ).then((data) => data.data);
 
-            if (userVerification.success) {
-              await this.loginUser(userVerification);
-              actionResult["success"] = true;
+              if (userVerification.success) {
+                await this.loginUser(userVerification);
+                actionResult["success"] = true;
+              }
             }
           }
           break;
@@ -545,6 +547,7 @@ export const useOlivStore = defineStore({
           break;
 
         case "logout":
+          // Reset userdata
           this.userData = {
             loggedIn: false,
             credentials: {
@@ -556,6 +559,12 @@ export const useOlivStore = defineStore({
               billing: [],
             },
             customerOrdersData: false,
+          };
+
+          // Reset coupons
+          this.cartData.coupon = {
+            codes: false,
+            errorMsg: false,
           };
 
           // Reset addresses
@@ -622,11 +631,13 @@ export const useOlivStore = defineStore({
     },
 
     async loginUser(userData) {
-      cookies.set(
-        "oliv_logged_in",
-        userData.success.cookie,
-        userData.success.expires
-      );
+      if (userData.success.cookie && userData.success.expires) {
+        cookies.set(
+          "oliv_logged_in",
+          userData.success.cookie,
+          userData.success.expires
+        );
+      }
 
       this.userData.loggedIn = true;
       this.userData["ID"] = userData.success.userData.ID;
@@ -1358,6 +1369,62 @@ export const useOlivStore = defineStore({
         }
 
         return "productError";
+      }
+
+      //
+      // If user has no shipping/billing addresses, add the ones from checkout
+      //
+
+      // Shipping
+      let shippingDefault = false;
+      if (
+        this.userData.loggedIn &&
+        !this.userData.customerAddresses.shipping.length
+      ) {
+        shippingDefault = this.cartData.addresses.shipping;
+      }
+
+      // Billing
+      let billingDefault = false;
+      if (
+        this.showBilling &&
+        this.userData.loggedIn &&
+        !this.userData.customerAddresses.billing.length
+      ) {
+        billingDefault = this.cartData.addresses.billing;
+      }
+
+      if (shippingDefault || billingDefault) {
+        // Woo object
+        const userUpdate = {
+          id: this.userData.ID,
+          meta_data: [],
+        };
+
+        if (shippingDefault) {
+          console.log("setting shipping default");
+          userUpdate["meta_data"].push({
+            key: "user_shipping_addresses",
+            value: [shippingDefault],
+          });
+
+          // Also save it in state
+          this.userData.customerAddresses.shipping.push(shippingDefault);
+        }
+
+        if (billingDefault) {
+          console.log("setting billing default");
+          userUpdate["meta_data"].push({
+            key: "user_billing_addresses",
+            value: [billingDefault],
+          });
+
+          // Also save it in state
+          this.userData.customerAddresses.billing.push(billingDefault);
+        }
+
+        // Send addresses to woo
+        await updateUser(userUpdate);
       }
 
       return await createOrder(this.createOrderParams()).then((data) => {

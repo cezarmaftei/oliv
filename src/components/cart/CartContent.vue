@@ -33,9 +33,8 @@ store.$subscribe((mutation, state) => {
       :isCheckout="isCheckout"
       :isOffCanvas="false"
     />
-
     <div class="cart-items" v-if="store.getCartItems.length">
-      <div :class="{ 'px-4': isOffCanvas }">
+      <div class="overflow-hidden" :class="{ 'px-4': isOffCanvas }">
         <TransitionGroup name="add-remove-element">
           <div
             class="cart-item no-delay"

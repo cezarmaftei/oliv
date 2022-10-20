@@ -4,7 +4,7 @@ defineProps({
 });
 </script>
 <template>
-  <div class="product-weight">
+  <div class="product-weight mb-1 mb-sm-0">
     {{ weight }}
   </div>
 </template>
@@ -17,7 +17,7 @@ defineProps({
   color: $gray-500;
 
   @include media-breakpoint-up(sm) {
-    @include font-size(2.4rem);
+    font-size: 2.4rem;
   }
 }
 </style>

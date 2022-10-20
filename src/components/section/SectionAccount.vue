@@ -65,7 +65,9 @@ const userActionPerformed = (message) => {
   <transition name="height-element-sm">
     <div v-show="infoMessage" class="user-actions-info-message">
       <div class="info-message info-message-lg">
-        <p class="m-0" v-if="infoMessage">{{ infoMessage }}</p>
+        <p class="m-0" :class="{ invisible: !infoMessage }">
+          {{ infoMessage }}
+        </p>
       </div>
     </div>
   </transition>

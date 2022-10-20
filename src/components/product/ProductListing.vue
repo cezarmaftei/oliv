@@ -189,12 +189,7 @@ const currentItemPrice = computed(() => {
     <div class="product-description">
       <p class="mb-1" v-if="!isSingle">{{ productDescriptionTrimmed }}</p>
       <div v-else v-html="product.description"></div>
-      <ProductWeight :weight="productWeight(product)" v-if="isSingle" />
-      <ProductWeight
-        :weight="productWeight(product)"
-        v-if="!isSingle"
-        class="d-none d-sm-block"
-      />
+      <ProductWeight :weight="productWeight(product)" />
     </div>
     <!-- Single product -->
     <div class="single-product-actions" v-if="isSingle">
@@ -211,8 +206,8 @@ const currentItemPrice = computed(() => {
         <button @click="updateProductQty(1)">+</button>
       </div>
 
-      <h3 class="mt-5">Adauga extra</h3>
       <div v-if="currentProductExtras" class="single-product-extras-actions">
+        <h3 class="mt-5">Adauga extra</h3>
         <div
           class="extra-wrap mb-2"
           v-for="extra in currentProductExtras"
@@ -254,11 +249,7 @@ const currentItemPrice = computed(() => {
       </div>
     </div>
     <!-- Product listing -->
-    <div v-else class="product-actions d-flex align-items-center">
-      <ProductWeight
-        :weight="productWeight(product)"
-        class="d-none d-xs-block d-sm-none"
-      />
+    <div v-else class="product-actions d-flex flex-wrap align-items-center">
       <ItemPrice :price="productPrice" />
       <AddToCart @click="addToCart(1, $event.target)">
         <span>+1</span>
@@ -307,11 +298,6 @@ const currentItemPrice = computed(() => {
       padding: 0 0.5rem;
       flex-grow: 1;
       text-align: center;
-    }
-
-    .product-weight {
-      padding-left: 0;
-      text-align: left;
     }
 
     .price {
@@ -554,13 +540,6 @@ const currentItemPrice = computed(() => {
     position: relative;
     text-align: center;
     margin-bottom: 2.5rem;
-
-    .product-weight {
-      font-family: $font-family-lanekcut;
-      line-height: 0.8;
-      font-size: 3rem;
-      color: $gray-500;
-    }
 
     &:after {
       content: "";

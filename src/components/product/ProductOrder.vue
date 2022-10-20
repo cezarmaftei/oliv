@@ -32,6 +32,7 @@ defineProps({
             class="row mb-1 mb-md-0"
             v-for="extra in product.productExtras"
             :key="extra"
+            v-show="parseInt(extra.extraQty) > 0"
           >
             <div class="col-auto">
               {{ extra.extraQty }} x {{ extra.extraName }}(<ItemPrice

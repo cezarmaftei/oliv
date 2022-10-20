@@ -5,9 +5,11 @@ import ProductOrder from "../product/ProductOrder.vue";
 import { useOlivStore } from "@/stores/oliv.js";
 const store = useOlivStore();
 
-defineProps({
-  order: Object,
+const props = defineProps({
+  order: String,
 });
+
+const JSONOrder = JSON.parse(props.order);
 
 // // Debug pentru /comanda-plasata
 // const order = {
@@ -556,18 +558,18 @@ const dateToLocale = (dateString) => {
   <div class="card card-order">
     <div class="order-header mb-2">
       <h4 class="mb-0">
-        Comanda #{{ order.id }} -
-        <span v-if="order.date_completed">{{
-          dateToLocale(order.date_completed)
+        Comanda #{{ JSONOrder.id }} -
+        <span v-if="JSONOrder.date_completed">{{
+          dateToLocale(JSONOrder.date_completed)
         }}</span
-        ><span v-else>{{ dateToLocale(order.date_created) }}</span>
+        ><span v-else>{{ dateToLocale(JSONOrder.date_created) }}</span>
       </h4>
     </div>
     <div class="order-body">
       <div class="order-products">
         <div
           class="order-product"
-          v-for="product in store.getReorder(order.meta_data)"
+          v-for="product in store.getReorder(JSONOrder.meta_data)"
           :key="product"
         >
           <ProductOrder :product="product" />
@@ -579,31 +581,35 @@ const dateToLocale = (dateString) => {
           <div class="ms-auto">
             <ItemPrice
               :price="
-                parseFloat(order.total) + parseFloat(order.discount_total)
+                parseFloat(JSONOrder.total) +
+                parseFloat(JSONOrder.discount_total)
               "
             />
           </div>
         </div>
-        <div class="order-coupons h5 mb-2" v-if="order.coupon_lines.length">
+        <div class="order-coupons h5 mb-2" v-if="JSONOrder.coupon_lines.length">
           <div
             class="order-coupon d-flex"
-            v-for="coupon in order.coupon_lines"
+            v-for="coupon in JSONOrder.coupon_lines"
             :key="coupon"
           >
             <div>Coupon "{{ coupon.code }}" discount:</div>
             <div class="ms-auto"><ItemPrice :price="coupon.discount" /></div>
           </div>
         </div>
-        <div class="d-flex h5 mb-2" v-if="parseFloat(order.shipping_total) > 0">
+        <div
+          class="d-flex h5 mb-2"
+          v-if="parseFloat(JSONOrder.shipping_total) > 0"
+        >
           <div class="me-1">Cost livrare:</div>
           <div class="ms-auto">
-            <ItemPrice :price="parseFloat(order.shipping_total)" />
+            <ItemPrice :price="parseFloat(JSONOrder.shipping_total)" />
           </div>
         </div>
         <div class="order-total h4 d-flex">
           <div>Total</div>
           <div class="ms-auto">
-            <ItemPrice :price="order.total" />
+            <ItemPrice :price="JSONOrder.total" />
           </div>
         </div>
       </div>

@@ -97,19 +97,21 @@ useHeadRaw({
     />
   </Head>
 
-  <div
-    v-if="store.userData.loggedIn && !store.userData.accountActive"
-    class="container mx-auto"
-  >
-    <div class="row">
-      <div class="col-12">
-        <div class="info-message info-message-lg text-center mb-0">
-          Inca nu poti efectua comenzi de pe acest cont. Verifica-ti adresa de
-          email si activeaza-ti contul.
+  <transition name="height-element-sm">
+    <div
+      v-if="store.userData.loggedIn && !store.userData.accountActive"
+      class="container mx-auto"
+    >
+      <div class="row">
+        <div class="col-12">
+          <div class="info-message info-message-lg text-center mb-0">
+            Inca nu poti efectua comenzi de pe acest cont. Verifica-ti adresa de
+            email si activeaza-ti contul.
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </transition>
 
   <UpdateLoading />
   <ModalLogin />
@@ -191,6 +193,11 @@ useHeadRaw({
   opacity: 1;
   transform: translateX(0);
   max-height: 1000px;
+}
+
+.add-remove-element-leave-from.no-delay,
+.add-remove-element-enter-to.no-delay {
+  max-height: 300px;
 }
 
 .add-remove-element-leave-to {
