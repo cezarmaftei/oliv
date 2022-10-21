@@ -27,7 +27,7 @@ defineProps({
           </div>
         </div>
 
-        <div v-if="product.productExtras.length > 0" class="order-item-extras">
+        <div v-if="product.productExtras.length" class="order-item-extras">
           <div
             class="row mb-1 mb-md-0"
             v-for="extra in product.productExtras"

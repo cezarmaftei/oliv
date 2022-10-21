@@ -41,7 +41,7 @@ onMounted(() => {
 });
 
 const productWeight = (product) => {
-  if (product.categories.filter((cat) => cat.slug === "bauturi").length > 0)
+  if (product.categories.filter((cat) => cat.slug === "bauturi").length)
     return `${product.weight}ml`;
   else return `${product.weight}g`;
 };

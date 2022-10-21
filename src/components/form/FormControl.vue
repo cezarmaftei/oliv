@@ -21,24 +21,6 @@ onMounted(() => {
   fieldVars.value["type"] = mappingObject[props.fieldName].type;
 
   fieldVars.value["required"] = mappingObject[props.fieldName].required;
-
-  // Set values for email and name on checkout
-  if (
-    props.isCheckout &&
-    props.fieldName === "shipping_first_name" &&
-    store.cartData.addresses.shipping[props.fieldName].length < 1
-  ) {
-    store.cartData.addresses.shipping[props.fieldName] =
-      store.userData.firstName;
-  }
-
-  if (
-    props.isCheckout &&
-    props.fieldName === "shipping_email" &&
-    store.cartData.addresses.shipping[props.fieldName].length < 1
-  ) {
-    store.cartData.addresses.shipping[props.fieldName] = store.userData.email;
-  }
 });
 </script>
 

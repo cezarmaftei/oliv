@@ -49,8 +49,7 @@ const showEditForm = ref(false);
                   <td
                     class="d-block d-sm-table-cell"
                     v-if="
-                      fieldData.type !== 'hidden' &&
-                      address[fieldName].length > 0
+                      fieldData.type !== 'hidden' && address[fieldName].length
                     "
                   >
                     {{ fieldData.name }}:
@@ -58,8 +57,7 @@ const showEditForm = ref(false);
                   <td
                     class="d-block d-sm-table-cell"
                     v-if="
-                      fieldData.type !== 'hidden' &&
-                      address[fieldName].length > 0
+                      fieldData.type !== 'hidden' && address[fieldName].length
                     "
                   >
                     {{ address[fieldName] }}
@@ -144,8 +142,7 @@ const showEditForm = ref(false);
                   <td
                     class="d-block d-sm-table-cell"
                     v-if="
-                      fieldData.type !== 'hidden' &&
-                      address[fieldName].length > 0
+                      fieldData.type !== 'hidden' && address[fieldName].length
                     "
                   >
                     {{ fieldData.name }}:
@@ -153,8 +150,7 @@ const showEditForm = ref(false);
                   <td
                     class="d-block d-sm-table-cell"
                     v-if="
-                      fieldData.type !== 'hidden' &&
-                      address[fieldName].length > 0
+                      fieldData.type !== 'hidden' && address[fieldName].length
                     "
                   >
                     {{ address[fieldName] }}

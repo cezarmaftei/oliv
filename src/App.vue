@@ -9,6 +9,7 @@ import ModalShippingAddresses from "./components/modal/ModalShippingAddresses.vu
 import ModalBillingAddresses from "./components/modal/ModalBillingAddresses.vue";
 import { computed } from "vue";
 import UpdateLoading from "./components/partials/UpdateLoading.vue";
+import { apiRoot, websiteRoot } from "./api/index.js";
 
 const store = useOlivStore();
 const route = useRoute();
@@ -20,15 +21,38 @@ provide("showMenuProductCats", showMenuProductCats);
 const activeCat = ref("Toate");
 provide("activeCat", activeCat);
 
+const apiURLtoLive = (URL) => {
+  if (URL.indexOf("wp-content/uploads") === -1) {
+    URL = URL.replace(apiRoot, "https://www.olivbistro.ro");
+  }
+
+  return URL;
+};
+
 useHeadRaw({
   script: [
     {
       type: "application/ld+json",
-      innerHTML: computed(() =>
-        store.getPageBySlug(route)
-          ? JSON.stringify(store.getPageBySlug(route).yoast_head_json.schema)
-          : ""
-      ),
+      innerHTML: computed(() => {
+        let schema = "";
+        if (store.getPageBySlug(route)) {
+          schema = JSON.stringify(
+            store.getPageBySlug(route).yoast_head_json.schema
+          );
+
+          const matchRegex = new RegExp(`"${apiRoot}.*?"`, "gi");
+          const schemaURLs = [...schema.matchAll(matchRegex)];
+
+          schemaURLs.forEach((result) => {
+            const oldURL = result[0];
+            if (oldURL.indexOf("uploads") === -1) {
+              const newURL = oldURL.replace(apiRoot, websiteRoot);
+              schema = schema.replaceAll(oldURL, newURL);
+            }
+          });
+        }
+        return schema;
+      }),
     },
   ],
 });
@@ -43,7 +67,7 @@ useHeadRaw({
     />
     <link
       rel="canonical"
-      :href="store.getPageBySlug(route).yoast_head_json.canonical"
+      :href="apiURLtoLive(store.getPageBySlug(route).yoast_head_json.canonical)"
     />
     <meta
       property="og:locale"
@@ -59,7 +83,7 @@ useHeadRaw({
     />
     <meta
       property="og:url"
-      :content="store.getPageBySlug(route).yoast_head_json.og_url"
+      :content="apiURLtoLive(store.getPageBySlug(route).yoast_head_json.og_url)"
     />
     <meta
       property="og:site_name"

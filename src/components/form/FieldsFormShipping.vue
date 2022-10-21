@@ -24,7 +24,7 @@ const getShippingPrice = () => {
       const city = store.cartData.addresses.shipping.shipping_city;
       let newAddressDistance = false;
 
-      if (address.length > 0 && city.length > 0) {
+      if (address.length && city.length) {
         newAddressDistance = await store
           .addressDistance(
             `${store.cartData.addresses.shipping.shipping_address_1}, ${store.cartData.addresses.shipping.shipping_city}, Romania`

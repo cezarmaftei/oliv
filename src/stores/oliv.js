@@ -398,26 +398,40 @@ export const useOlivStore = defineStore({
     },
 
     // Runs only to build/reset the cart address objects
-    initCartAddresses() {
+    initCartAddresses(initOnly) {
       // Shipping
-      const shippingAddress = {};
-      for (const [fieldName, fieldValue] of Object.entries(
-        this.shippingFieldsMapping
-      )) {
-        shippingAddress[fieldName] = "";
+      if (!initOnly || (initOnly && initOnly === "shipping")) {
+        const shippingAddress = {};
+        for (const [fieldName, fieldValue] of Object.entries(
+          this.shippingFieldsMapping
+        )) {
+          let newFieldValue = "";
+
+          if (this.userData.loggedIn && fieldName === "shipping_first_name") {
+            newFieldValue = this.userData.firstName;
+          }
+
+          if (this.userData.loggedIn && fieldName === "shipping_email") {
+            newFieldValue = this.userData.email;
+          }
+
+          shippingAddress[fieldName] = newFieldValue ? newFieldValue : "";
+        }
+        this.$patch((state) => {
+          state.cartData.addresses["shipping"] = shippingAddress;
+        });
       }
-      this.$patch((state) => {
-        state.cartData.addresses["shipping"] = shippingAddress;
-      });
 
       // Billing
-      const billingAddress = {};
-      for (const [fieldName, fieldValue] of Object.entries(
-        this.billingFieldsMapping
-      )) {
-        billingAddress[fieldName] = "";
+      if (!initOnly || (initOnly && initOnly === "billing")) {
+        const billingAddress = {};
+        for (const [fieldName, fieldValue] of Object.entries(
+          this.billingFieldsMapping
+        )) {
+          billingAddress[fieldName] = "";
+        }
+        this.cartData.addresses["billing"] = billingAddress;
       }
-      this.cartData.addresses["billing"] = billingAddress;
     },
 
     /**
@@ -644,6 +658,11 @@ export const useOlivStore = defineStore({
       this.userData["accountActive"] = userData.success.accountActive;
       this.initCartAddresses();
       await this.loadCustomerData();
+
+      // Do this to add default name and email
+      if (!this.userData.customerAddresses.shipping.length) {
+        this.initCartAddresses("shipping");
+      }
     },
 
     /**
@@ -702,7 +721,7 @@ export const useOlivStore = defineStore({
       // productWithExtrasPrice -> product price including extras
       // itemTotal -> productQty * productWithExtrasPrice - item total price
 
-      if (this.cartData.items.length < 1) {
+      if (!this.cartData.items.length) {
         //
         // Set all to 0 if there are no products in cart
         //
@@ -819,7 +838,7 @@ export const useOlivStore = defineStore({
           orderParams.line_items[itemIndex].id = item.lineId;
         }
 
-        if (item.productExtras.length > 0) {
+        if (item.productExtras.length) {
           orderParams.line_items[itemIndex].meta_data = [];
           let priceValues = [];
           item.productExtras.forEach((productExtra) => {
@@ -942,7 +961,7 @@ export const useOlivStore = defineStore({
       });
 
       // Order comments
-      if (this.cartData.orderComments.length > 0) {
+      if (this.cartData.orderComments.length) {
         orderParams["customer_note"] = this.cartData.orderComments;
       }
 
@@ -1090,7 +1109,7 @@ export const useOlivStore = defineStore({
         let userAddress = {};
         for (const [fieldName, fieldData] of Object.entries(addressData)) {
           // Check for empty
-          if (fieldData.required && fieldData["value"].length < 1)
+          if (fieldData.required && !fieldData["value"].length)
             return { error: `${fieldData.name} este obligatoriu!` };
 
           // Add to address object
@@ -1099,7 +1118,7 @@ export const useOlivStore = defineStore({
 
         if (addressType === "shipping") {
           // Check if exists
-          if (userShippingAddresses.length > 0) {
+          if (userShippingAddresses.length) {
             for (const address of userShippingAddresses) {
               if (this.compareAddressObjects(address, userAddress)) {
                 this.storeLiveUpdate = false;
@@ -1134,7 +1153,7 @@ export const useOlivStore = defineStore({
 
         if (addressType === "billing") {
           // Check if exists
-          if (userBillingAddresses.length > 0) {
+          if (userBillingAddresses.length) {
             for (const address of userBillingAddresses) {
               if (this.compareAddressObjects(address, userAddress)) {
                 this.storeLiveUpdate = false;
@@ -1198,13 +1217,21 @@ export const useOlivStore = defineStore({
         if (addressType === "shipping") {
           this.$patch((state) => {
             state.userData.customerAddresses.shipping = userShippingAddresses;
-            state.cartData.addresses.shipping = userShippingAddresses[0];
+            if (userShippingAddresses.length) {
+              state.cartData.addresses.shipping = userShippingAddresses[0];
+            } else {
+              this.initCartAddresses("shipping");
+            }
           });
         }
 
         if (addressType === "billing") {
           this.userData.customerAddresses.billing = userBillingAddresses;
-          this.cartData.addresses.billing = userBillingAddresses[0];
+          if (userBillingAddresses.length) {
+            this.cartData.addresses.billing = userBillingAddresses[0];
+          } else {
+            this.initCartAddresses("billing");
+          }
         }
 
         // Update cart cookie

@@ -17,13 +17,10 @@ const formData = ref({
 
 const form = ref(false);
 const formError = ref(false);
-// For styling
-// formError.value =
-//   "A aparut o problema la trimiterea mesajului. Te rugam sa reincerci in cateva minute.";
 
 const sendFormData = async () => {
   for (const [fieldName, fieldValue] of Object.entries(formData.value)) {
-    if (fieldName !== "email_check" && fieldValue.length < 1) {
+    if (fieldName !== "email_check" && !fieldValue.length) {
       formError.value = "Toate campurile sunt obligatorii!";
       return false;
     }
@@ -34,7 +31,7 @@ const sendFormData = async () => {
     }
 
     // Honeypot
-    if (fieldName === "email_check" && fieldValue.length > 0) return false;
+    if (fieldName === "email_check" && fieldValue.length) return false;
   }
 
   formError.value = false;
@@ -44,9 +41,7 @@ const sendFormData = async () => {
   WPFormData.append("name", JSON.stringify(formData.value.name));
   WPFormData.append("email", JSON.stringify(formData.value.email));
   WPFormData.append("message", JSON.stringify(formData.value.message));
-  // for (const value of WPFormData.values()) {
-  //   console.log(value);
-  // }
+
   const emailResult = await sendFormDataToWP(WPFormData).then(
     (data) => data.data
   );
@@ -61,7 +56,7 @@ const sendFormData = async () => {
 </script>
 <template>
   <form ref="form" @submit.prevent="sendFormData()">
-    <ErrorContact v-if="formError" :error="formError" />
+    <ErrorContact :error="formError" />
 
     <div class="form-group row g-0">
       <div class="col-12 col-sm-6">

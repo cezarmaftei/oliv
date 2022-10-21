@@ -93,7 +93,7 @@ const removeFromCart = () => {
  */
 const itemExtrasCount = computed(() => {
   let extrasCount = 0;
-  if (props.cartItem.productExtras.length > 0) {
+  if (props.cartItem.productExtras.length) {
     props.cartItem.productExtras.forEach((extra) => {
       extrasCount += extra.extraQty;
     });
@@ -152,15 +152,13 @@ const itemExtrasCount = computed(() => {
             Editeaza extra
             <strong>({{ itemExtrasCount }})</strong>
           </span>
-          <span v-else-if="cartItem.productExtras.length > 0">
-            Adauga extra
-          </span>
+          <span v-else-if="cartItem.productExtras.length"> Adauga extra </span>
         </button>
 
         <transition name="height-element-sm">
           <div
             v-show="showExtras"
-            v-if="cartItem.productExtras.length > 0"
+            v-if="cartItem.productExtras.length"
             class="cart-item-extras-actions"
           >
             <div

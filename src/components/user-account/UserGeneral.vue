@@ -30,7 +30,7 @@ const checkPass = () => {
     checkPassClass.value = "bg-danger";
     return false;
   } else if (
-    checkPassInput.value.length > 0 &&
+    checkPassInput.value.length &&
     checkPassInput.value.length === editFormData.value.password.length &&
     checkPassInput.value === editFormData.value.password
   ) {

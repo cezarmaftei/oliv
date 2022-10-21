@@ -15,7 +15,7 @@ const showCopyShippingDetails = computed(() => {
     store.shippingFieldsMapping
   );
   for (const fieldName of coreFields) {
-    if (store.cartData.addresses.shipping[fieldName].length > 0) return true;
+    if (store.cartData.addresses.shipping[fieldName].length) return true;
   }
 
   return false;
@@ -27,7 +27,7 @@ const copyShippingDetails = () => {
   )) {
     const billingFieldName = fieldName.replace("shipping_", "billing_");
     if (
-      fieldValue.length > 0 &&
+      fieldValue.length &&
       store.billingFieldsMapping[billingFieldName] &&
       store.billingFieldsMapping[billingFieldName].type !== "hidden"
     ) {

@@ -34,7 +34,7 @@ const reorderItems = (order) => {
     // Set new price
     product.productPrice = storeProduct.price;
 
-    if (product.productExtras.length > 0) {
+    if (product.productExtras.length) {
       const storeProductExtras = store.getProductExtras(storeProduct);
       storeProductExtras.forEach((storeProductExtra) => {
         const productExtra = Object.values(product.productExtras).find(
@@ -65,7 +65,7 @@ const reorderItems = (order) => {
     :order="currentOrder ? currentOrder : store.getUserOrders[0]"
   />
   <h3 class="mb-3">Istoric Comenzi</h3>
-  <div v-if="store.getUserOrders.length > 0">
+  <div v-if="store.getUserOrders.length">
     <table>
       <thead class="d-none d-lg-table-row">
         <th>Nr</th>

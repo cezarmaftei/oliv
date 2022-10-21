@@ -1,5 +1,6 @@
 import axios from "axios";
-const apiRoot = "https://new-site.olivbistro.ro";
+export const apiRoot = "https://new-site.olivbistro.ro";
+export const websiteRoot = "https://www.olivbistro.ro";
 // const WcApiKey = "ck_600ec0deee5141d9f47df5630197fbecbe2fc54d";
 // const WcApiSecret = "cs_d7f90b6535a732bd53e3363c110a25f6db982599";
 // const WcApiKey = "ck_2da30df94b9c39b9a003e73601d651e3cff87b8d";
