@@ -2,9 +2,7 @@
 import BtnClose from "../button/BtnClose.vue";
 import OrderDetails from "../partials/OrderDetails.vue";
 
-defineProps({
-  order: Object,
-});
+defineProps(["order"]);
 
 const emits = defineEmits(["reOrder"]);
 const reOrderItems = () => {
@@ -31,7 +29,7 @@ const reOrderItems = () => {
           />
         </div>
         <div class="modal-body">
-          <OrderDetails :order="order" />
+          <OrderDetails v-if="order" :order="order" />
 
           <button
             type="button"

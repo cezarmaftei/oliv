@@ -52,6 +52,9 @@ const sendOrder = async () => {
     }
 
     if (result) {
+      // Refresh account details
+      store.loadCustomerData();
+
       router.push({
         name: "page",
         params: {

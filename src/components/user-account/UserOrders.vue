@@ -1,12 +1,11 @@
 <script setup>
 import { useOlivStore } from "@/stores/oliv.js";
-import { ref } from "vue";
-import { Offcanvas } from "bootstrap";
+import { onMounted, ref } from "vue";
+import { Offcanvas, Modal } from "bootstrap";
 import ItemPrice from "../partials/ItemPrice.vue";
 import ModalOrderDetails from "../modal/ModalOrderDetails.vue";
 
 const store = useOlivStore();
-const currentOrder = ref(false);
 
 const dateToLocale = (dateString) => {
   let date = new Date(dateString);
@@ -55,15 +54,25 @@ const reorderItems = (order) => {
 
   offCanvas.show();
 };
+
+const currentOrder = ref(false);
+const orderDetailsModal = ref(false);
+onMounted(() => {
+  currentOrder.value = store.getUserOrders[0];
+  orderDetailsModal.value = new Modal("#order-details-modal");
+});
+
+const openOrderDetailsModal = (order) => {
+  currentOrder.value = order;
+  orderDetailsModal.value.show();
+};
 </script>
 <template>
   <ModalOrderDetails
-    @re-order="
-      reorderItems(currentOrder ? currentOrder : store.getUserOrders[0])
-    "
-    v-if="store.getUserOrders.length"
-    :order="currentOrder ? currentOrder : store.getUserOrders[0]"
+    @re-order="reorderItems(currentOrder)"
+    :order="currentOrder"
   />
+
   <h3 class="mb-3">Istoric Comenzi</h3>
   <div v-if="store.getUserOrders.length">
     <table>
@@ -113,9 +122,7 @@ const reorderItems = (order) => {
             <button
               type="button"
               class="btn btn-primary"
-              @click="currentOrder = order"
-              data-bs-toggle="modal"
-              data-bs-target="#order-details-modal"
+              @click="openOrderDetailsModal(order)"
             >
               detalii comanda
             </button>

@@ -109,7 +109,7 @@ const getShippingPrice = () => {
 
             <transition name="height-element-sm">
               <div class="col-12" v-if="addressError">
-                <div class="bg-danger">
+                <div class="error-message mb-0">
                   {{ addressError }}
                 </div>
               </div>

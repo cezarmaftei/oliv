@@ -331,7 +331,7 @@ export const useOlivStore = defineStore({
           orders.push(orderData);
       }
 
-      return orders.reverse();
+      return orders;
     },
   },
 
@@ -1347,7 +1347,6 @@ export const useOlivStore = defineStore({
       let productsAvailable = true;
       let productsToRemove = [];
       await productsData(cartProductsIds).then((data) => {
-        this.storeLiveUpdate = false;
         const productsData = data.data;
         // Loop through products to check if they are in stock
         this.cartData.items.forEach((product, productIndex) => {
@@ -1383,6 +1382,8 @@ export const useOlivStore = defineStore({
             }
           }
         });
+
+        this.storeLiveUpdate = false;
       });
 
       if (!productsAvailable) {
@@ -1429,7 +1430,6 @@ export const useOlivStore = defineStore({
         };
 
         if (shippingDefault) {
-          console.log("setting shipping default");
           userUpdate["meta_data"].push({
             key: "user_shipping_addresses",
             value: [shippingDefault],
@@ -1440,7 +1440,6 @@ export const useOlivStore = defineStore({
         }
 
         if (billingDefault) {
-          console.log("setting billing default");
           userUpdate["meta_data"].push({
             key: "user_billing_addresses",
             value: [billingDefault],

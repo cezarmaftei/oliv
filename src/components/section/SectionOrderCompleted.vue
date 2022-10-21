@@ -6,7 +6,7 @@ const route = useRoute();
 
 <template>
   <div v-if="route.params.orderData" class="order-completed-inner">
-    <OrderDetails :order="route.params.orderData" />
+    <OrderDetails :order="JSON.parse(route.params.orderData)" />
   </div>
 
   <h2 v-else>Nu ai plasat nici o comanda!</h2>
