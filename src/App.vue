@@ -136,7 +136,6 @@ useHeadRaw({
       </div>
     </div>
   </transition>
-
   <UpdateLoading />
   <ModalLogin />
   <ModalSearchResults />
