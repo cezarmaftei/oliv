@@ -37,7 +37,7 @@ store.$subscribe((mutation, state) => {
       <div class="overflow-hidden" :class="{ 'px-4': isOffCanvas }">
         <TransitionGroup name="add-remove-element">
           <div
-            class="cart-item no-delay"
+            class="cart-item"
             v-for="(cartItem, cartItemIndex) in store.getCartItems"
             :key="cartItem"
           >

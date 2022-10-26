@@ -48,7 +48,7 @@ const route = useRoute();
 @include media-breakpoint-up(xs) {
   .navbar-account {
     svg {
-      height: 2.5rem;
+      height: 2.2rem;
     }
   }
 }

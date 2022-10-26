@@ -4,14 +4,15 @@
 
 <style scoped lang="scss">
 .navbar-brand {
-  display: block;
-  width: 6rem;
+  white-space: nowrap;
+  transition: all 0.25s linear;
 
   &:before,
   &:after {
     content: "";
     display: inline-block;
     vertical-align: bottom;
+    transition: all 0.25s linear;
   }
 
   &:before {
@@ -29,8 +30,6 @@
   }
 
   @include media-breakpoint-up(sm) {
-    width: 13rem;
-
     &:before {
       width: 8rem;
       height: 7rem;
@@ -65,8 +64,6 @@
   }
 
   @include media-breakpoint-up(lg) {
-    width: 18rem;
-
     &:before {
       width: 12rem;
       height: 10.7rem;
@@ -75,14 +72,12 @@
     &:after {
       width: 12rem;
       height: 6.5rem;
-      margin-left: -6rem;
+      margin-left: -5rem;
       margin-bottom: 1rem;
     }
   }
 
   @include media-breakpoint-up(xl) {
-    width: 20rem;
-
     &:before {
       width: 13rem;
       height: 11.2rem;
@@ -95,19 +90,21 @@
   }
 }
 
-.cloned {
-  .navbar-brand {
-    @include media-breakpoint-up(lg) {
-      width: 20rem;
+@include media-breakpoint-up(lg) {
+  .navbar-scrolling {
+    .navbar-brand {
+      transition-delay: 0.25s;
       margin-top: -5rem;
-      margin-left: -6rem;
+      margin-left: -8rem;
 
       &:before {
+        transition-delay: 0.25s;
         width: 13rem;
         height: 11.2rem;
       }
 
       &:after {
+        transition-delay: 0.25s;
         width: 9rem;
         height: 5rem;
         margin-left: -2rem;

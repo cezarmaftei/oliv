@@ -1077,18 +1077,9 @@ export const useOlivStore = defineStore({
       }
 
       // Get shipping addresses
-      let userShippingAddresses = this.userData.customerAddresses.shipping
-        .length
-        ? Object.values(
-            Object.assign({}, this.userData.customerAddresses.shipping)
-          )
-        : [];
+      let userShippingAddresses = this.userData.customerAddresses.shipping;
 
-      let userBillingAddresses = this.userData.customerAddresses.billing.length
-        ? Object.values(
-            Object.assign({}, this.userData.customerAddresses.billing)
-          )
-        : [];
+      let userBillingAddresses = this.userData.customerAddresses.billing;
 
       if (!["setfirst", "delete"].includes(action)) {
         const addressData =
@@ -1186,6 +1177,32 @@ export const useOlivStore = defineStore({
         }
       }
 
+      // Update store state
+      if (addressType === "shipping") {
+        this.$patch((state) => {
+          state.userData.customerAddresses.shipping = userShippingAddresses;
+          if (userShippingAddresses.length) {
+            state.cartData.addresses.shipping = userShippingAddresses[0];
+          } else {
+            this.initCartAddresses("shipping");
+          }
+        });
+      }
+
+      if (addressType === "billing") {
+        this.userData.customerAddresses.billing = userBillingAddresses;
+        if (userBillingAddresses.length) {
+          this.cartData.addresses.billing = userBillingAddresses[0];
+        } else {
+          this.initCartAddresses("billing");
+        }
+      }
+
+      // Update cart cookie
+      cookies.set("oliv_cart", JSON.stringify(this.cartData), "7D");
+
+      this.storeLiveUpdate = false;
+
       const userUpdate = {
         id: this.userData.ID,
         meta_data: [
@@ -1202,44 +1219,46 @@ export const useOlivStore = defineStore({
         ],
       };
 
-      const updateWoo = await updateUser(userUpdate).then((data) => data.data);
+      updateUser(userUpdate);
 
-      if (updateWoo.id) {
-        // Update store state
-        if (addressType === "shipping") {
-          this.$patch((state) => {
-            state.userData.customerAddresses.shipping = userShippingAddresses;
-            if (userShippingAddresses.length) {
-              state.cartData.addresses.shipping = userShippingAddresses[0];
-            } else {
-              this.initCartAddresses("shipping");
-            }
-          });
-        }
+      return true;
 
-        if (addressType === "billing") {
-          this.userData.customerAddresses.billing = userBillingAddresses;
-          if (userBillingAddresses.length) {
-            this.cartData.addresses.billing = userBillingAddresses[0];
-          } else {
-            this.initCartAddresses("billing");
-          }
-        }
+      // const updateWoo = await updateUser(userUpdate).then((data) => data.data);
 
-        // Update cart cookie
-        cookies.set("oliv_cart", JSON.stringify(this.cartData), "7D");
-      } else {
-        return {
-          error:
-            "A aparut o problema la crearea adresei. Te rugam revino mai tarziu!",
-        };
-      }
+      // if (updateWoo.id) {
+      //   // Update store state
+      //   if (addressType === "shipping") {
+      //     this.$patch((state) => {
+      //       state.userData.customerAddresses.shipping = userShippingAddresses;
+      //       if (userShippingAddresses.length) {
+      //         state.cartData.addresses.shipping = userShippingAddresses[0];
+      //       } else {
+      //         this.initCartAddresses("shipping");
+      //       }
+      //     });
+      //   }
 
-      this.storeLiveUpdate = false;
+      //   if (addressType === "billing") {
+      //     this.userData.customerAddresses.billing = userBillingAddresses;
+      //     if (userBillingAddresses.length) {
+      //       this.cartData.addresses.billing = userBillingAddresses[0];
+      //     } else {
+      //       this.initCartAddresses("billing");
+      //     }
+      //   }
 
-      return {
-        success: updateWoo,
-      };
+      //   // Update cart cookie
+      //   cookies.set("oliv_cart", JSON.stringify(this.cartData), "7D");
+      // } else {
+      //   return {
+      //     error:
+      //       "A aparut o problema la crearea adresei. Te rugam revino mai tarziu!",
+      //   };
+      // }
+
+      // return {
+      //   success: updateWoo,
+      // };
     },
 
     /**

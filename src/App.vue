@@ -195,19 +195,18 @@ useHeadRaw({
   max-height: 30rem;
 }
 
+/**
+add-remove
+*/
 .add-remove-element-enter-from {
   opacity: 0;
   transform: translateX(-30rem);
   max-height: 0;
 }
 
+.add-remove-element-move,
 .add-remove-element-enter-active,
 .add-remove-element-leave-active {
-  transition: all 0.25s 0.5s ease;
-}
-
-.add-remove-element-enter-active.no-delay,
-.add-remove-element-leave-active.no-delay {
   transition: all 0.25s ease;
 }
 
@@ -216,11 +215,6 @@ useHeadRaw({
   opacity: 1;
   transform: translateX(0);
   max-height: 1000px;
-}
-
-.add-remove-element-leave-from.no-delay,
-.add-remove-element-enter-to.no-delay {
-  max-height: 300px;
 }
 
 .add-remove-element-leave-to {

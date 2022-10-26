@@ -2,36 +2,50 @@
 import VRuntimeTemplate from "vue3-runtime-template";
 import MenuProductCategories from "@/components/menu/MenuProductCategories.vue";
 import NavbarBrand from "./NavbarBrand.vue";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, computed } from "vue";
 import { useRoute } from "vue-router";
 import { useOlivStore } from "@/stores/oliv.js";
-import { computed } from "vue";
 import NavbarCallUs from "./NavbarCallUs.vue";
 import NavbarBtnSearch from "./NavbarBtnSearch.vue";
 import NavbarUserMenu from "./NavbarUserMenu.vue";
 import NavbarCartIcon from "./NavbarCartIcon.vue";
 
+defineProps({
+  isSingle: Boolean,
+});
+
 const route = useRoute();
 const store = useOlivStore();
 
 const mainNav = ref(false);
-const scrollingClass = ref(false);
-
-const props = defineProps({
-  isClone: Boolean,
-  isSingle: Boolean,
-});
 
 onMounted(() => {
-  if (props.isClone) {
-    onscroll = () => {
-      if (mainNav.value && window.scrollY > mainNav.value.clientHeight / 2) {
-        scrollingClass.value = true;
-      } else {
-        scrollingClass.value = false;
+  onscroll = () => {
+    console.log(mainNav.value.offsetTop);
+    if (!mainNav.value.classList.contains("navbar-single")) {
+      if (
+        window.scrollY > 100 &&
+        !mainNav.value.classList.contains("navbar-scrolling")
+      ) {
+        mainNav.value.classList.add("navbar-scrolling");
+        mainNav.value.classList.remove("navbar-no-scrolling");
+
+        setTimeout(() => {
+          mainNav.value.classList.add("navbar-scrolling-loaded");
+        }, 300);
+      } else if (
+        window.scrollY < 50 &&
+        mainNav.value.classList.contains("navbar-scrolling")
+      ) {
+        mainNav.value.classList.remove("navbar-scrolling");
+        mainNav.value.classList.add("navbar-no-scrolling");
+
+        setTimeout(() => {
+          mainNav.value.classList.remove("navbar-scrolling-loaded");
+        }, 300);
       }
-    };
-  }
+    }
+  };
 });
 
 const showMenuCart = computed(() => {
@@ -46,15 +60,12 @@ const showMenuCart = computed(() => {
     class="main-nav"
     ref="mainNav"
     :class="{
-      scrolling: scrollingClass || isSingle,
-      cloned: isClone || isSingle,
-      'fixed-top': isClone,
-      'sticky-top': isSingle,
+      'navbar-single navbar-scrolling navbar-scrolling-loaded': isSingle,
     }"
   >
     <div class="container">
       <div
-        class="navbar-top d-flex justify-content-end align-items-center overflow-hidden"
+        class="navbar-top d-flex justify-content-center align-items-center overflow-hidden bg-light"
       >
         <div class="navbar-brand-wrapper me-auto">
           <NavbarBrand />
@@ -62,43 +73,45 @@ const showMenuCart = computed(() => {
 
         <transition name="scale-element">
           <div
-            v-if="
-              !isClone &&
-              store.getPageBySlug(route) &&
-              store.getPageBySlug(route).acf
-            "
-            class="navbar-content-wrapper text-center d-none d-lg-block"
+            v-if="store.getPageBySlug(route) && store.getPageBySlug(route).acf"
+            class="navbar-content-wrapper text-center"
           >
-            <v-runtime-template
-              :template="store.getPageBySlug(route).acf.page_header_content"
-            ></v-runtime-template>
+            <div class="px-1">
+              <v-runtime-template
+                :template="store.getPageBySlug(route).acf.page_header_content"
+              ></v-runtime-template>
+            </div>
           </div>
         </transition>
 
         <div class="navbar-features-wrapper d-flex ms-auto">
-          <transition name="scale-element">
-            <NavbarCallUs />
-          </transition>
+          <div class="navbar-feature">
+            <transition name="scale-element">
+              <NavbarCallUs />
+            </transition>
+          </div>
 
-          <NavbarBtnSearch />
+          <div class="navbar-feature">
+            <NavbarBtnSearch />
+          </div>
 
-          <div class="navbar-buttons d-flex justify-content-end">
+          <div class="navbar-feature navbar-buttons d-flex justify-content-end">
             <transition name="scale-element">
               <NavbarUserMenu />
             </transition>
 
-            <div v-if="showMenuCart" class="navbar-cart-wrapper">
-              <transition name="scale-element">
+            <transition name="scale-element">
+              <div v-if="showMenuCart" class="navbar-cart-wrapper">
                 <NavbarCartIcon />
-              </transition>
-            </div>
+              </div>
+            </transition>
           </div>
         </div>
       </div>
     </div>
     <div class="navbar-bot">
       <div class="container">
-        <div class="secondary-navbar">
+        <div class="secondary-navbar bg-light">
           <MenuProductCategories />
         </div>
       </div>
@@ -107,21 +120,11 @@ const showMenuCart = computed(() => {
 </template>
 
 <style scoped lang="scss">
-.main-nav {
-  &.cloned {
-    transform: translateY(-105%);
-    @include transition(transform 0.2s linear);
-
-    &.scrolling {
-      transform: translateY(0);
-    }
-  }
+.main-nav-filler,
+.navbar-top {
+  @include transition($transition-base);
 }
 
-.navbar-top,
-.secondary-navbar {
-  background: $body-bg;
-}
 .navbar-top {
   position: relative;
   z-index: 1001;
@@ -134,12 +137,17 @@ const showMenuCart = computed(() => {
   align-items: center;
 }
 
+.navbar-feature {
+  margin: 0 0.5rem;
+}
+
 .navbar-cart-wrapper {
   white-space: nowrap;
 }
 
 .navbar-content-wrapper {
   flex-grow: 1;
+  display: none;
 }
 
 .navbar-buttons {
@@ -156,26 +164,22 @@ const showMenuCart = computed(() => {
   background: $body-bg;
 }
 
-.scrolling {
-  .navbar-bot {
-    padding: 0;
-  }
-
-  .secondary-navbar {
-    padding-top: 1rem;
-    padding-bottom: 1rem;
-  }
-}
-
 .navbar-separator {
   flex: 0 0 100%;
   max-width: 100%;
+}
+
+@include media-breakpoint-up(sm) {
+  .navbar-feature {
+    margin: 0 0.8rem;
+  }
 }
 
 @include media-breakpoint-up(lg) {
   .navbar-top {
     @include global-border;
     @include padding(2rem);
+    @include transition($transition-base);
   }
 
   .navbar-bot {
@@ -185,19 +189,25 @@ const showMenuCart = computed(() => {
   .navbar-features-wrapper {
     flex-direction: column;
     align-items: flex-end;
+    justify-content: space-around;
+  }
+
+  .navbar-feature {
+    width: 100%;
+    margin: 0.5rem 0;
   }
 
   .navbar-buttons {
     align-items: center;
-    width: 100%;
   }
 
   .navbar-cart-wrapper {
-    margin-left: auto;
+    margin-left: 3rem;
   }
 
   .navbar-content-wrapper {
-    padding: 0 1rem;
+    display: block;
+    position: relative;
 
     :deep {
       h1 {
@@ -211,22 +221,114 @@ const showMenuCart = computed(() => {
     }
   }
 
-  .cloned {
-    // .navbar-top {
-    //   padding-left: 0;
-    // }
-
-    .secondary-navbar {
-      padding: 0;
+  .navbar-scrolling {
+    .navbar-top {
+      max-height: 100px;
     }
-
     .navbar-content-wrapper {
-      display: none !important;
+      animation: content-scrolling 0.5s linear forwards;
     }
 
     .navbar-features-wrapper {
+      animation: features-scrolling 0.5s linear forwards;
+    }
+  }
+
+  .navbar-no-scrolling {
+    &:not(.navbar-scrolling-loaded) {
+      .navbar-top {
+        max-height: 600px;
+      }
+    }
+
+    .navbar-content-wrapper {
+      animation: content-no-scrolling 0.5s linear forwards;
+    }
+
+    .navbar-features-wrapper {
+      animation: features-no-scrolling 0.5s linear forwards;
+    }
+  }
+
+  .navbar-scrolling-loaded {
+    .navbar-top {
+      max-height: 100px;
+    }
+    .navbar-feature {
+      margin: 0 1rem;
+    }
+
+    .navbar-cart-wrapper {
+      margin-left: 2rem;
+    }
+  }
+
+  @keyframes content-scrolling {
+    0% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    50% {
+      transform: translateY(-50px);
+      opacity: 0;
+    }
+
+    100% {
+      transform: translateY(-500px);
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+  }
+
+  @keyframes content-no-scrolling {
+    0% {
+      transform: translateY(-500px);
+      opacity: 0;
+    }
+
+    70% {
+      transform: translateY(-50px);
+      opacity: 0;
+    }
+
+    100% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes features-scrolling {
+    0% {
+      transform: translateX(0);
+    }
+
+    50% {
+      transform: translateX(1000px);
+    }
+
+    100% {
+      transform: translateX(0);
       flex-direction: row;
       align-items: center;
+    }
+  }
+
+  @keyframes features-no-scrolling {
+    0% {
+      transform: translateX(0);
+    }
+
+    50% {
+      transform: translateX(1000px);
+      flex-direction: column;
+      align-items: flex-end;
+      justify-content: space-around;
+    }
+
+    100% {
+      transform: translateX(0);
     }
   }
 }
@@ -234,15 +336,6 @@ const showMenuCart = computed(() => {
 @include media-breakpoint-up(xl) {
   .navbar-buttons {
     font-size: 2.4rem;
-    align-items: center;
-    @include margin-top(2rem);
-    width: 100%;
-    justify-content: flex-start;
-
-    *:last-child {
-      margin-left: auto;
-      margin-right: 0;
-    }
   }
 
   .navbar-cart-wrapper {
@@ -258,11 +351,8 @@ const showMenuCart = computed(() => {
     }
   }
 
-  .cloned {
-    .navbar-buttons {
-      margin-top: 0;
-      width: auto;
-    }
+  .navbar-feature {
+    margin: 1rem 0;
   }
 }
 </style>

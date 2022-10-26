@@ -26,7 +26,6 @@ const store = useOlivStore();
 
 <style scoped lang="scss">
 .navbar-call-us {
-  margin-right: 1rem;
   white-space: nowrap;
   line-height: 0.7;
   font-family: $font-family-lanekcut;
@@ -47,20 +46,21 @@ const store = useOlivStore();
 
 @include media-breakpoint-up(sm) {
   .navbar-call-us {
-    margin-right: 2rem;
+    margin-right: 0;
+    display: block;
   }
-  .cloned {
-    .navbar-call-us {
-      display: flex;
-      align-items: center;
-      margin: 0;
-      margin-right: 3rem;
+  // .cloned {
+  //   .navbar-call-us {
+  //     display: flex;
+  //     align-items: center;
+  //     margin: 0;
+  //     margin-right: 3rem;
 
-      .phone-number {
-        margin-left: 1.5rem;
-      }
-    }
-  }
+  //     .phone-number {
+  //       margin-left: 1.5rem;
+  //     }
+  //   }
+  // }
 }
 
 @include media-breakpoint-between(sm, md) {
@@ -90,8 +90,6 @@ const store = useOlivStore();
 
 @include media-breakpoint-up(lg) {
   .navbar-call-us {
-    margin-bottom: 0.5rem;
-    margin-right: 0;
     font-size: 2.4rem;
 
     span {
@@ -99,7 +97,7 @@ const store = useOlivStore();
     }
 
     .phone-number {
-      font-size: 2.6rem;
+      font-size: 2.8rem;
     }
 
     .phone-text {
@@ -112,7 +110,7 @@ const store = useOlivStore();
     }
   }
 
-  .cloned {
+  .navbar-scrolling-in {
     .navbar-call-us {
       font-size: 2.4rem;
 
@@ -140,7 +138,6 @@ const store = useOlivStore();
     display: flex;
     justify-content: flex-end;
     font-size: 2.4rem;
-    @include margin-bottom(2rem);
 
     span {
       display: flex !important;

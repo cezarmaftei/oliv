@@ -7,12 +7,14 @@ const route = useRoute();
 </script>
 
 <template>
-  <header
-    class="menu-header"
-    :class="{ 'sticky-top': route.name === 'product' }"
-  >
+  <header class="menu-header sticky-top">
     <MainNav :isSingle="route.name === 'product'" />
-    <MainNav :isClone="true" v-if="route.name !== 'product'" />
     <CartDrawer v-if="route.params.slug !== 'finalizare'" />
   </header>
 </template>
+
+<style scoped lang="scss">
+.sticky-top {
+  z-index: 1200;
+}
+</style>

@@ -40,7 +40,7 @@ const addNewBilling = ref(false);
     </div>
   </transition>
 
-  <div class="mb-3" v-if="store.userData.customerAddresses.shipping.length">
+  <div class="mb-3">
     <transition-group name="add-remove-element">
       <div
         v-for="(address, addressIndex) in store.userData.customerAddresses
@@ -56,9 +56,12 @@ const addNewBilling = ref(false);
       </div>
     </transition-group>
   </div>
-  <div v-else>
-    <p>Nu ai nici o adresa de livrare</p>
-  </div>
+  <transition name="height-element-sm">
+    <div v-show="!store.userData.customerAddresses.shipping.length">
+      <p>Nu ai nici o adresa de livrare</p>
+    </div>
+  </transition>
+
   <!-- /.Shipping Addresses -->
 
   <!-- Billing Addresses -->
@@ -84,25 +87,26 @@ const addNewBilling = ref(false);
     </div>
   </transition>
 
-  <div v-if="store.userData.customerAddresses.billing.length">
-    <transition-group name="add-remove-element">
-      <div
-        v-for="(address, addressIndex) in store.userData.customerAddresses
-          .billing"
-        :key="address"
-      >
-        <UserAddress
-          addressType="billing"
-          :address="address"
-          :addressIndex="addressIndex"
-          :isCheckout="isCheckout"
-        />
-      </div>
-    </transition-group>
-  </div>
-  <div v-else>
-    <p>Nu ai nici o adresa de facturare</p>
-  </div>
+  <transition-group name="add-remove-element">
+    <div
+      v-for="(address, addressIndex) in store.userData.customerAddresses
+        .billing"
+      :key="address"
+    >
+      <UserAddress
+        addressType="billing"
+        :address="address"
+        :addressIndex="addressIndex"
+        :isCheckout="isCheckout"
+      />
+    </div>
+  </transition-group>
+
+  <transition name="height-element-sm">
+    <div v-show="!store.userData.customerAddresses.billing.length">
+      <p>Nu ai nici o adresa de facturare</p>
+    </div>
+  </transition>
   <!-- /.Billing Addresses -->
 </template>
 

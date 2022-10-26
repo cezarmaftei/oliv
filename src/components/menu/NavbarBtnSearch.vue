@@ -23,7 +23,6 @@ import IconSearch from "../icons/IconSearch.vue";
   position: relative;
   @include global-border;
   padding: 0.7rem 3rem 0.7rem 1.5rem;
-  margin-right: 2rem;
   border-radius: 2rem;
   background: $white;
   font-family: $font-family-lanekcut;
@@ -52,7 +51,6 @@ import IconSearch from "../icons/IconSearch.vue";
 .btn-mobile-search {
   border: 0;
   background: none;
-  margin-right: 1rem;
 
   svg {
     height: 2rem;
@@ -68,50 +66,23 @@ import IconSearch from "../icons/IconSearch.vue";
   }
 }
 
-@include media-breakpoint-up(sm) {
-  .btn-mobile-search {
-    margin-right: 2rem;
-  }
-}
-
 @include media-breakpoint-up(lg) {
   .btn-search {
     min-width: 13rem;
-    margin-right: 0;
-    margin-bottom: 1rem;
-  }
-
-  .cloned {
-    .btn-search {
-      margin-right: 3rem;
-      margin-bottom: 0;
-    }
   }
 }
 
 @include media-breakpoint-up(xl) {
   .btn-search {
-    min-width: 100%;
+    min-width: 22rem;
     font-size: 2.4rem;
     padding: 0.7rem 4rem 0.7rem 2rem;
     border-radius: 2.4rem;
     line-height: 1.15;
-    margin-bottom: 0;
 
     &:after {
       width: 1.6rem;
     }
-  }
-
-  .cloned {
-    .btn-search {
-      min-width: 23rem;
-    }
-  }
-}
-
-@include media-breakpoint-up(xxl) {
-  .btn-search {
   }
 }
 </style>
