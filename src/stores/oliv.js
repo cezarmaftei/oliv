@@ -274,12 +274,13 @@ export const useOlivStore = defineStore({
         if (productCat === "Toate") {
           return state.storeData.products;
         } else {
+          console.log("intra");
           return state.storeData.products.filter((product) => {
-            console.log(productCat);
-            return product.categories.filter((cat) => {
-              console.log(cat.name);
-              productCat === cat.name;
-            });
+            if (
+              product.categories.filter((cat) => productCat === cat.name).length
+            ) {
+              return product;
+            }
           });
         }
       };
