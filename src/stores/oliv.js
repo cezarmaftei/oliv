@@ -274,7 +274,6 @@ export const useOlivStore = defineStore({
         if (productCat === "Toate") {
           return state.storeData.products;
         } else {
-          console.log("intra");
           return state.storeData.products.filter((product) => {
             if (
               product.categories.filter((cat) => productCat === cat.name).length
