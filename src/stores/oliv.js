@@ -275,7 +275,11 @@ export const useOlivStore = defineStore({
           return state.storeData.products;
         } else {
           return state.storeData.products.filter((product) => {
-            return product.categories.filter((cat) => productCat === cat.name);
+            console.log(productCat);
+            return product.categories.filter((cat) => {
+              console.log(cat.name);
+              productCat === cat.name;
+            });
           });
         }
       };
