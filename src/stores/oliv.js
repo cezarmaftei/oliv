@@ -241,9 +241,19 @@ export const useOlivStore = defineStore({
               break;
 
             case "article":
-              result = state.articleData.filter(
-                (article) => article.slug === route.params.slug
-              )[0];
+              {
+                result = state.articleData.filter(
+                  (article) => article.slug === route.params.slug
+                )[0];
+
+                // Get blog title for article
+                const blogPage = state.pageData.filter(
+                  (page) => page.slug === "blog"
+                )[0];
+
+                result["acf"]["page_header_content"] =
+                  blogPage.acf.page_header_content;
+              }
               break;
           }
 

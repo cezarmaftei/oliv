@@ -21,7 +21,6 @@ const mainNav = ref(false);
 
 onMounted(() => {
   onscroll = () => {
-    console.log(mainNav.value.offsetTop);
     if (!mainNav.value.classList.contains("navbar-single")) {
       if (
         window.scrollY > 100 &&
@@ -156,12 +155,15 @@ const showMenuCart = computed(() => {
 }
 
 .navbar-bot {
-  @include padding(3rem 0);
   @include transition($transition-base);
 }
 
 .menu-header {
   background: $body-bg;
+}
+
+.secondary-navbar {
+  @include padding(3rem 0);
 }
 
 .navbar-separator {
@@ -182,7 +184,7 @@ const showMenuCart = computed(() => {
     @include transition($transition-base);
   }
 
-  .navbar-bot {
+  .secondary-navbar {
     padding: 0;
   }
 

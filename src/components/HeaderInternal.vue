@@ -15,6 +15,6 @@ const route = useRoute();
 
 <style scoped lang="scss">
 .sticky-top {
-  z-index: 1200;
+  z-index: 1030;
 }
 </style>
