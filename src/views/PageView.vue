@@ -35,11 +35,11 @@ const pageTemplates = {
 </script>
 
 <template>
-  <div id="page" class="page d-flex flex-column">
+  <div id="page" class="page d-flex flex-column" :class="`page-${route.name}`">
     <HeaderInternal />
     <main
       id="main-content"
-      class="main-content container d-flex flex-column flex-grow-1"
+      class="main-content container d-flex flex-column flex-grow-1 my-7"
     >
       <section
         v-if="store.isLoaded && store.getPageBySlug(route)"
@@ -93,3 +93,33 @@ const pageTemplates = {
     <FooterInternal />
   </div>
 </template>
+
+<style scoped lang="scss">
+.page:before {
+  content: "";
+  display: block;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  width: 100%;
+  height: 100%;
+  background: url("/bg-meniu-top-left.png") no-repeat left 25% / auto,
+    url("/bg-meniu-top-right.png") no-repeat right top / auto,
+    url("/bg-meniu-bottom-right.png") no-repeat right bottom / 25vh auto,
+    url("/bg-meniu-bottom-left.png") no-repeat left 90% / auto;
+
+  @include media-breakpoint-up(xxl) {
+    max-width: 1500px;
+  }
+}
+// .page-home:before {
+//   @include media-breakpoint-up(sm) {
+//     background: url("/bg-meniu-top-right.png") no-repeat right top / auto,
+//       url("/bg-meniu-bottom-right.png") no-repeat right bottom / 25vh auto,
+//       url("/bg-meniu-bottom-left.png") no-repeat left bottom / auto;
+//   }
+// }
+</style>

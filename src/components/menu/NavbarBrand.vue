@@ -90,6 +90,23 @@
   }
 }
 
+@include media-breakpoint-up(sm) {
+  .navbar-scrolling {
+    .navbar-brand {
+      &:before {
+        width: 5rem;
+        height: 4.5rem;
+      }
+
+      &:after {
+        width: 6rem;
+        height: 3rem;
+        margin-left: -2rem;
+      }
+    }
+  }
+}
+
 @include media-breakpoint-up(lg) {
   .navbar-scrolling {
     .navbar-brand {

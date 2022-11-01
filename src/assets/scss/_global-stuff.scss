@@ -4,7 +4,6 @@
 
 .section-bordered-content {
   @include global-border;
-  margin-bottom: -2px;
   @include padding(7rem);
 }
 

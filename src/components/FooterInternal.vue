@@ -8,7 +8,10 @@ import NavbarBrand from "./menu/NavbarBrand.vue";
 const store = useOlivStore();
 </script>
 <template>
-  <footer v-if="store.websiteOptions.footer" class="site-footer">
+  <footer
+    v-if="store.websiteOptions.footer"
+    class="site-footer position-relative mb-7"
+  >
     <div class="container">
       <div class="row">
         <div class="col-12">
@@ -68,6 +71,7 @@ const store = useOlivStore();
 .site-footer {
   margin-top: auto;
   @include padding-top(5rem);
+  z-index: 10;
 }
 
 .footer-top,

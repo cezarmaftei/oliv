@@ -30,9 +30,9 @@ const store = useOlivStore();
 
 <style scoped lang="scss">
 .navbar-cart {
-  flex-direction: column;
   border: 0;
   padding: 0;
+
   .cart-icon {
     position: relative;
     padding: 0;
@@ -57,28 +57,7 @@ const store = useOlivStore();
   font-size: 1.6rem;
 }
 
-.navbar-cart {
-  justify-content: center;
-
-  .cart-icon {
-    margin-right: 0;
-  }
-}
-
-@include media-breakpoint-up(xs) {
-  .navbar-cart {
-    justify-content: flex-start;
-
-    .cart-icon {
-      margin-right: 0.5rem;
-    }
-  }
-}
-
 @include media-breakpoint-up(sm) {
-  .navbar-cart {
-    flex-direction: row;
-  }
   .navbar-total-price {
     font-size: 2rem;
   }

@@ -17,8 +17,13 @@
 .navbar-cart {
   .icon-cart {
     display: block;
-    width: 2.2rem;
-    height: 2.2rem;
+    width: 2rem;
+    height: 2rem;
+
+    @include media-breakpoint-up(xs) {
+      width: 2.2rem;
+      height: 2.2rem;
+    }
   }
 }
 </style>

@@ -58,10 +58,10 @@ import IconSearch from "../icons/IconSearch.vue";
   }
 }
 
-@include media-breakpoint-up(xs) {
+@include media-breakpoint-up(sm) {
   .btn-mobile-search {
     svg {
-      height: 2.5rem;
+      height: 2.2rem;
     }
   }
 }
@@ -69,6 +69,7 @@ import IconSearch from "../icons/IconSearch.vue";
 @include media-breakpoint-up(lg) {
   .btn-search {
     min-width: 13rem;
+    width: 100%;
   }
 }
 

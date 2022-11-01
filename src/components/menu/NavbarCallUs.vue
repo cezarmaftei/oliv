@@ -11,8 +11,8 @@ const store = useOlivStore();
     class="navbar-call-us text-end"
     :href="`tel:${store.websiteOptions.global_settings.phone_number}`"
   >
-    <IconPhone class="d-xs-none d-lg-inline-block d-xl-none" />
-    <span class="d-none d-xs-inline-block">
+    <IconPhone class="d-sm-none d-lg-inline-block d-xl-none" />
+    <span class="d-none d-sm-inline-block">
       <span class="phone-text">Contacteaza-ne</span>
       <span class="phone-number">{{
         store.websiteOptions.global_settings.phone_number
@@ -44,6 +44,14 @@ const store = useOlivStore();
   }
 }
 
+@include media-breakpoint-up(xs) {
+  .navbar-call-us {
+    svg {
+      height: 2.2rem;
+    }
+  }
+}
+
 @include media-breakpoint-up(sm) {
   .navbar-call-us {
     margin-right: 0;
@@ -63,27 +71,12 @@ const store = useOlivStore();
   // }
 }
 
-@include media-breakpoint-between(sm, md) {
+@include media-breakpoint-between(sm, lg) {
   .navbar-call-us {
     font-size: 2.2rem;
 
     .phone-number {
       font-size: 2.8rem;
-    }
-  }
-}
-
-@include media-breakpoint-up(md) {
-  .navbar-call-us {
-    font-size: 2.4rem;
-
-    span {
-      font-size: 2.4rem;
-      display: flex !important;
-    }
-
-    .phone-number {
-      margin-left: 1rem;
     }
   }
 }
@@ -98,6 +91,7 @@ const store = useOlivStore();
 
     .phone-number {
       font-size: 2.8rem;
+      margin-left: 1rem;
     }
 
     .phone-text {

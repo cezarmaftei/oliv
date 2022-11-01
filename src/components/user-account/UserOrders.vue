@@ -23,36 +23,42 @@ const orderTotalItems = (items) => {
 
 const offCanvas = new Offcanvas("#cart-drawer");
 const reorderItems = (order) => {
-  const newCartItems = store.getReorder(order.meta_data);
+  if (
+    window.confirm(
+      'Te rugam sa confirmi re-efectuarea comenzii apasand butonul "OK"'
+    )
+  ) {
+    const newCartItems = store.getReorder(order.meta_data);
 
-  newCartItems.forEach((product) => {
-    const storeProduct = store.storeData.products.filter(
-      (p) => p.id === product.id
-    )[0];
+    newCartItems.forEach((product) => {
+      const storeProduct = store.storeData.products.filter(
+        (p) => p.id === product.id
+      )[0];
 
-    // Set new price
-    product.productPrice = storeProduct.price;
+      // Set new price
+      product.productPrice = storeProduct.price;
 
-    if (product.productExtras.length) {
-      const storeProductExtras = store.getProductExtras(storeProduct);
-      storeProductExtras.forEach((storeProductExtra) => {
-        const productExtra = Object.values(product.productExtras).find(
-          (value) => storeProductExtra._id === value._id
-        );
+      if (product.productExtras.length) {
+        const storeProductExtras = store.getProductExtras(storeProduct);
+        storeProductExtras.forEach((storeProductExtra) => {
+          const productExtra = Object.values(product.productExtras).find(
+            (value) => storeProductExtra._id === value._id
+          );
 
-        // console.log(
-        //   `productExtra.extraPrice: ${productExtra.extraPrice} updated to storeProductExtra._price: ${storeProductExtra._price}`
-        // );
+          // console.log(
+          //   `productExtra.extraPrice: ${productExtra.extraPrice} updated to storeProductExtra._price: ${storeProductExtra._price}`
+          // );
 
-        // Set new price
-        productExtra.extraPrice = storeProductExtra._price;
-      });
-    }
-  });
+          // Set new price
+          productExtra.extraPrice = storeProductExtra._price;
+        });
+      }
+    });
 
-  store.cartData.items = newCartItems;
+    store.cartData.items = newCartItems;
 
-  offCanvas.show();
+    offCanvas.show();
+  }
 };
 
 const currentOrder = ref(false);

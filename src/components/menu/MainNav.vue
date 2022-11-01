@@ -9,6 +9,7 @@ import NavbarCallUs from "./NavbarCallUs.vue";
 import NavbarBtnSearch from "./NavbarBtnSearch.vue";
 import NavbarUserMenu from "./NavbarUserMenu.vue";
 import NavbarCartIcon from "./NavbarCartIcon.vue";
+import IconMenu from "../icons/IconMenu.vue";
 
 defineProps({
   isSingle: Boolean,
@@ -24,7 +25,7 @@ onMounted(() => {
     if (!mainNav.value.classList.contains("navbar-single")) {
       if (
         window.scrollY > 100 &&
-        !mainNav.value.classList.contains("navbar-scrolling")
+        !mainNav.value.classList.contains("navbar-scrolling-loaded")
       ) {
         mainNav.value.classList.add("navbar-scrolling");
         mainNav.value.classList.remove("navbar-no-scrolling");
@@ -34,7 +35,7 @@ onMounted(() => {
         }, 300);
       } else if (
         window.scrollY < 50 &&
-        mainNav.value.classList.contains("navbar-scrolling")
+        mainNav.value.classList.contains("navbar-scrolling-loaded")
       ) {
         mainNav.value.classList.remove("navbar-scrolling");
         mainNav.value.classList.add("navbar-no-scrolling");
@@ -53,6 +54,8 @@ const showMenuCart = computed(() => {
 
   return true;
 });
+
+const showCategoriesMenu = ref(false);
 </script>
 <template>
   <nav
@@ -105,13 +108,30 @@ const showMenuCart = computed(() => {
               </div>
             </transition>
           </div>
+
+          <div class="navbar-feature d-flex align-items-center d-lg-none">
+            <button
+              class="mobile-categories-filter"
+              @click="showCategoriesMenu = !showCategoriesMenu"
+              :class="{ active: showCategoriesMenu }"
+            >
+              <IconMenu />
+            </button>
+          </div>
         </div>
       </div>
     </div>
     <div class="navbar-bot">
       <div class="container">
-        <div class="secondary-navbar bg-light">
-          <MenuProductCategories />
+        <div class="menu-product-categories-outer bg-light">
+          <div
+            class="menu-product-categories-inner"
+            :class="{ show: showCategoriesMenu }"
+          >
+            <div class="secondary-navbar">
+              <MenuProductCategories />
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -171,6 +191,44 @@ const showMenuCart = computed(() => {
   max-width: 100%;
 }
 
+.mobile-categories-filter {
+  border: 0;
+  background: none;
+  margin: 0;
+  padding: 0;
+  width: 2rem;
+  height: 2rem;
+  fill: $body-color;
+  @include transition($transition-base);
+
+  svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  &.active {
+    fill: $olive;
+  }
+}
+
+.menu-product-categories-inner {
+  @include transition($transition-base);
+  max-height: 0;
+  overflow: hidden;
+
+  &.show {
+    max-height: 300px;
+  }
+}
+
+@include media-breakpoint-up(xs) {
+  .mobile-categories-filter {
+    width: 2.2rem;
+    height: 2.2rem;
+  }
+}
+
 @include media-breakpoint-up(sm) {
   .navbar-feature {
     margin: 0 0.8rem;
@@ -227,6 +285,7 @@ const showMenuCart = computed(() => {
     .navbar-top {
       max-height: 100px;
     }
+
     .navbar-content-wrapper {
       animation: content-scrolling 0.5s linear forwards;
     }
@@ -256,6 +315,7 @@ const showMenuCart = computed(() => {
     .navbar-top {
       max-height: 100px;
     }
+
     .navbar-feature {
       margin: 0 1rem;
     }

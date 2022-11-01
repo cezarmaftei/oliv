@@ -15,7 +15,7 @@ if (route.query.categorie) activeCat.value = route.query.categorie;
 </script>
 
 <template>
-  <div class="row row-products gy-2" v-if="store.storeData.products">
+  <div class="row row-products gy-2 gy-sm-0" v-if="store.storeData.products">
     <TransitionGroup name="scale-element">
       <div
         class="col-12 col-sm-6 col-xl-4 col-xxl-3"
@@ -33,12 +33,11 @@ if (route.query.categorie) activeCat.value = route.query.categorie;
 <style scoped lang="scss">
 @include media-breakpoint-up(sm) {
   .row-products {
-    margin: 0 0 -2px;
+    margin: -2px 0;
     border-top: 2px solid $border-color;
 
     [class*="col"] {
       padding: 0;
-      margin: 0;
       @include global-border;
       border-top: 0;
 
