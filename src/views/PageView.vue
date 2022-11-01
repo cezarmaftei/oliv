@@ -106,10 +106,13 @@ const pageTemplates = {
   margin: auto;
   width: 100%;
   height: 100%;
-  background: url("/bg-meniu-top-left.png") no-repeat left 25% / auto,
-    url("/bg-meniu-top-right.png") no-repeat right top / auto,
-    url("/bg-meniu-bottom-right.png") no-repeat right bottom / 25vh auto,
-    url("/bg-meniu-bottom-left.png") no-repeat left 90% / auto;
+
+  @include media-breakpoint-up(sm) {
+    background: url("/bg-meniu-top-left.png") no-repeat left 25% / auto,
+      url("/bg-meniu-top-right.png") no-repeat right top / auto,
+      url("/bg-meniu-bottom-right.png") no-repeat right bottom / 25vh auto,
+      url("/bg-meniu-bottom-left.png") no-repeat left 90% / auto;
+  }
 
   @include media-breakpoint-up(xxl) {
     max-width: 1500px;
