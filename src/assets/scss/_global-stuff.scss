@@ -5,6 +5,7 @@
 .section-bordered-content {
   @include global-border;
   @include padding(7rem);
+  background: $light;
 }
 
 .sticky-spacing {
