@@ -112,7 +112,7 @@ const pageTemplates = {
 
 @include media-breakpoint-up(sm) {
   .page-home:before {
-    background: url("/bg-meniu-bottom-right.png") no-repeat right bottom / 15vh
+    background: url("/bg-meniu-bottom-right.png") no-repeat right bottom / 30rem
       auto;
   }
 

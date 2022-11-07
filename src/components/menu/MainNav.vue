@@ -220,6 +220,10 @@ const showCategoriesMenu = ref(false);
   &.show {
     max-height: 300px;
   }
+
+  @include media-breakpoint-up(lg) {
+    max-height: 300px;
+  }
 }
 
 @include media-breakpoint-up(xs) {

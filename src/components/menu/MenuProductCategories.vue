@@ -126,7 +126,7 @@ watch(
 
 @include media-breakpoint-up(lg) {
   .row-categories {
-    margin: -2px 0;
+    margin: -2px 0 0;
     width: 100%;
 
     [class*="col-"] {
