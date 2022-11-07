@@ -163,6 +163,16 @@ const currentItemPrice = computed(() => {
 
   return price;
 });
+
+const isNew = computed(() => {
+  let productDate = Date.parse(props.product.date_created);
+  productDate = new Date(productDate);
+  const currentDate = new Date();
+
+  if (currentDate.getMonth() - productDate.getMonth() < 7) return true;
+
+  return false;
+});
 </script>
 
 <template>
@@ -182,8 +192,14 @@ const currentItemPrice = computed(() => {
     </div>
     <figure class="d-flex align-items-center justify-content-center">
       <LoadImage v-if="isSingle" :id="product.images[0].id" size="medium" />
-      <router-link v-else :to="`/meniu/${product.slug}`"
-        ><LoadImage :id="product.images[0].id" size="medium"
+      <router-link v-else :to="`/meniu/${product.slug}`">
+        <div
+          class="product-new d-flex align-items-center justify-content-center"
+          v-if="isNew"
+        >
+          NEW
+        </div>
+        <LoadImage :id="product.images[0].id" size="medium"
       /></router-link>
     </figure>
     <div class="product-description">
@@ -259,6 +275,35 @@ const currentItemPrice = computed(() => {
 </template>
 
 <style scoped lang="scss">
+.product-new {
+  background: url("/bg-product-new.png") no-repeat center center / 100% 100%;
+  font-family: $font-family-lanekcut;
+  font-size: 1.8rem;
+  color: $white;
+  position: absolute;
+  z-index: 10;
+  width: 3.2rem;
+  height: 3.2rem;
+  right: -0.5rem;
+  top: -1rem;
+
+  @include media-breakpoint-up(sm) {
+    font-size: 2.4rem;
+    width: 6.2rem;
+    height: 6.2rem;
+    right: -1.5rem;
+    top: -1.5rem;
+  }
+
+  @include media-breakpoint-up(md) {
+    right: -2.1rem;
+    top: -2.7rem;
+  }
+
+  @include media-breakpoint-up(lg) {
+    right: -2.7rem;
+  }
+}
 .card-product-listing {
   background: $white;
   position: relative;
@@ -276,6 +321,11 @@ const currentItemPrice = computed(() => {
     top: 0;
     width: 8rem;
     height: 8rem;
+
+    a {
+      display: block;
+      position: relative;
+    }
 
     :deep {
       img,
@@ -450,6 +500,28 @@ const currentItemPrice = computed(() => {
               url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1489.73 1486" fill="#{$dark}"><path d="M1489.67,1327.53,1438.93,152.62C1438.06,68,1368.59,0,1283.34,0h-1077C121.08,0,51.65,68,50.77,152.63L.06,1327.8c0,1-.06,2-.06,3C0,1416.3,69.8,1486,155.59,1486H1334.15c85.79,0,155.58-69.83,155.58-155.38,0-.95,0-2.14-.06-3.09M1334.15,1354H155.59a23.25,23.25,0,0,1-23.43-22.34L182.84,156.71c0-1,.06-1.51.06-2.46,0-12.69,10.28-22.25,23.41-22.25h1077c13.15,0,23.46,9.48,23.46,22.17,0,1,0,1.67.06,2.62l50.71,1175a23.14,23.14,0,0,1-23.42,22.22"/><path d="M965.5,256.6c-36.49,0-66.5,29.58-66.5,66.07V522.35c0,84.12-68.81,152.56-153.54,152.56S592,606.47,592,522.35V322.67a66,66,0,1,0-132,0V522.35c0,157,128.42,284.7,286,284.7s286-127.72,286-284.7V322.67c0-36.49-30-66.07-66.5-66.07"/></svg>')
             )
             no-repeat center center / 100% auto;
+        }
+      }
+    }
+  }
+
+  @include media-breakpoint-up(xl) {
+    figure {
+      :deep {
+        img {
+          @include transition($transition-base);
+          filter: grayscale(1);
+        }
+      }
+    }
+
+    &:hover {
+      figure {
+        :deep {
+          img {
+            @include transition($transition-base);
+            filter: grayscale(0);
+          }
         }
       }
     }

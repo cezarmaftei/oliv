@@ -95,10 +95,12 @@ const pageTemplates = {
 </template>
 
 <style scoped lang="scss">
-.page:before {
+.page:before,
+.page:after {
   content: "";
   display: block;
   position: fixed;
+  z-index: -1;
   top: 0;
   bottom: 0;
   left: 0;
@@ -106,18 +108,30 @@ const pageTemplates = {
   margin: auto;
   width: 100%;
   height: 100%;
+}
 
-  @include media-breakpoint-up(sm) {
-    background: url("/bg-meniu-top-left.png") no-repeat left 25% / auto,
-      url("/bg-meniu-top-right.png") no-repeat right top / auto,
-      url("/bg-meniu-bottom-right.png") no-repeat right bottom / 25vh auto,
+@include media-breakpoint-up(sm) {
+  .page-home:before {
+    background: url("/bg-meniu-bottom-right.png") no-repeat right bottom / 15vh
+      auto;
+  }
+
+  .page-home:after {
+    background: url("/bg-meniu-top-right.png") no-repeat right 5% / auto,
       url("/bg-meniu-bottom-left.png") no-repeat left 90% / auto;
   }
+}
 
-  @include media-breakpoint-up(xxl) {
+@include media-breakpoint-up(xxl) {
+  .page:before {
     max-width: 1500px;
   }
+
+  .page:after {
+    max-width: 1370px;
+  }
 }
+
 // .page-home:before {
 //   @include media-breakpoint-up(sm) {
 //     background: url("/bg-meniu-top-right.png") no-repeat right top / auto,
