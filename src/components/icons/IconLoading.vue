@@ -31,7 +31,7 @@ svg {
   max-width: 4rem;
   max-height: 4rem;
   margin: auto;
-  fill: $olive;
+  fill: $body-color;
 }
 .main-nav {
   svg {
