@@ -63,7 +63,7 @@ watch(
 .menu-loading {
   min-height: 50px;
   @include global-border;
-  margin: -2px 0;
+  margin: -2px 0 0;
 }
 .navbar-bot {
   h3 {
