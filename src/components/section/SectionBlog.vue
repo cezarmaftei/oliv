@@ -18,7 +18,7 @@ const blogArticles = computed(() => {
 <template>
   <div class="articles-listing pb-8">
     <TransitionGroup name="scale-element">
-      <div v-for="article in blogArticles" :key="article">
+      <div class="bg-light" v-for="article in blogArticles" :key="article">
         <BlogArticle :article="article" />
       </div>
     </TransitionGroup>

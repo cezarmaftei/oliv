@@ -324,7 +324,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="contact-wrapper text-center p-8">
+  <div class="contact-wrapper bg-light text-center p-8">
     <div class="form-wrapper">
       <div
         class="form-top-content"
@@ -336,7 +336,7 @@ onMounted(() => {
       />
     </div>
   </div>
-  <div class="map-wrapper pt-7 px-4 pb-4">
+  <div class="map-wrapper bg-light pt-7 px-4 pb-4">
     <h2 class="mb-3" v-html="contactSectionData.map_heading"></h2>
 
     <div class="gmap" ref="gmap"></div>

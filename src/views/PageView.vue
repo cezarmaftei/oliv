@@ -18,6 +18,7 @@ import SectionContact from "../components/section/SectionContact.vue";
 import SectionBlogSingle from "../components/section/SectionBlogSingle.vue";
 import PageNotFound from "../components/partials/PageNotFound.vue";
 import IconLoading from "../components/icons/IconLoading.vue";
+import { computed } from "vue";
 
 const store = useOlivStore();
 const route = useRoute();
@@ -32,10 +33,16 @@ const pageTemplates = {
   SectionBlog,
   SectionContact,
 };
+
+const pageClass = computed(() => {
+  if (route.params.slug)
+    return `page-${route.name} page-${route.name}-${route.params.slug}`;
+  else return `page-${route.name}`;
+});
 </script>
 
 <template>
-  <div id="page" class="page d-flex flex-column" :class="`page-${route.name}`">
+  <div id="page" class="page d-flex flex-column" :class="pageClass">
     <HeaderInternal />
     <main
       id="main-content"
@@ -111,6 +118,18 @@ const pageTemplates = {
 }
 
 @include media-breakpoint-up(sm) {
+  .page-page:before,
+  .page-article:before {
+    background: url("/bg-checkout-top-left.png") no-repeat left 30% / 15rem auto,
+      url("/bg-checkout-top-right.png") no-repeat right 5% / 15rem auto,
+      url("/bg-checkout-bottom-right.png") no-repeat right bottom / 15rem auto;
+  }
+
+  .page-page:after,
+  .page-article:after {
+    background: url("/bg-meniu-bottom-left.png") no-repeat left 90% / auto;
+  }
+
   .page-home:before {
     background: url("/bg-meniu-bottom-right.png") no-repeat right bottom / 30rem
       auto;
@@ -119,6 +138,27 @@ const pageTemplates = {
   .page-home:after {
     background: url("/bg-meniu-top-right.png") no-repeat right 5% / auto,
       url("/bg-meniu-bottom-left.png") no-repeat left 90% / auto;
+  }
+
+  .page-product:before {
+    background: url("/bg-meniu-bottom-right.png") no-repeat right bottom / 30rem
+      auto;
+  }
+
+  .page-product:after {
+    background: url("/bg-product-left-top.png") no-repeat left 25% / auto,
+      url("/bg-product-right-top.png") no-repeat right 10% / auto,
+      url("/bg-meniu-bottom-left.png") no-repeat left 90% / auto;
+  }
+
+  .page-account:before {
+    background: url("/bg-account-top-left.png") no-repeat left 30% / 15rem auto,
+      url("/bg-account-top-right.png") no-repeat right 5% / 15rem auto,
+      url("/bg-account-bottom-right.png") no-repeat right bottom / 15rem auto;
+  }
+
+  .page-account:after {
+    background: url("/bg-meniu-bottom-left.png") no-repeat left 90% / auto;
   }
 }
 

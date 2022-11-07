@@ -6,7 +6,9 @@ const dismissBtn = ref(false);
 const router = useRouter();
 
 const showMenu = () => {
-  dismissBtn.value.click();
+  if (dismissBtn.value.closest(".offcanvas")) {
+    dismissBtn.value.click();
+  }
   router.push("/");
 };
 </script>

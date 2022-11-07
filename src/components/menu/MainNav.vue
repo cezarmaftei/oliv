@@ -183,7 +183,7 @@ const showCategoriesMenu = ref(false);
 }
 
 .secondary-navbar {
-  @include padding(3rem 0);
+  @include padding(3rem 0 0);
 }
 
 .navbar-separator {

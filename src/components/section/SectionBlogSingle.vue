@@ -21,7 +21,7 @@ const relatedArticles = computed(() => {
 </script>
 
 <template>
-  <div class="single-article-wrapper p-7">
+  <div class="single-article-wrapper bg-light p-7">
     <ArticleSingle :article="currentArticle()" />
 
     <div class="article-author p-3 d-flex flex-wrap">
@@ -41,7 +41,7 @@ const relatedArticles = computed(() => {
     </div>
   </div>
 
-  <div class="related-articles">
+  <div class="related-articles bg-light">
     <h2 class="mb-0 pt-4 px-4">Mai multe pe blogul Oliv:</h2>
 
     <ArticleListing
