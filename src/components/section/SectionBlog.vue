@@ -5,7 +5,7 @@ import BlogArticle from "../article/ArticleListing.vue";
 
 const store = useOlivStore();
 
-const postsPerPage = 2;
+const postsPerPage = 10;
 const currentPage = ref(1);
 
 const blogArticles = computed(() => {
@@ -35,5 +35,15 @@ const blogArticles = computed(() => {
 <style scoped lang="scss">
 .articles-listing {
   border-top: 2px solid $border-color;
+
+  .bg-light {
+    &:first-child {
+      :deep {
+        .article-listing {
+          border-top: 0;
+        }
+      }
+    }
+  }
 }
 </style>

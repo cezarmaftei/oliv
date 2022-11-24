@@ -63,9 +63,7 @@ const registerCustomer = async () => {
       />
     </div>
 
-    <button class="btn btn-primary reverse" type="submit">
-      Creaza cont
-    </button>
+    <button class="btn btn-primary reverse" type="submit">Creaza cont</button>
   </form>
 </template>
 

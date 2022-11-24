@@ -32,9 +32,7 @@ defineProps({
           <div v-html="article.excerpt.rendered"></div>
         </div>
         <div class="article-content-right mt-2 mt-lg-0 ms-lg-auto ps-lg-5">
-          <router-link
-            class="btn btn-primary"
-            :to="store.articleURL(article)"
+          <router-link class="btn btn-primary" :to="store.articleURL(article)"
             >Citeste articolul</router-link
           >
         </div>
@@ -46,7 +44,6 @@ defineProps({
 <style scoped lang="scss">
 .article-listing {
   @include global-border;
-  border-top: 0;
   margin-bottom: -2px;
   @include padding(4rem);
 

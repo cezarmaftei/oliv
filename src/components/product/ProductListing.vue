@@ -169,7 +169,7 @@ const isNew = computed(() => {
   productDate = new Date(productDate);
   const currentDate = new Date();
 
-  if (currentDate.getMonth() - productDate.getMonth() < 7) return true;
+  if (currentDate.getMonth() - productDate.getMonth() < 2) return true;
 
   return false;
 });

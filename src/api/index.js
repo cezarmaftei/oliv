@@ -108,7 +108,7 @@ export const userAccountActions = (action, user, email, pass, cookie, key) => {
 
 export const createUser = (userData) => {
   return ajax.post(
-    `/wp-json/wc/v3/customers/?consumer_key=${WcApiKey}&consumer_secret=${WcApiSecret}`,
+    `/wp-json/wc/v3/customers?consumer_key=${WcApiKey}&consumer_secret=${WcApiSecret}`,
     userData
   );
 };

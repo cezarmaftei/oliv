@@ -498,6 +498,7 @@ export const useOlivStore = defineStore({
       };
 
       await createUser(userData);
+
       this.storeLiveUpdate = false;
       return true;
     },
@@ -896,6 +897,17 @@ export const useOlivStore = defineStore({
         this.cartData.coupon.codes.forEach((couponData) =>
           orderParams.coupon_lines.push({ code: couponData.code })
         );
+      }
+
+      // Add shipping costs
+      if (this.cartData.totalShipping && this.cartData.totalShipping > 0) {
+        orderParams.shipping_lines = [
+          {
+            method_id: "flat_rate",
+            method_title: "Flat Rate",
+            total: this.cartData.totalShipping.toString(),
+          },
+        ];
       }
 
       // Set status

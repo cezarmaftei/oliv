@@ -40,7 +40,9 @@ const dateToLocale = (dateString) => {
           <div class="ms-auto">
             <ItemPrice
               :price="
-                parseFloat(order.total) + parseFloat(order.discount_total)
+                parseFloat(order.total) +
+                parseFloat(order.discount_total) -
+                parseFloat(order.shipping_total)
               "
             />
           </div>
