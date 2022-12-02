@@ -121,7 +121,11 @@ const itemExtrasCount = computed(() => {
 
         <div class="product-small-details d-flex">
           <ProductWeight :weight="cartItem.productWeight" />
-          <ItemPrice class="ms-auto" :price="cartItem.itemTotal" />
+          <ItemPrice
+            class="ms-auto"
+            :price="cartItem.itemTotal"
+            :oldPrice="cartItem.itemSubtotal"
+          />
         </div>
 
         <div class="cart-item-actions d-flex align-items-center">

@@ -98,7 +98,7 @@ export const useOlivStore = defineStore({
         priority: "core",
       },
       shipping_address_1: {
-        name: "Adresa",
+        name: "Strada si Numarul",
         type: "text",
         required: true,
         value: "",
@@ -110,6 +110,14 @@ export const useOlivStore = defineStore({
         required: true,
         value: "",
         priority: "regular",
+      },
+      shipping_address_2: {
+        name: "Bloc, Scara, Etaj, Apartament",
+        type: "text",
+        required: false,
+        value: "",
+        priority: "regular",
+        class: "col-12",
       },
       shipping_country: {
         name: "Tara",
@@ -400,7 +408,9 @@ export const useOlivStore = defineStore({
       // Check user cart cookie
       this.checkCart();
 
-      this.$patch({ isLoaded: true });
+      this.$patch({
+        isLoaded: true,
+      });
     },
 
     // Runs only to build/reset the cart address objects
@@ -714,19 +724,21 @@ export const useOlivStore = defineStore({
     async updateCartTotals() {
       // Cart product object:
       //
-      // id -> product ID === Is added here
-      // name -> product name === Is added here
-      // thumbId -> product thumbnail ID === Is added here
-      // productWeight -> product weight === Is added here
-      // productQty -> quantity === Is added here
-      // productPrice -> product price === Is added here
-      // productExtras -> array with extra options: === Is added here
-      //    _id -> extra ID === Is added here
-      //    extraName -> extra name === Is added here
-      //    extraQty -> extra quantity === Is added here
-      //    extraPrice -> extra price === Is added here
-      // productWithExtrasPrice -> product price including extras
-      // itemTotal -> productQty * productWithExtrasPrice - item total price
+      // id -> product ID
+      // name -> product name
+      // thumbId -> product thumbnail ID
+      // productWeight -> product weight
+      // productQty -> quantity
+      // productPrice -> product price
+      // isCouponEligible -> accepts coupon discount
+      // productExtras -> array with extra options:
+      //    _id -> extra ID
+      //    extraName -> extra name
+      //    extraQty -> extra quantity
+      //    extraPrice -> extra price
+      // productWithExtrasPrice -> product price including extras === Is added here
+      // itemSubtotal -> productQty * productWithExtrasPrice === Is added here
+      // itemTotal -> itemSubtotal - coupon discount === Is added here
 
       if (!this.cartData.items.length) {
         //
@@ -739,10 +751,35 @@ export const useOlivStore = defineStore({
         this.cartData.totalPrice = 0;
       } else {
         //
+        // Get coupon discount
+        //
+        let percentageDiscount = false;
+        if (this.cartData.coupon.codes.length) {
+          percentageDiscount = (
+            parseFloat(this.cartData.coupon.codes[0].amount) / 100
+          ).toFixed(2);
+          percentageDiscount = parseFloat(percentageDiscount);
+        }
+
+        // let cartDiscount = 0;
+        // if (this.cartData.coupon.codes.length) {
+        //   this.cartData.coupon.codes.forEach((coupon) => {
+        //     if (coupon.discount_type === "percent") {
+        //       coupon["discount"] =
+        //         (parseFloat(coupon.amount) * this.cartData.subTotal) / 100;
+        //       cartDiscount += coupon.discount;
+        //     }
+        //   });
+        // }
+        // this.cartData.totalDiscount = cartDiscount;
+
+        //
         // Calculate totals
         //
         let cartTotalQty = 0;
         let cartSubTotalPrice = 0;
+        this.cartData.totalDiscount = 0;
+
         this.cartData.items.forEach((product) => {
           let extrasPrice = 0;
           product.productExtras.forEach((extra) => {
@@ -754,30 +791,24 @@ export const useOlivStore = defineStore({
           product.productWithExtrasPrice =
             parseFloat(product.productPrice) + extrasPrice;
 
-          product.itemTotal =
+          product.itemSubtotal =
             product.productWithExtrasPrice * product.productQty;
 
+          product.itemTotal =
+            product.isCouponEligible && percentageDiscount
+              ? product.itemSubtotal * percentageDiscount
+              : product.itemSubtotal;
+
           cartTotalQty += parseInt(product.productQty);
-          cartSubTotalPrice += product.itemTotal;
+
+          cartSubTotalPrice += product.itemSubtotal;
+
+          this.cartData.totalDiscount +=
+            product.itemSubtotal - product.itemTotal;
         });
 
         this.cartData.totalQty = cartTotalQty;
         this.cartData.subTotal = cartSubTotalPrice;
-
-        //
-        // Set coupon discount
-        //
-        let cartDiscount = 0;
-        if (this.cartData.coupon.codes.length) {
-          this.cartData.coupon.codes.forEach((coupon) => {
-            if (coupon.discount_type === "percent") {
-              coupon["discount"] =
-                (parseFloat(coupon.amount) * this.cartData.subTotal) / 100;
-              cartDiscount += coupon.discount;
-            }
-          });
-        }
-        this.cartData.totalDiscount = cartDiscount;
 
         //
         // Set shipping cost
@@ -837,7 +868,7 @@ export const useOlivStore = defineStore({
         orderParams.line_items.push({
           product_id: item.id,
           quantity: item.productQty,
-          subtotal: String(item.itemTotal),
+          subtotal: String(item.itemSubtotal),
           total: String(item.itemTotal),
         });
 
@@ -895,7 +926,9 @@ export const useOlivStore = defineStore({
       orderParams.coupon_lines = [];
       if (this.cartData.coupon.codes) {
         this.cartData.coupon.codes.forEach((couponData) =>
-          orderParams.coupon_lines.push({ code: couponData.code })
+          orderParams.coupon_lines.push({
+            code: couponData.code,
+          })
         );
       }
 
@@ -1014,10 +1047,30 @@ export const useOlivStore = defineStore({
 
       // Check if the coupon exists in woo
       this.storeLiveUpdate = true;
-
+      let couponError = false;
       const couponData = await getCoupon(coupon).then((data) => data.data);
-
+      const theCoupon = couponData[0];
       if (couponData.length) {
+        // Coupon is restricted per account
+        if (theCoupon.email_restrictions.length) {
+          // Not logged in
+          if (!this.userData.loggedIn) {
+            couponError = "Trebuie sa fii logat pentru a folosi acest cod!";
+          }
+
+          // Logged in but account email is not in restrictions list
+          if (
+            this.userData.loggedIn &&
+            !theCoupon.email_restrictions.includes(this.userData.email)
+          ) {
+            couponError = "Acest cod de reducere nu este asociat acestui cont!";
+          }
+        }
+      } else {
+        couponError = "Cupon invalid!";
+      }
+
+      if (!couponError) {
         // Coupoon exists, add it to cartData
         this.$patch((state) => {
           state.cartData.coupon.codes = [
@@ -1029,8 +1082,9 @@ export const useOlivStore = defineStore({
           ];
         });
       } else {
-        this.cartData.coupon.errorMsg = "Cupon invalid!";
+        this.cartData.coupon.errorMsg = couponError;
       }
+
       this.storeLiveUpdate = false;
     },
 
@@ -1119,7 +1173,9 @@ export const useOlivStore = defineStore({
         for (const [fieldName, fieldData] of Object.entries(addressData)) {
           // Check for empty
           if (fieldData.required && !fieldData["value"].length)
-            return { error: `${fieldData.name} este obligatoriu!` };
+            return {
+              error: `${fieldData.name} este obligatoriu!`,
+            };
 
           // Add to address object
           userAddress[fieldName] = fieldData["value"];
@@ -1145,7 +1201,9 @@ export const useOlivStore = defineStore({
 
           // If is not number then it's an error
           if (typeof newAddressDistance !== "number")
-            return { error: newAddressDistance };
+            return {
+              error: newAddressDistance,
+            };
 
           /**
            * It's eligible, now continue
@@ -1523,6 +1581,7 @@ export const useOlivStore = defineStore({
         }
       });
     },
+
     /**
      * Get image data from wordpress
      * @param {Int} id

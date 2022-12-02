@@ -100,18 +100,22 @@ useHeadRaw({
       "
     />
     <meta
+      v-if="store.getPageBySlug(route).yoast_head_json.og_image"
       property="og:image"
       :content="store.getPageBySlug(route).yoast_head_json.og_image[0].url"
     />
     <meta
+      v-if="store.getPageBySlug(route).yoast_head_json.og_image"
       property="og:image:width"
       :content="store.getPageBySlug(route).yoast_head_json.og_image[0].width"
     />
     <meta
+      v-if="store.getPageBySlug(route).yoast_head_json.og_image"
       property="og:image:height"
       :content="store.getPageBySlug(route).yoast_head_json.og_image[0].height"
     />
     <meta
+      v-if="store.getPageBySlug(route).yoast_head_json.og_image"
       property="og:image:type"
       :content="store.getPageBySlug(route).yoast_head_json.og_image[0].type"
     />

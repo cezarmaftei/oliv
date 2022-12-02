@@ -82,7 +82,9 @@ store.$subscribe((mutation, state) => {
               ></button>
               <div class="px-1">Discount cupon "{{ couponData.code }}":</div>
               <div class="ms-auto text-nowrap">
-                <strong><ItemPrice :price="couponData.discount" /></strong>
+                <strong
+                  ><ItemPrice :price="store.cartData.totalDiscount"
+                /></strong>
               </div>
             </div>
           </div>

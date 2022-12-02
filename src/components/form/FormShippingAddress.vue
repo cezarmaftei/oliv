@@ -75,11 +75,7 @@ const submitUserAddress = async () => {
         </button>
       </div>
       <div class="col-12 col-md-6 col-lg-auto ms-auto">
-        <button
-          type="button"
-          class="btn btn-primary"
-          @click="cancelAction"
-        >
+        <button type="button" class="btn btn-primary" @click="cancelAction">
           Renunta
         </button>
       </div>

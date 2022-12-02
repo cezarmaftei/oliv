@@ -73,6 +73,7 @@ const sendOrder = async () => {
 
 <template>
   <div class="checkout-inner">
+    {{ store.shippingLimitsAndFees.shipping_options.exwoofood_gg_api }}
     <form @submit.prevent="sendOrder" v-if="store.cartData.items.length">
       <div class="row">
         <div class="col-12 col-md-6 col-lg-7 pe-lg-5 pe-xl-0">

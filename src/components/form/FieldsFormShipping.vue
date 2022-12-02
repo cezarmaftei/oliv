@@ -91,13 +91,21 @@ const getShippingPrice = () => {
           <h3>Detalii Livrare</h3>
           <div class="row g-2">
             <div
-              class="col-12 col-sm-6 col-md-12 col-lg-6"
               v-for="fieldName in store.getMappingFieldsByPriority(
                 'regular',
                 store.shippingFieldsMapping
               )"
               :key="fieldName"
-              v-show="store.shippingFieldsMapping[fieldName].type !== 'hidden'"
+              v-show="
+                ['hidden'].indexOf(
+                  store.shippingFieldsMapping[fieldName].type
+                ) === -1
+              "
+              :class="
+                store.shippingFieldsMapping[fieldName].class
+                  ? store.shippingFieldsMapping[fieldName].class
+                  : 'col-12 col-sm-6 col-md-12 col-lg-6'
+              "
             >
               <FormControl
                 fieldFor="shipping"

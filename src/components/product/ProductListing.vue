@@ -62,6 +62,7 @@ const addToCart = (quantity, button) => {
   // productWeight -> product weight === Is added here
   // productQty -> quantity === Is added here
   // productPrice -> product price === Is added here
+  // isCouponEligible -> accepts coupon discount?  === Is added here
   // productExtras -> array with extra options: === Is added here
   //    _id -> extra ID === Is added here
   //    extraName -> extra name === Is added here
@@ -84,6 +85,15 @@ const addToCart = (quantity, button) => {
     }
   }
 
+  // console.log(props.product);
+
+  // Exclude categories from coupon discounts
+  // 24 - Bauturi
+  const excludeCatsFromDiscount = [24];
+  const containsExcludedCat = props.product.categories.filter((cat) =>
+    excludeCatsFromDiscount.includes(cat.id)
+  );
+
   store.cartData.items.push({
     id: props.product.id,
     name: props.product.name,
@@ -91,6 +101,7 @@ const addToCart = (quantity, button) => {
     productWeight: productWeight(props.product),
     productQty: quantity,
     productPrice: props.product.price,
+    isCouponEligible: containsExcludedCat.length ? false : true,
     productExtras: cartProductExtras,
     productWithExtrasPrice: 0, // Will be updated with this.updateCartTotals()
     itemTotal: 0, // Will be updated with this.updateCartTotals()
@@ -199,8 +210,8 @@ const isNew = computed(() => {
         >
           NEW
         </div>
-        <LoadImage :id="product.images[0].id" size="medium"
-      /></router-link>
+        <LoadImage :id="product.images[0].id" size="medium" />
+      </router-link>
     </figure>
     <div class="product-description">
       <p class="mb-1" v-if="!isSingle">{{ productDescriptionTrimmed }}</p>
@@ -231,7 +242,10 @@ const isNew = computed(() => {
         >
           <p class="extra-name mb-1">
             {{ extra._name }}
-            <span>+ <ItemPrice :price="extra._price" /></span>
+            <span
+              >+
+              <ItemPrice :price="extra._price" />
+            </span>
           </p>
           <div class="quantity-wrap">
             <button @click="updateProductExtraQty(extra._id, -1)">-</button>
@@ -304,6 +318,7 @@ const isNew = computed(() => {
     right: -2.7rem;
   }
 }
+
 .card-product-listing {
   background: $white;
   position: relative;
@@ -709,6 +724,7 @@ const isNew = computed(() => {
     .single-product-add {
       @include font-size(3rem);
     }
+
     .single-product-add {
       button {
         &:before {

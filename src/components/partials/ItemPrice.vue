@@ -9,11 +9,12 @@ const toFloat = (number) => {
   return parseFloat(number).toFixed(2);
 };
 
-defineProps(["price", "showX"]);
+defineProps(["price", "oldPrice", "showX"]);
 </script>
 <template>
   <span class="price"
     ><span class="price-multiplier" v-show="showX">x </span
+    ><del v-if="oldPrice && oldPrice !== price">({{ oldPrice }} lei)</del
     >{{ toFloat(price) }} lei</span
   >
 </template>
