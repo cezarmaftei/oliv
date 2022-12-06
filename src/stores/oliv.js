@@ -501,6 +501,8 @@ export const useOlivStore = defineStore({
         };
       }
 
+      console.log(userExists);
+
       const userData = {
         email: formFields.username,
         username: formFields.username,

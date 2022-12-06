@@ -34,40 +34,40 @@ const requestBilling = () => {
 const sendOrder = async () => {
   if (store.userData.loggedIn && !store.userData.accountActive) return;
 
-  await store.submitOrder().then((result) => {
-    if (result === "productError") {
-      document.getElementById("cart-summary").scrollIntoView();
-      return;
-    }
+  const orderSubmit = await store.submitOrder().then((result) => result);
 
-    if (result && result.checkoutError) {
-      window.scrollTo(0, 0);
-      checkoutError.value = result.checkoutError;
+  if (orderSubmit === "productError") {
+    document.getElementById("cart-summary").scrollIntoView();
+    return;
+  }
 
-      setTimeout(() => {
-        checkoutError.value = false;
-      }, 2000);
+  if (orderSubmit && orderSubmit.checkoutError) {
+    window.scrollTo(0, 0);
+    checkoutError.value = orderSubmit.checkoutError;
 
-      return;
-    }
+    setTimeout(() => {
+      checkoutError.value = false;
+    }, 2000);
 
-    if (result) {
-      // Refresh account details
-      store.loadCustomerData();
+    return;
+  }
 
-      router.push({
-        name: "page",
-        params: {
-          slug: "comanda-plasata",
-          orderData: JSON.stringify(result),
-        },
-      });
-    } else {
-      alert(
-        `Ne pare rau, dar am intampinat o problema la inregistrarea comenzii. Incearca din nou in cateva secunde!`
-      );
-    }
-  });
+  if (orderSubmit) {
+    // Refresh account details
+    store.loadCustomerData();
+
+    router.push({
+      name: "page",
+      params: {
+        slug: "comanda-plasata",
+        orderData: JSON.stringify(orderSubmit),
+      },
+    });
+  } else {
+    alert(
+      `Ne pare rau, dar am intampinat o problema la inregistrarea comenzii. Incearca din nou in cateva minute!`
+    );
+  }
 };
 </script>
 
