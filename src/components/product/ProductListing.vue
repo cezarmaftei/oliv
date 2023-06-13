@@ -42,8 +42,8 @@ onMounted(() => {
 
 const productWeight = (product) => {
   if (product.categories.filter((cat) => cat.slug === "bauturi").length)
-    return `${product.weight}ml`;
-  else return `${product.weight}g`;
+    return product.weight.length ? `${product.weight}ml` : "";
+  else return product.weight.length ? `${product.weight}g` : "";
 };
 
 /**
@@ -201,7 +201,10 @@ const isNew = computed(() => {
         }}</router-link>
       </h2>
     </div>
-    <figure class="d-flex align-items-center justify-content-center">
+    <figure
+      v-if="product.images.length"
+      class="d-flex align-items-center justify-content-center"
+    >
       <LoadImage v-if="isSingle" :id="product.images[0].id" size="medium" />
       <router-link v-else :to="`/meniu/${product.slug}`">
         <div
