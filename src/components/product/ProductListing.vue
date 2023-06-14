@@ -68,6 +68,8 @@ const addToCart = (quantity, button) => {
   //    extraName -> extra name === Is added here
   //    extraQty -> extra quantity === Is added here
   //    extraPrice -> extra price === Is added here
+  //    min -> extra minimum quantity === Is added here
+  //    max -> extra maximum quantity === Is added here
   // productWithExtrasPrice -> product price including extras
   // itemTotal -> productQty * productWithExtrasPrice - item total price
   let cartProductExtras = [];
@@ -81,6 +83,8 @@ const addToCart = (quantity, button) => {
         extraName: currentExtraData._name,
         extraQty: productQtys.value[currentExtraData._id],
         extraPrice: currentExtraData._price,
+        _min: currentExtraData._min,
+        _max: currentExtraData._max,
       });
     }
   }
@@ -133,26 +137,83 @@ const updateProductQty = (value, isNewValue) => {
   productQtys.value.productQty = newValue;
 };
 
-const updateProductExtraQty = (extraId, value, isNewValue, isFocusOut) => {
-  const addedValue = parseFloat(value);
-
+const updateProductExtraQty = (extraId, event) => {
   // He didn't stopped typing
-  if (isNaN(addedValue) && !isFocusOut) return;
+  if (event.type === "keyup" && event.target.value === "") return;
 
-  const oldValue = productQtys.value[extraId];
-  let newValue = isNewValue ? addedValue : oldValue + addedValue;
+  // Set the default value to false
+  let newValue = false;
 
-  // If he entered negative number or left blank
-  if (newValue < 0 || isNaN(newValue)) {
-    // Do not patch
-    // The following line is triggering a reactive change
-    // If deleted, sometimes the user can add a negative number and the input value doesn't update
-    productQtys.value[extraId] = newValue;
-    newValue = 0;
+  // Button was clicked
+  if (event.type === "click") {
+    const oldValue = Number(
+      event.target.closest(".quantity-wrap").querySelector("input").value
+    );
+    newValue =
+      event.target.textContent.trim() === "+" ? oldValue + 1 : oldValue - 1;
   }
 
-  // Update with new value
+  // User manually updated the qty input field
+  if (event.type === "keyup") {
+    newValue = Number(event.target.value);
+  }
+
+  // Get product extra object
+  const extraData = currentProductExtras.filter((data) => data._id === extraId);
+
+  // On focusOut he left the field blank, set it to 0
+  if (!newValue && event.type === "focusout") {
+    event.target.value = extraData[0]._min;
+  }
+
+  // If value is _min
+  if (newValue <= extraData[0]._min) {
+    productQtys.value[extraId] = extraData[0]._min;
+
+    // Disable minus
+    event.target
+      .closest(".quantity-wrap")
+      .querySelector(".extra-qty-minus")
+      .setAttribute("disabled", "disabled");
+
+    // Be sure that plus is enabled
+    event.target
+      .closest(".quantity-wrap")
+      .querySelector(".extra-qty-plus")
+      .removeAttribute("disabled");
+
+    return;
+  }
+
+  // If value is _max
+  if (newValue >= extraData[0]._max) {
+    productQtys.value[extraId] = extraData[0]._max;
+
+    // Disable plus
+    event.target
+      .closest(".quantity-wrap")
+      .querySelector(".extra-qty-plus")
+      .setAttribute("disabled", "disabled");
+
+    // Be sure that minus is enabled
+    event.target
+      .closest(".quantity-wrap")
+      .querySelector(".extra-qty-minus")
+      .removeAttribute("disabled");
+
+    return;
+  }
+
+  // Set value if none of the above happens
   productQtys.value[extraId] = newValue;
+  event.target
+    .closest(".quantity-wrap")
+    .querySelector(".extra-qty-minus")
+    .removeAttribute("disabled");
+  event.target
+    .closest(".quantity-wrap")
+    .querySelector(".extra-qty-plus")
+    .removeAttribute("disabled");
 };
 
 /**
@@ -251,24 +312,25 @@ const isNew = computed(() => {
             </span>
           </p>
           <div class="quantity-wrap">
-            <button @click="updateProductExtraQty(extra._id, -1)">-</button>
+            <button
+              disabled
+              class="extra-qty-minus"
+              @click="updateProductExtraQty(extra._id, $event)"
+            >
+              -
+            </button>
             <input
               type="text"
               :value="productQtys[extra._id]"
-              @keyup="
-                updateProductExtraQty(extra._id, $event.target.value, true)
-              "
-              @focusout="
-                updateProductExtraQty(
-                  extra._id,
-                  $event.target.value,
-                  true,
-                  true
-                )
-              "
-              readonly
+              @keyup="updateProductExtraQty(extra._id, $event)"
+              @focusout="updateProductExtraQty(extra._id, $event)"
             />
-            <button @click="updateProductExtraQty(extra._id, 1)">+</button>
+            <button
+              class="extra-qty-plus"
+              @click="updateProductExtraQty(extra._id, $event)"
+            >
+              +
+            </button>
           </div>
         </div>
       </div>

@@ -44,17 +44,87 @@ const updateCartItemQty = (value, isNewValue) => {
 /**
  * Update cart item extra qty
  */
-const updateCartItemExtraQty = (extraIndex, value, isNewValue, isFocusOut) => {
-  const addedValue = parseFloat(value);
-
+const updateCartItemExtraQty = (extraIndex, extra, event) => {
+  console.log(props.cartItem);
   // He didn't stopped typing
-  if (isNaN(addedValue) && !isFocusOut) return;
+  if (event.type === "keyup" && event.target.value === "") return;
 
-  const oldValue =
-    store.cartData.items[props.cartItemIndex].productExtras[extraIndex]
-      .extraQty;
-  let newValue = isNewValue ? addedValue : oldValue + addedValue;
+  // Set the default value to false
+  let newValue = false;
 
+  // Button was clicked
+  if (event.type === "click") {
+    const oldValue = Number(
+      event.target.closest(".quantity-wrap").querySelector("input").value
+    );
+    newValue =
+      event.target.textContent.trim() === "+" ? oldValue + 1 : oldValue - 1;
+  }
+
+  // User manually updated the qty input field
+  if (event.type === "keyup") {
+    newValue = Number(event.target.value);
+  }
+
+  // On focusOut he left the field blank, set it to 0
+  if (!newValue && event.type === "focusout") {
+    event.target.value = extra._min;
+  }
+
+  // If value is _min
+  if (newValue <= extra._min) {
+    store.cartData.items[props.cartItemIndex].productExtras[
+      extraIndex
+    ].extraQty = extra._min;
+
+    // Disable minus
+    event.target
+      .closest(".quantity-wrap")
+      .querySelector(".extra-qty-minus")
+      .setAttribute("disabled", "disabled");
+
+    // Be sure that plus is enabled
+    event.target
+      .closest(".quantity-wrap")
+      .querySelector(".extra-qty-plus")
+      .removeAttribute("disabled");
+
+    return;
+  }
+
+  // If value is _max
+  if (newValue >= extra._max) {
+    store.cartData.items[props.cartItemIndex].productExtras[
+      extraIndex
+    ].extraQty = extra._max;
+
+    // Disable plus
+    event.target
+      .closest(".quantity-wrap")
+      .querySelector(".extra-qty-plus")
+      .setAttribute("disabled", "disabled");
+
+    // Be sure that minus is enabled
+    event.target
+      .closest(".quantity-wrap")
+      .querySelector(".extra-qty-minus")
+      .removeAttribute("disabled");
+
+    return;
+  }
+
+  // Set value if none of the above happens
+  store.cartData.items[props.cartItemIndex].productExtras[extraIndex].extraQty =
+    newValue;
+  event.target
+    .closest(".quantity-wrap")
+    .querySelector(".extra-qty-minus")
+    .removeAttribute("disabled");
+  event.target
+    .closest(".quantity-wrap")
+    .querySelector(".extra-qty-plus")
+    .removeAttribute("disabled");
+  /*
   // If he entered negative number or left blank
   if (newValue < 0 || isNaN(newValue)) {
     // Do not patch
@@ -75,6 +145,7 @@ const updateCartItemExtraQty = (extraIndex, value, isNewValue, isFocusOut) => {
   //       extraIndex
   //     ].extraQty = newValue)
   // );
+  */
 };
 
 /**
@@ -173,37 +244,26 @@ const itemExtrasCount = computed(() => {
               <div class="quantity-wrap">
                 <button
                   type="button"
-                  @click="updateCartItemExtraQty(extraIndex, -1)"
+                  class="extra-qty-minus"
+                  @click="updateCartItemExtraQty(extraIndex, extra, $event)"
+                  disabled
                 >
                   -
                 </button>
                 <input
                   type="text"
-                  readonly
                   :value="
                     store.cartData.items[cartItemIndex].productExtras[
                       extraIndex
                     ].extraQty
                   "
-                  @keyup="
-                    updateCartItemExtraQty(
-                      extraIndex,
-                      $event.target.value,
-                      true
-                    )
-                  "
-                  @focusout="
-                    updateCartItemExtraQty(
-                      extraIndex,
-                      $event.target.value,
-                      true,
-                      true
-                    )
-                  "
+                  @keyup="updateCartItemExtraQty(extraIndex, extra, $event)"
+                  @focusout="updateCartItemExtraQty(extraIndex, extra, $event)"
                 />
                 <button
                   type="button"
-                  @click="updateCartItemExtraQty(extraIndex, 1)"
+                  class="extra-qty-plus"
+                  @click="updateCartItemExtraQty(extraIndex, extra, $event)"
                 >
                   +
                 </button>
