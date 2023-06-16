@@ -45,7 +45,6 @@ const updateCartItemQty = (value, isNewValue) => {
  * Update cart item extra qty
  */
 const updateCartItemExtraQty = (extraIndex, extra, event) => {
-  console.log(props.cartItem);
   // He didn't stopped typing
   if (event.type === "keyup" && event.target.value === "") return;
 
