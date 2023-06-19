@@ -3,7 +3,7 @@ defineProps(["error", "success"]);
 </script>
 <template>
   <transition name="height-element-sm">
-    <div v-if="error || success" class="message">
+    <div v-if="error || success" class="message" ref="errorElement">
       <div v-if="error" class="error-message">
         {{ error }}
       </div>

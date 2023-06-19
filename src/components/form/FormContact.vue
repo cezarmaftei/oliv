@@ -22,11 +22,13 @@ const sendFormData = async () => {
   for (const [fieldName, fieldValue] of Object.entries(formData.value)) {
     if (fieldName !== "email_check" && !fieldValue.length) {
       formError.value = "Toate campurile sunt obligatorii!";
+      store.scrollToElement(form);
       return false;
     }
 
     if (fieldName === "email" && !store.validateEmail(fieldValue)) {
       formError.value = "Te rugam sa introduci o adresa de email valida";
+      store.scrollToElement(form);
       return false;
     }
 

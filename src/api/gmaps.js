@@ -33,6 +33,11 @@ export const gmapsCheckUserAddress = async (
                 return true;
               } else {
                 const distanceMatrix = new google.maps.DistanceMatrixService();
+
+                let checkResult = {
+                  lat: response.results[0].geometry.location.lat(),
+                  lng: response.results[0].geometry.location.lng(),
+                };
                 // Get distance matrix
                 return distanceMatrix
                   .getDistanceMatrix({
@@ -41,11 +46,11 @@ export const gmapsCheckUserAddress = async (
                     travelMode: "DRIVING",
                   })
                   .then((response) => {
-                    let checkResult =
+                    checkResult["distance"] =
                       response.rows[0].elements[0].distance.value / 1000;
 
                     if (
-                      checkResult >
+                      checkResult.distance >
                       shippingLimitsAndFees.shipping_options
                         .exwoofood_restrict_km
                     )

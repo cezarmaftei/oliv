@@ -7,6 +7,7 @@ import ErrorAddress from "../error/ErrorAddress.vue";
 const store = useOlivStore();
 const formErrorMessage = ref(false);
 const formSuccess = ref(false);
+const formElement = ref(false);
 
 const emits = defineEmits(["addressAddedSuccess", "cancelAction"]);
 
@@ -36,6 +37,8 @@ const submitUserAddress = async () => {
   if (result.error) {
     formErrorMessage.value = result.error;
     formSuccess.value = false;
+
+    store.scrollToElement(formElement);
   } else {
     formErrorMessage.value = false;
     formSuccess.value = true;
@@ -53,7 +56,7 @@ const cancelAction = () => {
 </script>
 
 <template>
-  <form @submit.prevent="submitUserAddress()">
+  <form ref="formElement" @submit.prevent="submitUserAddress()">
     <ErrorAddress :error="formErrorMessage" :success="formSuccess" />
 
     <FieldsFormBilling />
@@ -65,11 +68,7 @@ const cancelAction = () => {
         </button>
       </div>
       <div class="col-12 col-md-6 col-lg-auto ms-auto">
-        <button
-          type="button"
-          class="btn btn-primary"
-          @click="cancelAction"
-        >
+        <button type="button" class="btn btn-primary" @click="cancelAction">
           Renunta
         </button>
       </div>

@@ -134,6 +134,16 @@ export const useOlivStore = defineStore({
         type: "hidden",
         value: "",
       },
+      shipping_latitude: {
+        name: "Latitudine",
+        type: "hidden",
+        value: "",
+      },
+      shipping_longitude: {
+        name: "Longitudine",
+        type: "hidden",
+        value: "",
+      },
     },
     billingFieldsMapping: {
       billing_first_name: {
@@ -971,6 +981,13 @@ export const useOlivStore = defineStore({
 
       // Delivery address
       const orderShipping = {};
+
+      // Thses fields have no .value property
+      const shippingGeolocationFields = [
+        "shipping_distance",
+        "shipping_latitude",
+        "shipping_longitude",
+      ];
       for (const [fieldName, fieldData] of Object.entries(
         this.shippingFieldsMapping
       )) {
@@ -978,7 +995,7 @@ export const useOlivStore = defineStore({
           name: fieldData.name,
           value:
             this.cartData.addresses.shipping[fieldName].length ||
-            fieldName === "shipping_distance"
+            shippingGeolocationFields.indexOf(fieldName) != -1
               ? this.cartData.addresses.shipping[fieldName]
               : this.shippingFieldsMapping[fieldName].value,
         };
@@ -1120,6 +1137,8 @@ export const useOlivStore = defineStore({
         "shipping_state",
         "shipping_country",
         "shipping_distance",
+        "shipping_latitude",
+        "shipping_longitude",
       ];
 
       // Compares 1-level objects
@@ -1197,21 +1216,23 @@ export const useOlivStore = defineStore({
           }
 
           // Check if is eligible for shipping
-          const newAddressDistance = await this.addressDistance(
+          const newAddressResults = await this.addressDistance(
             `${this.shippingFieldsMapping.shipping_address_1.value}, ${this.shippingFieldsMapping.shipping_city.value}, Romania`
           ).then((data) => data);
 
           // If is not number then it's an error
-          if (typeof newAddressDistance !== "number")
+          if (typeof newAddressResults !== "object")
             return {
-              error: newAddressDistance,
+              error: newAddressResults,
             };
 
           /**
            * It's eligible, now continue
            */
           // Add distance to address data
-          userAddress["shipping_distance"] = newAddressDistance;
+          userAddress["shipping_distance"] = newAddressResults.distance;
+          userAddress["shipping_latitude"] = newAddressResults.lat;
+          userAddress["shipping_longitude"] = newAddressResults.lng;
 
           // Add address to userShippingAddresses
           if (action === "add") userShippingAddresses.unshift(userAddress);
@@ -1638,6 +1659,18 @@ export const useOlivStore = defineStore({
 
     articleURL(article) {
       return `/blog/${article.slug}`;
+    },
+
+    scrollToElement(element) {
+      var headerOffset =
+        document.querySelector("header.menu-header").clientHeight;
+      var elementPosition = element.value.getBoundingClientRect().top;
+      var offsetPosition = elementPosition + window.scrollY - headerOffset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth",
+      });
     },
   },
 });
