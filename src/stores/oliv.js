@@ -1532,12 +1532,7 @@ export const useOlivStore = defineStore({
 
       // Billing
       let billingDefault = false;
-      console.log(this.userData.customerAddresses);
-      if (
-        this.showBilling &&
-        this.userData.loggedIn &&
-        !this.userData.customerAddresses.billing.length
-      ) {
+      if (this.showBilling && this.userData.loggedIn) {
         billingDefault = this.cartData.addresses.billing;
       }
 
