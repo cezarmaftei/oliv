@@ -237,6 +237,7 @@ export const useOlivStore = defineStore({
           let result = false;
           switch (route.name) {
             case "home":
+            case "product-category":
               result = state.pageData.filter(
                 (page) => page.slug === "meniu"
                 // (page) => page.slug === "home"
@@ -289,12 +290,12 @@ export const useOlivStore = defineStore({
      */
     getProductsByCategory: (state) => {
       return (productCat) => {
-        if (productCat === "Toate") {
+        if (productCat === "toate") {
           return state.storeData.products;
         } else {
           return state.storeData.products.filter((product) => {
             if (
-              product.categories.filter((cat) => productCat === cat.name).length
+              product.categories.filter((cat) => productCat === cat.slug).length
             ) {
               return product;
             }
@@ -1438,12 +1439,8 @@ export const useOlivStore = defineStore({
      * @returns {Int/Bool} order id or false onerror
      */
     async submitOrder() {
-      this.storeLiveUpdate = true;
-
       // Check if is available for shipping
       if (this.cartData.totalShipping === false) {
-        this.storeLiveUpdate = false;
-
         return {
           checkoutError:
             "Trebuie sa completezi detaliile despre livrarea comenzii!",
@@ -1454,8 +1451,6 @@ export const useOlivStore = defineStore({
         this.cartData.paymentMethod === false &&
         this.cartData.deliveryMethod !== "pickup"
       ) {
-        this.storeLiveUpdate = false;
-
         return {
           checkoutError: "Trebuie sa selectezi o metoda de plata!",
         };
@@ -1500,8 +1495,6 @@ export const useOlivStore = defineStore({
             }
           }
         });
-
-        this.storeLiveUpdate = false;
       });
 
       if (!productsAvailable) {
@@ -1532,7 +1525,6 @@ export const useOlivStore = defineStore({
 
       // Billing
       let billingDefault = false;
-      console.log(this.userData.customerAddresses);
       if (
         this.showBilling &&
         this.userData.loggedIn &&
@@ -1573,8 +1565,6 @@ export const useOlivStore = defineStore({
       }
 
       return await createOrder(this.createOrderParams()).then((data) => {
-        this.storeLiveUpdate = false;
-
         if (data.data.id) {
           //
           // The order has been created

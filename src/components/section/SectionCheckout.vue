@@ -34,10 +34,12 @@ const requestBilling = () => {
 const sendOrder = async () => {
   if (store.userData.loggedIn && !store.userData.accountActive) return;
 
+  store.storeLiveUpdate = true;
   const orderSubmit = await store.submitOrder().then((result) => result);
 
   if (orderSubmit === "productError") {
     document.getElementById("cart-summary").scrollIntoView();
+    store.storeLiveUpdate = false;
     return;
   }
 
@@ -49,6 +51,7 @@ const sendOrder = async () => {
       checkoutError.value = false;
     }, 2000);
 
+    store.storeLiveUpdate = false;
     return;
   }
 
@@ -68,6 +71,8 @@ const sendOrder = async () => {
       `Ne pare rau, dar am intampinat o problema la inregistrarea comenzii. Incearca din nou in cateva minute!`
     );
   }
+
+  store.storeLiveUpdate = false;
 };
 </script>
 

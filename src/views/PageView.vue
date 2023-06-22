@@ -61,7 +61,7 @@ const pageClass = computed(() => {
       >
         <!-- page layout -->
         <component
-          v-if="['home', 'page'].includes(route.name)"
+          v-if="['home', 'page', 'product-category'].includes(route.name)"
           :is="
             pageTemplates[
               store.getPageBySlug(route).acf.page_sections[0].acf_fc_layout

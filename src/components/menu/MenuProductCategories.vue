@@ -1,21 +1,12 @@
 <script setup>
 import { useOlivStore } from "@/stores/oliv.js";
-import { inject, watch } from "vue";
+import { inject } from "vue";
 import { useRoute } from "vue-router";
 import IconLoading from "../icons/IconLoading.vue";
 
 const route = useRoute();
 const store = useOlivStore();
 const activeCat = inject("activeCat");
-
-watch(
-  () => route.query,
-  () => {
-    if (route.query.categorie) {
-      window.scrollTo(0, 0);
-    }
-  }
-);
 </script>
 <template>
   <div
@@ -24,15 +15,12 @@ watch(
   >
     <div class="col-auto flex-grow-1">
       <router-link
-        @click="activeCat = 'Toate'"
+        @click="activeCat = 'toate'"
         :class="
-          (route.query.categorie === 'Toate' || !route.query.categorie) &&
-          (route.params.slug === 'meniu' || route.path === '/')
-            ? 'active'
-            : ''
+          route.name == 'home' || route.params.slug === 'toate' ? 'active' : ''
         "
         class="btn btn-primary"
-        :to="{ path: '/', query: { categorie: 'Toate' } }"
+        :to="{ path: `/category/toate` }"
         >Toate</router-link
       >
     </div>
@@ -42,10 +30,10 @@ watch(
       :key="cat"
     >
       <router-link
-        @click="activeCat = cat.name"
-        :class="route.query.categorie === cat.name ? 'active' : ''"
+        @click="activeCat = cat.slug"
+        :class="route.path.indexOf(cat.slug) !== -1 ? 'active' : ''"
         class="btn btn-primary"
-        :to="{ path: '/', query: { categorie: cat.name } }"
+        :to="{ path: `/category/${cat.slug}` }"
       >
         {{ cat.name }}
       </router-link>
@@ -65,6 +53,7 @@ watch(
   @include global-border;
   margin: -2px 0 0;
 }
+
 .navbar-bot {
   h3 {
     overflow: hidden;
@@ -76,30 +65,6 @@ watch(
     width: 100%;
   }
 }
-
-// .cloned {
-//   .navbar-bot {
-//     h3 {
-//       max-height: 0;
-//       margin: 0 !important;
-//     }
-
-//     .btn-primary {
-//       padding: 0.3rem 0.5rem;
-//       width: 100%;
-//     }
-//   }
-// }
-
-// @include media-breakpoint-up(xs) {
-//   .cloned {
-//     .navbar-bot {
-//       .btn-primary {
-//         padding: 0.3rem 0.7rem;
-//       }
-//     }
-//   }
-// }
 
 @include media-breakpoint-up(sm) {
   .row-categories {
@@ -148,15 +113,5 @@ watch(
       border-left: 0;
     }
   }
-
-  // .cloned {
-  //   .navbar-bot {
-  //     padding: 0;
-  //     .btn-primary {
-  //       padding: 1rem 1.5rem;
-  //       @include font-size(2.4rem);
-  //     }
-  //   }
-  // }
 }
 </style>

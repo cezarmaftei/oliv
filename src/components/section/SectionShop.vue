@@ -11,7 +11,8 @@ const showMenuProductCats = inject("showMenuProductCats");
 showMenuProductCats.value = true;
 
 const activeCat = inject("activeCat");
-if (route.query.categorie) activeCat.value = route.query.categorie;
+if (route.name == "product-category") activeCat.value = route.params.slug;
+else activeCat.value = "toate";
 </script>
 
 <template>

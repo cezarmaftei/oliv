@@ -17,6 +17,11 @@ const router = createRouter({
       component: () => import("@/views/PageView.vue"),
     },
     {
+      path: "/category/:slug",
+      name: "product-category",
+      component: () => import("@/views/PageView.vue"),
+    },
+    {
       path: "/meniu/:slug",
       name: "product",
       component: () => import("@/views/PageView.vue"),
@@ -42,5 +47,11 @@ const router = createRouter({
     return { top: 0 };
   },
 });
+
+// router.afterEach((to, from) => {
+//   if (["home", "product-category"].indexOf(to.name) !== -1) {
+//     document.title = `Oliv - ${to.params.slug}`;
+//   }
+// });
 
 export default router;

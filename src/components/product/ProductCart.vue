@@ -314,11 +314,12 @@ figure {
 
   span {
     position: relative;
+    padding-right: 1.5rem;
 
     &:after {
       content: "";
       position: absolute;
-      left: 100%;
+      right: 0;
       top: 50%;
       margin-top: -0.5rem;
       margin-left: 0.5rem;

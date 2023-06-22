@@ -56,11 +56,27 @@ useHeadRaw({
     },
   ],
 });
+
+const pageTitle = () => {
+  if (route.name === "product-category") {
+    let productCatTitle = false;
+    for (const [fieldName, fieldValue] of Object.entries(
+      store.storeData.categories
+    )) {
+      if (fieldValue.slug === route.params.slug)
+        productCatTitle = fieldValue.name;
+    }
+
+    return `Oliv Bistro - ${productCatTitle}`;
+  }
+
+  return store.getPageBySlug(route).yoast_head_json.title;
+};
 </script>
 
 <template>
   <Head v-if="store.getPageBySlug(route)">
-    <title>{{ store.getPageBySlug(route).yoast_head_json.title }}</title>
+    <title>{{ pageTitle() }}</title>
     <meta
       name="robots"
       content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1"
