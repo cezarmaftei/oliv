@@ -1535,7 +1535,7 @@ export const useOlivStore = defineStore({
       if (
         this.showBilling &&
         this.userData.loggedIn &&
-        this.userData.customerAddresses.billing &&
+        typeof this.userData.customerAddresses.billing !== "undefined" &&
         !this.userData.customerAddresses.billing.length
       ) {
         billingDefault = this.cartData.addresses.billing;
