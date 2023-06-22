@@ -17,6 +17,7 @@ const requestBilling = () => {
   if (
     !billingAutofill &&
     store.showBilling &&
+    typeof store.userData.customerAddresses.billing !== "undefined" &&
     store.userData.customerAddresses.billing.length
   ) {
     store.cartData.addresses.billing = Object.assign(
