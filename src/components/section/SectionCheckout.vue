@@ -14,12 +14,7 @@ const checkoutError = ref(false);
 let billingAutofill = false;
 
 const requestBilling = () => {
-  if (
-    !billingAutofill &&
-    store.showBilling &&
-    typeof store.userData.customerAddresses.billing !== "undefined" &&
-    store.userData.customerAddresses.billing.length
-  ) {
+  if (!billingAutofill && store.showBilling) {
     store.cartData.addresses.billing = Object.assign(
       {},
       store.userData.customerAddresses.billing[0]
