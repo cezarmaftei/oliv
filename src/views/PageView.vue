@@ -16,6 +16,7 @@ import SectionOrderCompleted from "../components/section/SectionOrderCompleted.v
 import SectionBlog from "../components/section/SectionBlog.vue";
 import SectionContact from "../components/section/SectionContact.vue";
 import SectionBlogSingle from "../components/section/SectionBlogSingle.vue";
+import SectionSimplePage from "../components/section/SectionSimplePage.vue";
 import PageNotFound from "../components/partials/PageNotFound.vue";
 import IconLoading from "../components/icons/IconLoading.vue";
 import { computed } from "vue";
@@ -32,6 +33,7 @@ const pageTemplates = {
   SectionOrderCompleted,
   SectionBlog,
   SectionContact,
+  SectionSimplePage,
 };
 
 const pageClass = computed(() => {

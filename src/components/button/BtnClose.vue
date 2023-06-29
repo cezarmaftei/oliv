@@ -13,6 +13,12 @@
     no-repeat center center / 1.6rem 1.6rem;
   border: 0;
 
+  &.white {
+    background-image: escape-svg(
+      url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 451.77 451.77" fill="#fff"><path d="M225.89,167.74,393.63,0l58.14,58.71L284.6,225.89,451.77,393.63l-58.14,58.14L225.89,284.6,58.71,451.77,0,393.63,167.74,225.89,0,58.71,58.71,0Z" style="fill-rule:evenodd"/></svg>')
+    );
+  }
+
   &:hover {
     animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
   }

@@ -2,17 +2,21 @@
 import { RouterView, useRoute } from "vue-router";
 import { useOlivStore } from "@/stores/oliv.js";
 import { Head, useHeadRaw } from "@vueuse/head";
-import { provide, ref } from "vue";
+import { onMounted, provide, ref } from "vue";
 import ModalSearchResults from "@/components/modal/ModalSearchResults.vue";
 import ModalLogin from "@/components/modal/ModalLogin.vue";
 import ModalShippingAddresses from "./components/modal/ModalShippingAddresses.vue";
 import ModalBillingAddresses from "./components/modal/ModalBillingAddresses.vue";
+import ModalShopClosed from "./components/modal/ModalShopClosed.vue";
+import SectionCookieConsent from "./components/section/SectionCookieConsent.vue";
 import { computed } from "vue";
 import UpdateLoading from "./components/partials/UpdateLoading.vue";
 import { apiRoot, websiteRoot } from "./api/index.js";
+import { useCookies } from "vue3-cookies";
 
 const store = useOlivStore();
 const route = useRoute();
+const { cookies } = useCookies();
 store.initWebsite();
 
 const showMenuProductCats = ref(false);
@@ -72,6 +76,53 @@ const pageTitle = () => {
 
   return store.getPageBySlug(route).yoast_head_json.title;
 };
+
+/**
+ * Show modal only if use is visiting when the restaurant is closed
+ */
+const showShopClosedModal = computed(() => {
+  if (store.isLoaded) {
+    store.websiteOptions.global_settings.store_opening_hours[0];
+
+    const startTime = `${store.websiteOptions.global_settings.store_opening_hours[0].ora_deschidere}:00`;
+    const endTime = `${store.websiteOptions.global_settings.store_opening_hours[0].ora_inchidere}:00`;
+
+    const currentDate = new Date();
+
+    const startDate = new Date(currentDate.getTime());
+    startDate.setHours(startTime.split(":")[0]);
+    startDate.setMinutes(startTime.split(":")[1]);
+    startDate.setSeconds(startTime.split(":")[2]);
+
+    const endDate = new Date(currentDate.getTime());
+    endDate.setHours(endTime.split(":")[0]);
+    endDate.setMinutes(endTime.split(":")[1]);
+    endDate.setSeconds(endTime.split(":")[2]);
+
+    return startDate > currentDate || endDate < currentDate;
+  }
+
+  return false;
+});
+
+const showCookieConsent = ref(true);
+provide("showCookieConsent", showCookieConsent);
+
+onMounted(() => {
+  if (cookies.get("oliv_cookie_consent") === "false") {
+    showCookieConsent.value = false;
+  }
+});
+
+const displayCookieConsent = computed(() => {
+  if (!showCookieConsent.value) {
+    const date = new Date();
+    cookies.set("oliv_cookie_consent", "false", date.getDate() + 1);
+    return false;
+  }
+
+  return true;
+});
 </script>
 
 <template>
@@ -161,7 +212,9 @@ const pageTitle = () => {
   <ModalSearchResults />
   <ModalShippingAddresses />
   <ModalBillingAddresses />
+  <ModalShopClosed v-if="showShopClosedModal" />
   <RouterView />
+  <SectionCookieConsent v-if="displayCookieConsent && store.isLoaded" />
 </template>
 
 <style lang="scss">

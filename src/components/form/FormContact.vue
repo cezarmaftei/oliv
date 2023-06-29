@@ -1,5 +1,6 @@
 <script setup>
 import { useOlivStore } from "@/stores/oliv.js";
+import { useRouter } from "vue-router";
 import { ref } from "vue";
 import { sendFormDataToWP } from "@/api";
 import ErrorContact from "../error/ErrorContact.vue";
@@ -7,6 +8,7 @@ import ErrorContact from "../error/ErrorContact.vue";
 defineProps(["contentBottom", "buttonText"]);
 
 const store = useOlivStore();
+const router = useRouter();
 
 const formData = ref({
   name: "",
@@ -19,6 +21,8 @@ const form = ref(false);
 const formError = ref(false);
 
 const sendFormData = async () => {
+  store.storeLiveUpdate = true;
+
   for (const [fieldName, fieldValue] of Object.entries(formData.value)) {
     if (fieldName !== "email_check" && !fieldValue.length) {
       formError.value = "Toate campurile sunt obligatorii!";
@@ -50,10 +54,13 @@ const sendFormData = async () => {
 
   if (emailResult === true) {
     form.value.reset();
+    router.push({ path: "/thanks" });
   } else {
     formError.value =
       "A aparut o problema la trimiterea mesajului. Te rugam sa reincerci in cateva minute.";
   }
+
+  store.storeLiveUpdate = false;
 };
 </script>
 <template>

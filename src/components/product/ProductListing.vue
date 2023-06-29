@@ -241,7 +241,11 @@ const isNew = computed(() => {
   productDate = new Date(productDate);
   const currentDate = new Date();
 
-  if (currentDate.getMonth() - productDate.getMonth() < 2) return true;
+  if (
+    currentDate.getMonth() - productDate.getMonth() < 2 &&
+    currentDate.getFullYear() === productDate.getFullYear()
+  )
+    return true;
 
   return false;
 });
