@@ -90,7 +90,11 @@ store.$subscribe((mutation, state) => {
           </div>
 
           <div
-            v-if="store.getCustomDiscount() && store.cartData.totalDiscount > 0"
+            v-if="
+              !store.cartData.coupon.codes.length &&
+              store.getCustomDiscount() &&
+              store.cartData.totalDiscount > 0
+            "
           >
             <div class="d-flex align-items-center cart-bordered-element">
               <div
