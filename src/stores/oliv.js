@@ -798,7 +798,7 @@ export const useOlivStore = defineStore({
         // Get coupon discount
         //
         let percentageDiscount = false;
-        if (this.cartData.coupon.codes.length) {
+        if (this.cartData.coupon.codes) {
           percentageDiscount = (
             1 -
             parseFloat(this.cartData.coupon.codes[0].amount) / 100
@@ -810,7 +810,7 @@ export const useOlivStore = defineStore({
         // Apply custom discount if no coupons are applied
         //
         let customDiscount = false;
-        if (this.cartData.coupon.codes.length < 1) {
+        if (!this.cartData.coupon.codes) {
           customDiscount = this.getCustomDiscount();
           percentageDiscount = parseFloat(customDiscount);
         }
