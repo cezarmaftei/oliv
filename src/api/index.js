@@ -37,6 +37,10 @@ export const websiteOptions = () => {
   return wpAjax.get(`/wp-json/olivbistro/v1/theme-options`);
 };
 
+export const customDiscounts = () => {
+  return wpAjax.get(`/wp-json/olivbistro/v1/custom-discounts`);
+};
+
 export const pageData = () => {
   return wpAjax.get(`/wp-json/wp/v2/pages`);
 };

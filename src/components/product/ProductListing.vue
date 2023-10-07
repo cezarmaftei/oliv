@@ -265,6 +265,16 @@ const isNew = computed(() => {
           product.name
         }}</router-link>
       </h2>
+
+      <div
+        v-if="store.isCustomDiscountEligible(props.product.id)"
+        class="product-custom-discount-notification"
+      >
+        <p
+          class="text-warning mb-0"
+          v-text="store.customDiscounts.notificare_client"
+        ></p>
+      </div>
     </div>
     <figure
       v-if="product.images.length"

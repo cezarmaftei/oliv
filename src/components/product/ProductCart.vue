@@ -277,6 +277,16 @@ const itemExtrasCount = computed(() => {
         </transition>
       </div>
     </div>
+
+    <div
+      v-if="store.isCustomDiscountEligible(cartItem.id)"
+      class="product-custom-discount-notification w-100"
+    >
+      <p
+        class="text-warning mb-0"
+        v-text="store.customDiscounts.notificare_client"
+      ></p>
+    </div>
   </div>
 </template>
 

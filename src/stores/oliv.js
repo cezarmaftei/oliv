@@ -3,6 +3,7 @@ import { useCookies } from "vue3-cookies";
 
 import {
   websiteOptions,
+  customDiscounts,
   pageData,
   articleData,
   productsData,
@@ -35,6 +36,7 @@ export const useOlivStore = defineStore({
     isLoaded: false,
     storeLiveUpdate: false,
     websiteOptions: [],
+    customDiscounts: [],
     pageData: [],
     articleData: [],
     storeData: {},
@@ -370,6 +372,15 @@ export const useOlivStore = defineStore({
     async initWebsite() {
       await websiteOptions().then((data) => {
         this.websiteOptions = data.data;
+      });
+
+      await customDiscounts().then((data) => {
+        if (data.data.aplica_discount !== "")
+          data.data.notificare_client = data.data.notificare_client.replace(
+            "||valoare_discount||",
+            data.data.procent_reducere
+          );
+        this.customDiscounts = data.data;
       });
 
       await pageData().then((data) => {
@@ -731,6 +742,24 @@ export const useOlivStore = defineStore({
       );
     },
 
+    getCustomDiscount() {
+      if (this.customDiscounts.aplica_discount === "") return false;
+
+      return (
+        1 -
+        parseFloat(this.customDiscounts.procent_reducere) / 100
+      ).toFixed(2);
+    },
+
+    isCustomDiscountEligible(productId) {
+      return (
+        this.customDiscounts.aplica_discount !== "" &&
+        this.customDiscounts.produsele_care_intra_la_discount.indexOf(
+          String(productId)
+        ) > -1
+      );
+    },
+
     /**
      * Update cart after quantities change
      */
@@ -753,6 +782,8 @@ export const useOlivStore = defineStore({
       // itemSubtotal -> productQty * productWithExtrasPrice === Is added here
       // itemTotal -> itemSubtotal - coupon discount === Is added here
 
+      // Set custom discount data
+
       if (!this.cartData.items.length) {
         //
         // Set all to 0 if there are no products in cart
@@ -769,9 +800,19 @@ export const useOlivStore = defineStore({
         let percentageDiscount = false;
         if (this.cartData.coupon.codes.length) {
           percentageDiscount = (
+            1 -
             parseFloat(this.cartData.coupon.codes[0].amount) / 100
           ).toFixed(2);
           percentageDiscount = parseFloat(percentageDiscount);
+        }
+
+        //
+        // Apply custom discount if no coupons are applied
+        //
+        let customDiscount = false;
+        if (this.cartData.coupon.codes.length < 1) {
+          customDiscount = this.getCustomDiscount();
+          percentageDiscount = parseFloat(customDiscount);
         }
 
         // let cartDiscount = 0;
@@ -795,6 +836,26 @@ export const useOlivStore = defineStore({
 
         this.cartData.items.forEach((product) => {
           let extrasPrice = 0;
+
+          if (this.cartData.coupon.codes.length < 1) {
+            // Set eligible for custom discount
+            // vue_vale : wordpress_value
+            var customDiscountScenariosMapping = {
+              pickup: "store-pickup",
+            };
+
+            if (
+              customDiscount &&
+              this.isCustomDiscountEligible(product.id) &&
+              customDiscountScenariosMapping[this.cartData.deliveryMethod] ===
+                this.customDiscounts.aplica_discount
+            ) {
+              product.isCouponEligible = true;
+            } else {
+              product.isCouponEligible = false;
+            }
+          }
+
           product.productExtras.forEach((extra) => {
             const extraQty = parseInt(extra.extraQty);
             if (extraQty > 0)
