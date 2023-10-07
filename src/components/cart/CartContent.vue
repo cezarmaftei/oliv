@@ -69,7 +69,7 @@ store.$subscribe((mutation, state) => {
             </div>
           </div>
 
-          <div v-if="store.cartData.coupon.codes">
+          <div v-if="store.cartData.coupon.codes.length">
             <div
               v-for="couponData in store.cartData.coupon.codes"
               :key="couponData"
@@ -88,11 +88,30 @@ store.$subscribe((mutation, state) => {
               </div>
             </div>
           </div>
+
+          <div
+            v-if="store.getCustomDiscount() && store.cartData.totalDiscount > 0"
+          >
+            <div class="d-flex align-items-center cart-bordered-element">
+              <div
+                v-text="store.customDiscounts.notificare_checkout_discount"
+              ></div>
+              <div class="ms-auto text-nowrap">
+                <strong
+                  ><ItemPrice :price="store.cartData.totalDiscount"
+                /></strong>
+              </div>
+            </div>
+          </div>
+
           <div v-if="!store.cartData.coupon.codes.length">
             <FormCoupon />
           </div>
 
-          <div class="cart-bordered-element">
+          <div
+            class="cart-bordered-element"
+            v-if="store.cartData.deliveryMethod !== 'pickup'"
+          >
             <div class="d-flex">
               <div class="text-nowrap me-1">Cost livrare:</div>
               <div class="ms-auto">
