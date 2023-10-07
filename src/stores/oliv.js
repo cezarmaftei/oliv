@@ -798,7 +798,11 @@ export const useOlivStore = defineStore({
         // Get coupon discount
         //
         let percentageDiscount = false;
-        if (this.cartData.coupon.codes) {
+
+        if (
+          this.cartData.coupon.codes &&
+          this.cartData.coupon.codes.length > 0
+        ) {
           percentageDiscount = (
             1 -
             parseFloat(this.cartData.coupon.codes[0].amount) / 100
@@ -810,7 +814,10 @@ export const useOlivStore = defineStore({
         // Apply custom discount if no coupons are applied
         //
         let customDiscount = false;
-        if (!this.cartData.coupon.codes) {
+        if (
+          !this.cartData.coupon.codes ||
+          this.cartData.coupon.codes.length < 1
+        ) {
           customDiscount = this.getCustomDiscount();
           percentageDiscount = parseFloat(customDiscount);
         }
@@ -837,7 +844,11 @@ export const useOlivStore = defineStore({
         this.cartData.items.forEach((product) => {
           let extrasPrice = 0;
 
-          if (this.cartData.coupon.codes.length < 1) {
+          if (
+            (!this.cartData.coupon.codes ||
+              this.cartData.coupon.codes.length < 1) &&
+            customDiscount
+          ) {
             // Set eligible for custom discount
             // vue_vale : wordpress_value
             var customDiscountScenariosMapping = {
@@ -845,7 +856,6 @@ export const useOlivStore = defineStore({
             };
 
             if (
-              customDiscount &&
               this.isCustomDiscountEligible(product.id) &&
               customDiscountScenariosMapping[this.cartData.deliveryMethod] ===
                 this.customDiscounts.aplica_discount
