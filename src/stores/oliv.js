@@ -822,18 +822,6 @@ export const useOlivStore = defineStore({
           percentageDiscount = parseFloat(customDiscount);
         }
 
-        // let cartDiscount = 0;
-        // if (this.cartData.coupon.codes.length) {
-        //   this.cartData.coupon.codes.forEach((coupon) => {
-        //     if (coupon.discount_type === "percent") {
-        //       coupon["discount"] =
-        //         (parseFloat(coupon.amount) * this.cartData.subTotal) / 100;
-        //       cartDiscount += coupon.discount;
-        //     }
-        //   });
-        // }
-        // this.cartData.totalDiscount = cartDiscount;
-
         //
         // Calculate totals
         //

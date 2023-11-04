@@ -27,7 +27,13 @@ store.$subscribe((mutation, state) => {
 </script>
 
 <template>
-  <div class="cart-content">
+  <div
+    class="cart-content"
+    :class="{
+      'd-flex flex-column flex-grow-1': isOffCanvas,
+      'cart-content-checkout': isCheckout,
+    }"
+  >
     <CartHeader
       v-if="!isOffCanvas"
       :isCheckout="isCheckout"
@@ -58,7 +64,7 @@ store.$subscribe((mutation, state) => {
     <div
       v-if="store.getCartItems.length"
       class="cart-totals"
-      :class="{ 'd-flex flex-column flex-grow-1': isOffCanvas }"
+      :class="{ 'cart-totals d-flex flex-column mt-auto': isOffCanvas }"
     >
       <div class="cart-totals-inner sticky-spacing">
         <div class="cart-subtotal" :class="{ 'px-4': isOffCanvas }">
@@ -175,6 +181,11 @@ store.$subscribe((mutation, state) => {
 </template>
 
 <style scoped lang="scss">
+.cart-content-checkout {
+  // @include padding(2rem);
+  // background: $white;
+  // border: 2px solid $black;
+}
 .cart-bordered-element {
   margin-top: 1rem;
   padding-bottom: 1rem;

@@ -295,4 +295,22 @@ add-remove
   transform: translateX(30rem);
   max-height: 0;
 }
+
+.text-truncate-l2 {
+  display: -webkit-box;
+  max-width: 100%;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.form-control {
+  background: $white !important;
+}
+
+.form-control::placeholder {
+  color: var(--bs-gray-500);
+  opacity: 1;
+}
 </style>

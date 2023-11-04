@@ -249,13 +249,34 @@ const isNew = computed(() => {
 
   return false;
 });
+
+const productCadClass = () => {
+  let cardClass = "card-product-listing";
+
+  if (props.isSingle) {
+    cardClass = "product-single";
+
+    if (store.isCustomDiscountEligible(props.product.id)) {
+      cardClass += " has-custom-discount";
+    }
+  }
+
+  return cardClass;
+};
 </script>
 
 <template>
-  <div
-    class="card"
-    :class="isSingle ? 'product-single' : 'card-product-listing'"
-  >
+  <div class="card" :class="productCadClass()">
+    <div
+      class="product-custom-discount-badge d-flex align-items-center justify-content-center"
+      v-if="isSingle && store.isCustomDiscountEligible(product.id)"
+    >
+      <div
+        class="text-center"
+        v-html="store.customDiscounts.notificare_client"
+      ></div>
+    </div>
+
     <div class="product-title">
       <h2>
         <span v-if="isSingle">
@@ -265,16 +286,6 @@ const isNew = computed(() => {
           product.name
         }}</router-link>
       </h2>
-
-      <div
-        v-if="store.isCustomDiscountEligible(props.product.id)"
-        class="product-custom-discount-notification"
-      >
-        <p
-          class="text-warning mb-0"
-          v-text="store.customDiscounts.notificare_client"
-        ></p>
-      </div>
     </div>
     <figure
       v-if="product.images.length"
@@ -288,64 +299,80 @@ const isNew = computed(() => {
         >
           NEW
         </div>
+
+        <div
+          class="product-custom-discount-badge d-flex align-items-center justify-content-center"
+          v-if="store.isCustomDiscountEligible(product.id)"
+        >
+          <div
+            class="text-center"
+            v-html="store.customDiscounts.notificare_client"
+          ></div>
+        </div>
         <LoadImage :id="product.images[0].id" size="medium" />
       </router-link>
     </figure>
     <div class="product-description">
-      <p class="mb-1" v-if="!isSingle">{{ productDescriptionTrimmed }}</p>
+      <div v-if="!isSingle" class="text-truncate-l2 mb-1">
+        <p class="mb-0">{{ productDescriptionTrimmed }}</p>
+      </div>
       <div v-else v-html="product.description"></div>
       <ProductWeight :weight="productWeight(product)" />
     </div>
     <!-- Single product -->
     <div class="single-product-actions" v-if="isSingle">
-      <h3>Cantitate</h3>
-      <div class="quantity-wrap">
-        <button @click="updateProductQty(-1)">-</button>
-        <input
-          type="text"
-          @keyup="updateProductQty($event.target.value, true)"
-          :value="productQtys.productQty"
-          :v-model="productQtys.productQty"
-          readonly
-        />
-        <button @click="updateProductQty(1)">+</button>
-      </div>
-
       <div v-if="currentProductExtras" class="single-product-extras-actions">
-        <h3 class="mt-5">Adauga extra</h3>
         <div
-          class="extra-wrap mb-2"
-          v-for="extra in currentProductExtras"
+          class="extra-wrap"
+          v-for="(extra, index) in currentProductExtras"
           :key="extra"
         >
-          <p class="extra-name mb-1">
-            {{ extra._name }}
-            <span
-              >+
-              <ItemPrice :price="extra._price" />
-            </span>
-          </p>
-          <div class="quantity-wrap">
-            <button
-              disabled
-              class="extra-qty-minus"
-              @click="updateProductExtraQty(extra._id, $event)"
-            >
-              -
-            </button>
-            <input
-              type="text"
-              :value="productQtys[extra._id]"
-              @keyup="updateProductExtraQty(extra._id, $event)"
-              @focusout="updateProductExtraQty(extra._id, $event)"
-            />
-            <button
-              class="extra-qty-plus"
-              @click="updateProductExtraQty(extra._id, $event)"
-            >
-              +
-            </button>
+          <div class="extra-inner">
+            <h3 v-if="index === 0">Adauga extra</h3>
+            <p class="extra-name mb-1">
+              {{ extra._name }}
+              <span
+                >+
+                <ItemPrice :price="extra._price" />
+              </span>
+            </p>
+            <div class="quantity-wrap">
+              <button
+                disabled
+                class="extra-qty-minus"
+                @click="updateProductExtraQty(extra._id, $event)"
+              >
+                -
+              </button>
+              <input
+                type="text"
+                :value="productQtys[extra._id]"
+                @keyup="updateProductExtraQty(extra._id, $event)"
+                @focusout="updateProductExtraQty(extra._id, $event)"
+              />
+              <button
+                class="extra-qty-plus"
+                @click="updateProductExtraQty(extra._id, $event)"
+              >
+                +
+              </button>
+            </div>
           </div>
+        </div>
+      </div>
+
+      <div class="single-product-quantity-wrap">
+        <h3 class="mt-3">Cantitate</h3>
+        <div class="quantity-wrap">
+          <button @click="updateProductQty(-1)">-</button>
+          <input
+            type="text"
+            @keyup="updateProductQty($event.target.value, true)"
+            :value="productQtys.productQty"
+            :v-model="productQtys.productQty"
+            readonly
+          />
+          <button @click="updateProductQty(1)">+</button>
         </div>
       </div>
 
@@ -384,6 +411,41 @@ const isNew = computed(() => {
     font-size: 2.4rem;
     width: 6.2rem;
     height: 6.2rem;
+    right: -1.5rem;
+    top: -1.5rem;
+  }
+
+  @include media-breakpoint-up(md) {
+    right: -2.1rem;
+    top: -2.7rem;
+  }
+
+  @include media-breakpoint-up(lg) {
+    right: -2.7rem;
+  }
+}
+
+.product-custom-discount-badge {
+  background: url("/bg-product-new.png") no-repeat center center / 100% 100%;
+  font-family: $font-family-lanekcut;
+  line-height: 0.8;
+  font-size: 1.6rem;
+  color: $white;
+  position: absolute;
+  z-index: 10;
+  width: 6.2rem;
+  height: 6.2rem;
+  right: -0.5rem;
+  top: -1rem;
+
+  :deep {
+    span {
+      display: block;
+      font-size: 2.8rem;
+    }
+  }
+
+  @include media-breakpoint-up(sm) {
     right: -1.5rem;
     top: -1.5rem;
   }
@@ -598,7 +660,7 @@ const isNew = computed(() => {
       }
     }
   }
-
+  /*
   @include media-breakpoint-up(xl) {
     figure {
       :deep {
@@ -620,6 +682,7 @@ const isNew = computed(() => {
       }
     }
   }
+  */
 }
 
 .modal .card-product-listing {
@@ -659,6 +722,21 @@ const isNew = computed(() => {
 .product-single {
   display: flex;
   flex-direction: column;
+  position: relative;
+
+  &.has-custom-discount {
+    .product-custom-discount-badge {
+      top: 2rem;
+      right: 2rem;
+    }
+
+    @include media-breakpoint-up(md) {
+      h2,
+      .product-description :deep p {
+        padding-right: 6.2rem;
+      }
+    }
+  }
 
   h2 {
     font-size: 5.6rem;
@@ -702,10 +780,11 @@ const isNew = computed(() => {
   }
 
   .product-description {
+    max-width: 100%;
     order: 2;
     position: relative;
     text-align: center;
-    margin-bottom: 2.5rem;
+    @include margin-bottom(3.5rem);
 
     &:after {
       content: "";
@@ -719,6 +798,10 @@ const isNew = computed(() => {
       background-size: 15px 2px;
       margin-top: 2.5rem;
     }
+  }
+
+  .extra-wrap {
+    margin-bottom: 2rem;
   }
 
   .extra-name {
@@ -789,17 +872,69 @@ const isNew = computed(() => {
     }
   }
 
-  @include media-breakpoint-between(sm, md) {
+  @include media-breakpoint-up(sm) {
+    .product-description {
+      margin-bottom: 0;
+    }
     .single-product-extras-actions {
       display: flex;
+      position: relative;
 
-      .extra-wrap:last-child {
-        margin-left: 2rem;
+      &:after {
+        content: "";
+        display: block;
+        height: 2px;
+        background-image: linear-gradient(
+          to right,
+          $body-color 8px,
+          transparent 8px
+        );
+        background-size: 15px 2px;
+        width: 100%;
+        position: absolute;
+        left: 0;
+        bottom: 0;
       }
     }
-  }
 
-  @include media-breakpoint-up(sm) {
+    .extra-name {
+      max-width: 200px;
+    }
+
+    .extra-wrap {
+      padding-top: 2.5rem;
+      flex-grow: 1;
+      margin-bottom: 0;
+      padding-bottom: 2.5rem;
+
+      &:last-child {
+        display: flex;
+        align-items: flex-end;
+
+        &:not(:first-child) {
+          @include padding-left(3rem);
+          @include margin-left(2rem);
+          position: relative;
+
+          &:before {
+            content: "";
+            display: block;
+            width: 2px;
+            background-image: linear-gradient(
+              to bottom,
+              $body-color 8px,
+              transparent 8px
+            );
+            background-size: 2px 15px;
+            height: 100%;
+            position: absolute;
+            left: 0;
+            bottom: 0;
+          }
+        }
+      }
+    }
+
     .single-product-add {
       @include font-size(3rem);
     }
@@ -842,7 +977,7 @@ const isNew = computed(() => {
       position: absolute;
       left: 0;
       top: 0;
-      width: 50%;
+      width: calc(50% - 2px);
       height: 100%;
       background: none;
 
@@ -874,7 +1009,9 @@ const isNew = computed(() => {
       }
     }
 
-    .single-product-actions {
+    .single-product-add,
+    .single-product-quantity-wrap,
+    .single-product-extras-actions {
       @include padding(0 3rem);
     }
 

@@ -10,7 +10,7 @@ const store = useOlivStore();
 <template>
   <footer
     v-if="store.websiteOptions.footer"
-    class="site-footer position-relative mb-7"
+    class="site-footer position-relative"
   >
     <div class="container">
       <div class="row">

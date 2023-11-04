@@ -178,6 +178,16 @@ const itemExtrasCount = computed(() => {
     <ErrorProduct v-if="cartItem.errorMsg" :productIndex="cartItemIndex" />
 
     <div class="d-flex position-relative">
+      <div
+        class="product-custom-discount-badge d-flex align-items-center justify-content-center"
+        :class="{ 'discount-badge-checkout': isCheckout }"
+        v-if="store.isCustomDiscountEligible(cartItem.id)"
+      >
+        <div
+          class="text-center"
+          v-html="store.customDiscounts.notificare_client"
+        ></div>
+      </div>
       <figure>
         <LoadImage :id="cartItem.thumbId" size="medium" />
       </figure>
@@ -277,20 +287,42 @@ const itemExtrasCount = computed(() => {
         </transition>
       </div>
     </div>
-
-    <div
-      v-if="store.isCustomDiscountEligible(cartItem.id)"
-      class="product-custom-discount-notification w-100"
-    >
-      <p
-        class="text-warning mb-0"
-        v-text="store.customDiscounts.notificare_client"
-      ></p>
-    </div>
   </div>
 </template>
 
 <style scoped lang="scss">
+.product-custom-discount-badge {
+  background: url("/bg-product-new.png") no-repeat center center / 100% 100%;
+  font-family: $font-family-lanekcut;
+  line-height: 0.8;
+  font-size: 1.6rem;
+  color: $white;
+  position: absolute;
+  z-index: 10;
+  width: 6.2rem;
+  height: 6.2rem;
+  left: 0;
+  top: 0;
+
+  :deep {
+    span {
+      display: block;
+      font-size: 2.8rem;
+    }
+  }
+
+  @include media-breakpoint-up(xs) {
+    @include rfs(-3rem, left);
+    top: -1.5rem;
+  }
+
+  &.discount-badge-checkout {
+    @include media-breakpoint-up(xs) {
+      left: 0;
+      top: -1.5rem;
+    }
+  }
+}
 .card-product-cart {
   @include padding-bottom(2rem);
   @include margin-bottom(2rem);

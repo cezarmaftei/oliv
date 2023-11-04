@@ -48,7 +48,7 @@ const pageClass = computed(() => {
     <HeaderInternal />
     <main
       id="main-content"
-      class="main-content container d-flex flex-column flex-grow-1 my-7"
+      class="main-content container d-flex flex-column flex-grow-1 my-4"
     >
       <section
         v-if="store.isLoaded && store.getPageBySlug(route)"
